@@ -1,1705 +1,2282 @@
 <!DOCTYPE html>
 <html lang="de" data-theme="dark">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Lebensplaner</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<style>
-/* ═══════════════════════════ TOKENS ═══════════════════════════ */
-:root{
-  --bg-base:#0d0f14;--bg-surface:#131720;--bg-elevated:#1a2030;--bg-hover:#1f2740;
-  --border-subtle:#1e2535;--border-muted:#2a3450;--border-strong:#3a4a70;
-  --text-primary:#e8ecf5;--text-secondary:#8896b0;--text-muted:#5a6880;
-  --accent-primary:#4f8ef7;--accent-glow:rgba(79,142,247,.15);
-  --accent-green:#3ecf8e;--accent-amber:#f5a623;--accent-red:#f26b6b;--accent-purple:#9b6cf7;
-  --nav-width:240px;--nav-width-sm:64px;--topbar-h:56px;
-  --radius-sm:6px;--radius-md:10px;--radius-lg:16px;
-  --shadow-card:0 2px 12px rgba(0,0,0,.4);
-  --font-sans:'Inter',system-ui,sans-serif;--font-mono:'JetBrains Mono',monospace;
-  --transition:160ms ease;
-}
-[data-theme="light"]{
-  --bg-base:#f0f2f7;--bg-surface:#fff;--bg-elevated:#f7f9fc;--bg-hover:#eef1f8;
-  --border-subtle:#e4e8f0;--border-muted:#d2d8e8;--border-strong:#b0bcd4;
-  --text-primary:#111827;--text-secondary:#4b5a72;--text-muted:#8896b0;
-  --accent-primary:#2563eb;--accent-glow:rgba(37,99,235,.12);
-  --shadow-card:0 1px 6px rgba(0,0,0,.08);
-}
-/* ═══════════════════════════ RESET ═══════════════════════════ */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{font-size:15px;scroll-behavior:smooth;}
-body{font-family:var(--font-sans);background:var(--bg-base);color:var(--text-primary);min-height:100vh;display:flex;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
-a{color:inherit;text-decoration:none;}
-button{font-family:inherit;cursor:pointer;border:none;background:none;}
-ul{list-style:none;}
-input,select,textarea{font-family:inherit;}
-/* ═══════════════════════════ SIDEBAR ═══════════════════════════ */
-#sidebar{width:var(--nav-width);min-height:100vh;background:var(--bg-surface);border-right:1px solid var(--border-subtle);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;transition:width var(--transition),transform var(--transition);overflow:hidden;}
-#sidebar.collapsed{width:var(--nav-width-sm);}
-.sidebar-brand{height:var(--topbar-h);display:flex;align-items:center;padding:0 18px;border-bottom:1px solid var(--border-subtle);gap:10px;flex-shrink:0;}
-.brand-icon{width:28px;height:28px;background:var(--accent-primary);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.brand-icon svg{width:16px;height:16px;fill:#fff;}
-.brand-label{font-size:.95rem;font-weight:600;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;transition:opacity var(--transition),width var(--transition);}
-#sidebar.collapsed .brand-label{opacity:0;width:0;}
-.nav-list{flex:1;padding:12px 8px;overflow-y:auto;overflow-x:hidden;}
-.nav-section-label{font-size:.65rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);padding:14px 10px 6px;white-space:nowrap;overflow:hidden;transition:opacity var(--transition);}
-#sidebar.collapsed .nav-section-label{opacity:0;}
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--radius-sm);cursor:pointer;transition:background var(--transition),color var(--transition);color:var(--text-secondary);font-size:.875rem;font-weight:500;white-space:nowrap;position:relative;user-select:none;}
-.nav-item:hover{background:var(--bg-hover);color:var(--text-primary);}
-.nav-item.active{background:var(--accent-glow);color:var(--accent-primary);}
-.nav-item.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;border-radius:0 2px 2px 0;background:var(--accent-primary);}
-.nav-icon{width:18px;height:18px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
-.nav-icon svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;}
-.nav-label{overflow:hidden;transition:opacity var(--transition),width var(--transition);}
-#sidebar.collapsed .nav-label{opacity:0;width:0;}
-#sidebar.collapsed .nav-item[data-tooltip]::after{content:attr(data-tooltip);position:absolute;left:calc(var(--nav-width-sm) + 8px);top:50%;transform:translateY(-50%);background:var(--bg-elevated);border:1px solid var(--border-muted);color:var(--text-primary);font-size:.8rem;padding:4px 10px;border-radius:var(--radius-sm);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity var(--transition);z-index:200;}
-#sidebar.collapsed .nav-item[data-tooltip]:hover::after{opacity:1;}
-.sidebar-footer{padding:12px 8px;border-top:1px solid var(--border-subtle);}
-#sidebar-toggle{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:var(--radius-sm);color:var(--text-muted);transition:background var(--transition),color var(--transition);}
-#sidebar-toggle:hover{background:var(--bg-hover);color:var(--text-primary);}
-#sidebar-toggle svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;}
-/* ═══════════════════════════ SHELL ═══════════════════════════ */
-#app-shell{flex:1;margin-left:var(--nav-width);display:flex;flex-direction:column;min-height:100vh;transition:margin-left var(--transition);}
-#app-shell.sidebar-collapsed{margin-left:var(--nav-width-sm);}
-/* ═══════════════════════════ TOPBAR ═══════════════════════════ */
-#topbar{height:var(--topbar-h);background:var(--bg-surface);border-bottom:1px solid var(--border-subtle);display:flex;align-items:center;padding:0 24px;gap:12px;position:sticky;top:0;z-index:50;}
-.topbar-title{font-size:1rem;font-weight:600;flex:1;}
-.topbar-actions{display:flex;align-items:center;gap:8px;}
-.icon-btn{width:34px;height:34px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:var(--text-secondary);transition:background var(--transition),color var(--transition);}
-.icon-btn:hover{background:var(--bg-hover);color:var(--text-primary);}
-.icon-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;}
-#theme-toggle{width:44px;height:24px;border-radius:12px;background:var(--bg-elevated);border:1px solid var(--border-muted);position:relative;cursor:pointer;}
-#theme-toggle::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:var(--accent-primary);transition:transform var(--transition);}
-[data-theme="light"] #theme-toggle::after{transform:translateX(20px);}
-.avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent-primary),#7c3aed);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#fff;cursor:pointer;}
-/* ═══════════════════════════ PAGE AREA ═══════════════════════════ */
-#page-area{flex:1;padding:28px;overflow-y:auto;}
-.page{display:none;}.page.active{display:block;}
-.page-heading{font-size:1.5rem;font-weight:700;letter-spacing:-.025em;margin-bottom:4px;}
-.page-sub{font-size:.875rem;color:var(--text-muted);margin-bottom:24px;}
-/* ═══════════════════════════ GENERIC CARD ═══════════════════════════ */
-.card{background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:20px;box-shadow:var(--shadow-card);}
-.card-title{font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:12px;}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
-.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
-/* Placeholder */
-.placeholder-section{border:1.5px dashed var(--border-muted);border-radius:var(--radius-lg);padding:48px 24px;text-align:center;color:var(--text-muted);margin-top:24px;}
-.placeholder-section svg{width:36px;height:36px;stroke:var(--border-strong);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;margin:0 auto 12px;display:block;}
-.placeholder-section p{font-size:.875rem;max-width:320px;margin:0 auto;line-height:1.6;}
-/* Progress */
-.progress-track{height:4px;background:var(--border-subtle);border-radius:2px;overflow:hidden;margin-top:8px;}
-.progress-fill{height:100%;border-radius:2px;background:var(--accent-primary);transition:width .6s ease;}
-/* Badge */
-.badge{display:inline-flex;align-items:center;gap:4px;font-size:.7rem;font-weight:600;padding:2px 8px;border-radius:100px;letter-spacing:.02em;}
-.badge-blue{background:rgba(79,142,247,.15);color:var(--accent-primary);}
-.badge-green{background:rgba(62,207,142,.15);color:var(--accent-green);}
-.badge-amber{background:rgba(245,166,35,.15);color:var(--accent-amber);}
-.badge-red{background:rgba(242,107,107,.15);color:var(--accent-red);}
-/* Divider */
-.divider{border:none;border-top:1px solid var(--border-subtle);margin:20px 0;}
-/* Mobile overlay */
-#mobile-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:90;}
-#mobile-menu-btn{display:none;align-items:center;justify-content:center;width:36px;height:36px;border-radius:var(--radius-sm);color:var(--text-secondary);}
-#mobile-menu-btn:hover{background:var(--bg-hover);}
-#mobile-menu-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;}
-/* Scrollbar */
-::-webkit-scrollbar{width:4px;height:4px;}
-::-webkit-scrollbar-track{background:transparent;}
-::-webkit-scrollbar-thumb{background:var(--border-muted);border-radius:2px;}
-::-webkit-scrollbar-thumb:hover{background:var(--border-strong);}
-:focus-visible{outline:2px solid var(--accent-primary);outline-offset:2px;}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;}}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lebensplaner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
-/* ═══════════════════════════ DASHBOARD SYSTEM ═══════════════════════════ */
-/* Toolbar */
-.db-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
-.db-toolbar-left{flex:1;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.db-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--radius-sm);font-size:.82rem;font-weight:600;transition:background var(--transition),color var(--transition),border-color var(--transition);border:1px solid transparent;cursor:pointer;}
-.db-btn-primary{background:var(--accent-primary);color:#fff;}
-.db-btn-primary:hover{background:#3a7de8;}
-.db-btn-ghost{background:var(--bg-elevated);color:var(--text-secondary);border-color:var(--border-muted);}
-.db-btn-ghost:hover{color:var(--text-primary);border-color:var(--border-strong);}
-.db-btn-active{background:var(--accent-glow);color:var(--accent-primary);border-color:var(--accent-primary);}
-.db-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
-/* Grid */
-.db-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;align-items:start;}
-/* Column spans */
-.col-3{grid-column:span 3;}.col-4{grid-column:span 4;}.col-6{grid-column:span 6;}.col-8{grid-column:span 8;}.col-12{grid-column:span 12;}
-/* Card shell */
-.db-grid-card{background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-md);box-shadow:var(--shadow-card);position:relative;transition:border-color var(--transition),box-shadow var(--transition),opacity var(--transition);}
-.db-grid-card.dragging{opacity:.35;box-shadow:none;border-style:dashed;}
-.db-grid-card.drag-over{border-color:var(--accent-primary);box-shadow:0 0 0 2px var(--accent-glow);}
-/* Edit mode border shimmer */
-.db-edit-mode .db-grid-card{border-color:var(--border-muted);}
-/* Card header */
-.dbc-header{display:flex;align-items:center;gap:7px;padding:12px 14px 0;}
-.dbc-drag-handle{cursor:grab;color:var(--text-muted);opacity:0;pointer-events:none;flex-shrink:0;line-height:0;transition:opacity var(--transition);}
-.dbc-drag-handle:active{cursor:grabbing;}
-.dbc-drag-handle svg{width:14px;height:20px;fill:currentColor;}
-.db-edit-mode .dbc-drag-handle{opacity:1;pointer-events:auto;}
-.dbc-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.dbc-title{font-size:.82rem;font-weight:600;color:var(--text-secondary);letter-spacing:.02em;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-/* Inline action buttons – always present, visible only in edit mode */
-.dbc-actions{display:flex;align-items:center;gap:1px;flex-shrink:0;opacity:0;pointer-events:none;transition:opacity var(--transition);}
-.db-edit-mode .dbc-actions{opacity:1;pointer-events:auto;}
-.dbc-ab{width:26px;height:26px;border-radius:4px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);transition:background var(--transition),color var(--transition);}
-.dbc-ab:hover{background:var(--bg-hover);color:var(--text-primary);}
-.dbc-ab.red:hover{background:rgba(242,107,107,.15);color:var(--accent-red);}
-.dbc-ab svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
-/* Card body */
-.dbc-body{padding:10px 14px 14px;}
-/* Widgets */
-.widget-text{font-size:.875rem;color:var(--text-secondary);line-height:1.65;}
-.widget-stat-num{font-size:2rem;font-weight:700;font-family:var(--font-mono);letter-spacing:-.04em;}
-.widget-stat-sub{font-size:.75rem;color:var(--text-muted);margin-top:2px;}
-.widget-list{display:flex;flex-direction:column;gap:5px;}
-.widget-list-item{display:flex;align-items:flex-start;gap:8px;font-size:.83rem;color:var(--text-secondary);padding:5px 0;border-bottom:1px solid var(--border-subtle);}
-.widget-list-item:last-child{border-bottom:none;}
-.widget-list-dot{width:6px;height:6px;border-radius:50%;background:var(--accent-primary);flex-shrink:0;margin-top:5px;}
-.widget-progress-label{display:flex;justify-content:space-between;font-size:.78rem;color:var(--text-secondary);margin-bottom:6px;}
-.widget-progress-pct{font-family:var(--font-mono);color:var(--accent-primary);}
-.widget-link{display:inline-flex;align-items:center;gap:6px;font-size:.83rem;color:var(--accent-primary);word-break:break-all;}
-.widget-link svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0;}
-/* Drop zone (end of grid) */
-.db-drop-zone{border:1.5px dashed var(--border-muted);border-radius:var(--radius-md);min-height:72px;display:none;align-items:center;justify-content:center;color:var(--text-muted);font-size:.8rem;grid-column:span 12;transition:border-color var(--transition),background var(--transition);}
-.db-edit-mode~.db-drop-zone,.db-drop-zone.show{display:flex;}
-.db-drop-zone.drag-target{border-color:var(--accent-primary);background:var(--accent-glow);}
-/* Hidden tray */
-.db-hidden-tray{background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:14px 16px;margin-top:16px;display:none;}
-.db-hidden-tray.visible{display:block;}
-.db-hidden-tray-title{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:10px;}
-.db-hidden-list{display:flex;flex-wrap:wrap;gap:8px;}
-.db-hidden-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 8px 5px 10px;background:var(--bg-elevated);border:1px solid var(--border-muted);border-radius:100px;font-size:.78rem;color:var(--text-secondary);}
-.db-restore-btn{font-size:.72rem;font-weight:600;color:var(--accent-primary);padding:1px 4px;border-radius:3px;transition:background var(--transition);}
-.db-restore-btn:hover{background:var(--accent-glow);}
+  <style>
+    /* ═══════════════════════════════════════════════
+       DESIGN TOKENS
+    ═══════════════════════════════════════════════ */
+    :root {
+      /* Dark theme (default) */
+      --bg-base:       #0d0f14;
+      --bg-surface:    #131720;
+      --bg-elevated:   #1a2030;
+      --bg-hover:      #1f2740;
 
-/* ═══════════════════════════ MODAL ═══════════════════════════ */
-.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);z-index:500;display:none;align-items:center;justify-content:center;padding:16px;}
-.modal-backdrop.open{display:flex;}
-.modal{background:var(--bg-surface);border:1px solid var(--border-muted);border-radius:var(--radius-lg);width:min(520px,100%);max-height:90vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,.5);}
-.modal-header{display:flex;align-items:center;justify-content:space-between;padding:20px 22px 0;}
-.modal-title{font-size:1rem;font-weight:700;}
-.modal-close{width:30px;height:30px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:var(--text-muted);transition:background var(--transition),color var(--transition);}
-.modal-close:hover{background:var(--bg-hover);color:var(--text-primary);}
-.modal-close svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;}
-.modal-body{padding:18px 22px;}
-.modal-footer{padding:0 22px 20px;display:flex;justify-content:flex-end;gap:8px;}
-.mf-group{margin-bottom:14px;}
-.mf-label{font-size:.75rem;font-weight:500;color:var(--text-secondary);margin-bottom:5px;display:block;}
-.mf-input{width:100%;background:var(--bg-elevated);border:1px solid var(--border-muted);border-radius:var(--radius-sm);color:var(--text-primary);font-size:.875rem;padding:8px 11px;outline:none;transition:border-color var(--transition),box-shadow var(--transition);}
-.mf-input:focus{border-color:var(--accent-primary);box-shadow:0 0 0 3px var(--accent-glow);}
-.mf-input::placeholder{color:var(--text-muted);}
-.mf-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.mf-input[type="color"]{height:38px;padding:3px 6px;cursor:pointer;}
-textarea.mf-input{resize:vertical;min-height:80px;line-height:1.5;}
-select.mf-input{cursor:pointer;color-scheme:dark;}
-[data-theme="light"] select.mf-input{color-scheme:light;}
-/* Widget type picker */
-.wt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;}
-.wt-opt{border:1px solid var(--border-muted);border-radius:var(--radius-sm);padding:10px 6px;text-align:center;cursor:pointer;transition:border-color var(--transition),background var(--transition);}
-.wt-opt:hover{border-color:var(--border-strong);}
-.wt-opt.sel{border-color:var(--accent-primary);background:var(--accent-glow);}
-.wt-opt input[type="radio"]{display:none;}
-.wt-ico{font-size:1.2rem;margin-bottom:4px;}
-.wt-nm{font-size:.7rem;font-weight:600;color:var(--text-secondary);}
-.wt-opt.sel .wt-nm{color:var(--accent-primary);}
-/* Modal section divider */
-.modal-sep{font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);padding-top:14px;margin:14px 0 10px;border-top:1px solid var(--border-subtle);}
+      --border-subtle: #1e2535;
+      --border-muted:  #2a3450;
+      --border-strong: #3a4a70;
 
-/* ═══════════════════════════ CONTEXT MENU ═══════════════════════════ */
-.ctx-menu{position:fixed;background:var(--bg-elevated);border:1px solid var(--border-muted);border-radius:var(--radius-md);padding:5px;min-width:182px;z-index:600;box-shadow:0 8px 32px rgba(0,0,0,.45);display:none;}
-.ctx-menu.open{display:block;}
-.ctx-item{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:var(--radius-sm);font-size:.83rem;color:var(--text-secondary);cursor:pointer;transition:background var(--transition),color var(--transition);}
-.ctx-item:hover{background:var(--bg-hover);color:var(--text-primary);}
-.ctx-item.danger{color:var(--accent-red);}
-.ctx-item.danger:hover{background:rgba(242,107,107,.1);}
-.ctx-item svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
-.ctx-sep{height:1px;background:var(--border-subtle);margin:4px 0;}
+      --text-primary:  #e8ecf5;
+      --text-secondary:#8896b0;
+      --text-muted:    #5a6880;
+      --text-accent:   #4f8ef7;
 
-/* ═══════════════════════════ SETTINGS MODULE ═══════════════════════════ */
-.settings-layout{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
-.settings-col{display:flex;flex-direction:column;gap:16px;}
-.settings-card{background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:20px 22px;box-shadow:var(--shadow-card);}
-.settings-card-header{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
-.settings-card-icon{width:30px;height:30px;border-radius:var(--radius-sm);background:var(--accent-glow);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.settings-card-icon svg{width:15px;height:15px;stroke:var(--accent-primary);fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;}
-.settings-card-title{font-size:.9rem;font-weight:600;}
-.field-group{display:flex;flex-direction:column;gap:14px;}
-.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.field{display:flex;flex-direction:column;gap:5px;}
-.field-label{font-size:.75rem;font-weight:500;color:var(--text-secondary);}
-.field-hint{font-size:.78rem;color:var(--text-muted);line-height:1.5;margin-bottom:-4px;}
-.field-input{background:var(--bg-elevated);border:1px solid var(--border-muted);border-radius:var(--radius-sm);color:var(--text-primary);font-size:.875rem;padding:8px 11px;width:100%;outline:none;transition:border-color var(--transition),box-shadow var(--transition);}
-.field-input:focus{border-color:var(--accent-primary);box-shadow:0 0 0 3px var(--accent-glow);}
-.field-input:disabled{opacity:.45;cursor:default;}
-.field-input::placeholder{color:var(--text-muted);}
-.field-input[type="date"],.field-select{color-scheme:dark;cursor:pointer;}
-[data-theme="light"] .field-input[type="date"],[data-theme="light"] .field-select{color-scheme:light;}
-.field-with-unit{position:relative;display:flex;align-items:center;}
-.field-unit{font-size:.8rem;color:var(--text-muted);font-family:var(--font-mono);}
-.field-unit-left{position:absolute;left:10px;pointer-events:none;}
-.field-input-right{padding-left:22px;}
-.field-input[type="number"]::-webkit-inner-spin-button,.field-input[type="number"]::-webkit-outer-spin-button{-webkit-appearance:none;}
-.field-input[type="number"]{-moz-appearance:textfield;}
-.checkbox-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.checkbox-item{display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-subtle);background:var(--bg-elevated);transition:border-color var(--transition);}
-.checkbox-item:hover{border-color:var(--border-strong);}
-.checkbox-item input[type="checkbox"]{display:none;}
-.checkbox-box{width:16px;height:16px;border:1.5px solid var(--border-strong);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:background var(--transition),border-color var(--transition);}
-.checkbox-box::after{content:'';width:8px;height:5px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translateY(-1px);opacity:0;transition:opacity var(--transition);}
-.checkbox-item input:checked~.checkbox-box{background:var(--accent-primary);border-color:var(--accent-primary);}
-.checkbox-item input:checked~.checkbox-box::after{opacity:1;}
-.checkbox-label{font-size:.85rem;color:var(--text-secondary);font-weight:500;}
-.finance-summary{display:flex;background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:var(--radius-sm);overflow:hidden;}
-.finance-summary-item{flex:1;padding:10px 14px;display:flex;flex-direction:column;gap:2px;}
-.finance-summary-label{font-size:.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;}
-.finance-summary-value{font-size:1rem;font-weight:700;font-family:var(--font-mono);color:var(--accent-green);}
-.finance-summary-sep{width:1px;align-self:stretch;background:var(--border-subtle);}
-.time-sliders{display:flex;flex-direction:column;gap:14px;}
-.slider-field{display:flex;flex-direction:column;gap:6px;}
-.slider-header{display:flex;justify-content:space-between;}
-.slider-value{font-size:.78rem;font-family:var(--font-mono);color:var(--accent-primary);font-weight:600;}
-.range-input{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:2px;background:var(--border-muted);outline:none;cursor:pointer;}
-.range-input::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent-primary);border:2px solid var(--bg-surface);cursor:pointer;}
-.range-input::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--accent-primary);border:2px solid var(--bg-surface);cursor:pointer;}
-.time-total-bar{height:8px;border-radius:4px;background:var(--border-subtle);display:flex;overflow:hidden;margin-top:4px;}
-.time-bar-segment{height:100%;transition:width .3s ease;}
-.seg-arbeit{background:var(--accent-amber);}.seg-lernen{background:var(--accent-primary);}.seg-freizeit{background:var(--accent-green);}
-.time-total-label{font-size:.75rem;color:var(--text-muted);text-align:right;}
-.priority-list{display:flex;flex-direction:column;gap:2px;}
-.priority-item{display:flex;align-items:center;justify-content:space-between;padding:8px 4px;border-bottom:1px solid var(--border-subtle);}
-.priority-item:last-child{border-bottom:none;}
-.priority-label{font-size:.85rem;color:var(--text-secondary);font-weight:500;}
-.star-row{display:flex;gap:2px;}
-.star{font-size:1.15rem;color:var(--border-strong);padding:2px;line-height:1;transition:color var(--transition),transform var(--transition);cursor:pointer;}
-.star:hover,.star.active{color:var(--accent-amber);}
-.star:hover{transform:scale(1.15);}
-/* Toast */
-.settings-toast{position:fixed;bottom:24px;right:24px;background:var(--bg-elevated);border:1px solid var(--accent-green);color:var(--accent-green);font-size:.82rem;font-weight:600;padding:8px 16px;border-radius:var(--radius-md);display:flex;align-items:center;gap:7px;z-index:999;opacity:0;transform:translateY(8px);transition:opacity .2s ease,transform .2s ease;pointer-events:none;}
-.settings-toast.show{opacity:1;transform:translateY(0);}
-.settings-toast svg{width:14px;height:14px;stroke:var(--accent-green);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+      --accent-primary: #4f8ef7;
+      --accent-glow:    rgba(79, 142, 247, 0.15);
+      --accent-green:   #3ecf8e;
+      --accent-amber:   #f5a623;
+      --accent-red:     #f26b6b;
 
-/* ═══════════════════════════ RESPONSIVE ═══════════════════════════ */
-@media(max-width:1100px){.col-3{grid-column:span 6;}.col-4{grid-column:span 6;}.col-8{grid-column:span 12;}}
-@media(max-width:900px){.grid-4{grid-template-columns:1fr 1fr;}.col-3,.col-4,.col-6{grid-column:span 12;}.col-8,.col-12{grid-column:span 12;}.settings-layout{grid-template-columns:1fr;}}
-@media(max-width:640px){
-  #sidebar{transform:translateX(-100%);width:var(--nav-width)!important;box-shadow:4px 0 24px rgba(0,0,0,.4);}
-  #sidebar.mobile-open{transform:translateX(0);}
-  #mobile-overlay.visible{display:block;}
-  #mobile-menu-btn{display:flex;}
-  #sidebar-toggle{display:none;}
-  #app-shell{margin-left:0!important;}
-  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr;}
-  #page-area{padding:20px 14px;}
-  .db-grid{grid-template-columns:1fr!important;}
-  .col-3,.col-4,.col-6,.col-8,.col-12{grid-column:span 1!important;}
-  .mf-row{grid-template-columns:1fr;}
-  .wt-grid{grid-template-columns:repeat(2,1fr);}
-  .field-row{grid-template-columns:1fr;}
-  .checkbox-grid{grid-template-columns:1fr;}
-}
-/* ═══════════════════════════ STRATEGIE MODULE ═══════════════════════════ */
-.strat-layout{display:grid;grid-template-columns:340px 1fr;gap:20px;align-items:start;}
-@media(max-width:900px){.strat-layout{grid-template-columns:1fr;}}
+      --nav-width:      240px;
+      --nav-width-sm:   64px;
+      --topbar-h:       56px;
 
-/* Input panel */
-.strat-input-panel{background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:22px;box-shadow:var(--shadow-card);position:sticky;top:calc(var(--topbar-h) + 16px);}
-.strat-panel-title{font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);margin-bottom:18px;}
-.strat-field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
-.strat-label{font-size:.75rem;font-weight:500;color:var(--text-secondary);}
-.strat-input{background:var(--bg-elevated);border:1px solid var(--border-muted);border-radius:var(--radius-sm);color:var(--text-primary);font-size:.875rem;padding:9px 11px;width:100%;outline:none;transition:border-color var(--transition),box-shadow var(--transition);color-scheme:dark;}
-[data-theme="light"] .strat-input{color-scheme:light;}
-.strat-input:focus{border-color:var(--accent-primary);box-shadow:0 0 0 3px var(--accent-glow);}
-.strat-analyze-btn{width:100%;padding:10px;border-radius:var(--radius-sm);background:var(--accent-primary);color:#fff;font-size:.875rem;font-weight:600;cursor:pointer;transition:background var(--transition);margin-top:4px;border:none;}
-.strat-analyze-btn:hover{background:#3a7de8;}
-.strat-clear-btn{width:100%;padding:7px;border-radius:var(--radius-sm);background:transparent;color:var(--text-muted);font-size:.78rem;font-weight:500;cursor:pointer;border:1px solid var(--border-subtle);transition:background var(--transition),color var(--transition);margin-top:8px;}
-.strat-clear-btn:hover{background:var(--bg-hover);color:var(--text-primary);}
+      --radius-sm:  6px;
+      --radius-md:  10px;
+      --radius-lg:  16px;
 
-/* Legal disclaimer */
-.strat-disclaimer{display:flex;align-items:flex-start;gap:9px;background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.3);border-radius:var(--radius-sm);padding:10px 12px;margin-top:16px;font-size:.75rem;color:var(--accent-amber);line-height:1.55;}
-.strat-disclaimer svg{width:14px;height:14px;stroke:var(--accent-amber);fill:none;stroke-width:2;stroke-linecap:round;flex-shrink:0;margin-top:1px;}
+      --shadow-card: 0 2px 12px rgba(0,0,0,0.4);
+      --shadow-glow: 0 0 0 1px var(--accent-primary), 0 4px 20px var(--accent-glow);
 
-/* Results panel */
-.strat-results{display:flex;flex-direction:column;gap:14px;}
-.strat-empty{border:1.5px dashed var(--border-muted);border-radius:var(--radius-lg);padding:48px 24px;text-align:center;color:var(--text-muted);}
-.strat-empty svg{width:40px;height:40px;stroke:var(--border-strong);fill:none;stroke-width:1.4;stroke-linecap:round;margin:0 auto 14px;display:block;}
-.strat-empty p{font-size:.875rem;line-height:1.6;}
+      --font-sans: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
 
-/* Timeline */
-.strat-timeline{background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:18px 20px;box-shadow:var(--shadow-card);}
-.strat-timeline-title{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:16px;}
-.strat-tl-track{position:relative;padding-left:28px;}
-.strat-tl-track::before{content:'';position:absolute;left:9px;top:8px;bottom:8px;width:2px;background:var(--border-muted);border-radius:1px;}
-.strat-tl-item{position:relative;margin-bottom:20px;}
-.strat-tl-item:last-child{margin-bottom:0;}
-.strat-tl-dot{position:absolute;left:-23px;top:3px;width:14px;height:14px;border-radius:50%;border:2px solid var(--bg-surface);flex-shrink:0;}
-.strat-tl-dot.green{background:var(--accent-green);}
-.strat-tl-dot.amber{background:var(--accent-amber);}
-.strat-tl-dot.red{background:var(--accent-red);}
-.strat-tl-dot.blue{background:var(--accent-primary);}
-.strat-tl-date{font-size:.72rem;font-family:var(--font-mono);color:var(--text-muted);margin-bottom:2px;}
-.strat-tl-label{font-size:.875rem;font-weight:600;color:var(--text-primary);}
-.strat-tl-desc{font-size:.78rem;color:var(--text-secondary);margin-top:2px;line-height:1.5;}
+      --transition: 160ms ease;
+    }
 
-/* Status cards */
-.strat-status-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-@media(max-width:640px){.strat-status-grid{grid-template-columns:1fr;}}
-.strat-status-card{background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:16px 18px;box-shadow:var(--shadow-card);}
-.strat-status-card-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:12px;}
-.strat-status-badge{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;padding:5px 12px;border-radius:100px;margin-bottom:10px;}
-.strat-status-badge.green{background:rgba(62,207,142,.12);color:var(--accent-green);border:1px solid rgba(62,207,142,.3);}
-.strat-status-badge.amber{background:rgba(245,166,35,.12);color:var(--accent-amber);border:1px solid rgba(245,166,35,.3);}
-.strat-status-badge.red{background:rgba(242,107,107,.12);color:var(--accent-red);border:1px solid rgba(242,107,107,.3);}
-.strat-status-badge svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
-.strat-status-detail{font-size:.8rem;color:var(--text-secondary);line-height:1.55;}
-.strat-status-months{font-size:1.6rem;font-weight:700;font-family:var(--font-mono);letter-spacing:-.03em;color:var(--text-primary);line-height:1;}
-.strat-status-months-label{font-size:.72rem;color:var(--text-muted);margin-top:2px;}
+    [data-theme="light"] {
+      --bg-base:       #f0f2f7;
+      --bg-surface:    #ffffff;
+      --bg-elevated:   #f7f9fc;
+      --bg-hover:      #eef1f8;
 
-/* Risk / benefit lists */
-.strat-list-card{background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:16px 18px;box-shadow:var(--shadow-card);}
-.strat-list-card-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;}
-.strat-list-card-title.red{color:var(--accent-red);}
-.strat-list-card-title.green{color:var(--accent-green);}
-.strat-list-card-title.amber{color:var(--accent-amber);}
-.strat-list-item{display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-bottom:1px solid var(--border-subtle);font-size:.82rem;color:var(--text-secondary);line-height:1.5;}
-.strat-list-item:last-child{border-bottom:none;}
-.strat-list-icon{flex-shrink:0;margin-top:1px;}
-.strat-list-icon svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
-.strat-list-icon.green svg{stroke:var(--accent-green);}
-.strat-list-icon.red svg{stroke:var(--accent-red);}
-.strat-list-icon.amber svg{stroke:var(--accent-amber);}
+      --border-subtle: #e4e8f0;
+      --border-muted:  #d2d8e8;
+      --border-strong: #b0bcd4;
 
-/* Summary bar */
-.strat-summary-bar{background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:14px 18px;box-shadow:var(--shadow-card);display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
-.strat-summary-item{display:flex;flex-direction:column;gap:2px;min-width:80px;}
-.strat-summary-label{font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);}
-.strat-summary-value{font-size:.9rem;font-weight:700;font-family:var(--font-mono);}
-.strat-summary-sep{width:1px;align-self:stretch;background:var(--border-subtle);}
+      --text-primary:  #111827;
+      --text-secondary:#4b5a72;
+      --text-muted:    #8896b0;
+      --text-accent:   #2563eb;
 
-/* Modul header */
-.strat-modul-header{margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid var(--border-subtle);}
-.strat-modul-tag{display:inline-block;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-primary);background:var(--accent-glow);padding:2px 8px;border-radius:100px;margin-bottom:6px;}
-.strat-modul-title{font-size:1.15rem;font-weight:700;letter-spacing:-.02em;color:var(--text-primary);margin-bottom:4px;}
-.strat-modul-desc{font-size:.83rem;color:var(--text-muted);line-height:1.55;}
+      --accent-primary: #2563eb;
+      --accent-glow:    rgba(37, 99, 235, 0.12);
 
-/* Label dots (input panel legend) */
-.strat-label{display:flex;align-items:center;gap:6px;}
-.strat-label-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.strat-label-dot.blue{background:var(--accent-primary);}
-.strat-label-dot.amber{background:var(--accent-amber);}
-.strat-label-dot.green{background:var(--accent-green);}
-.strat-label-dot.purple{background:var(--accent-purple);}
+      --shadow-card: 0 1px 6px rgba(0,0,0,0.08);
+    }
 
-/* Analyze button icon alignment */
-.strat-analyze-btn{display:flex;align-items:center;justify-content:center;gap:6px;}
-.strat-analyze-btn svg{flex-shrink:0;}
+    /* ═══════════════════════════════════════════════
+       RESET & BASE
+    ═══════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* Circular list icons (risks / benefits / questions) */
-.strat-li-icon{flex-shrink:0;margin-top:1px;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
-.strat-li-icon svg{width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
-.strat-li-icon.green{background:rgba(62,207,142,.15);color:var(--accent-green);}
-.strat-li-icon.red{background:rgba(242,107,107,.15);color:var(--accent-red);}
-.strat-li-icon.amber{background:rgba(245,166,35,.15);color:var(--accent-amber);}
-.strat-li-icon.blue{background:rgba(79,142,247,.15);color:var(--accent-primary);}
-.strat-list-card-title.blue{color:var(--accent-primary);}
+    html { font-size: 15px; scroll-behavior: smooth; }
 
-/* Status months larger variant */
-.strat-status-months{font-size:1.8rem;}
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-base);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
 
-/* Footer notice (always visible) */
-.strat-footer-notice{display:flex;align-items:flex-start;gap:10px;background:rgba(245,166,35,.06);border:1px solid rgba(245,166,35,.2);border-radius:var(--radius-md);padding:12px 16px;margin-top:24px;font-size:.78rem;color:var(--accent-amber);line-height:1.6;}
-.strat-footer-notice svg{width:15px;height:15px;stroke:var(--accent-amber);fill:none;stroke-width:2;stroke-linecap:round;flex-shrink:0;margin-top:1px;}
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+    ul { list-style: none; }
 
-/* ═══════════════════════════ DEV TAG ═══════════════════════════ */
-.dev-tag{position:fixed;bottom:10px;right:10px;font-size:.62rem;font-family:var(--font-mono);color:var(--text-muted);background:var(--bg-surface);border:1px solid var(--border-subtle);padding:3px 7px;border-radius:var(--radius-sm);z-index:9999;pointer-events:none;}
-</style>
+    /* ═══════════════════════════════════════════════
+       SIDEBAR NAV
+    ═══════════════════════════════════════════════ */
+    #sidebar {
+      width: var(--nav-width);
+      min-height: 100vh;
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 100;
+      transition: width var(--transition), transform var(--transition);
+      overflow: hidden;
+    }
+
+    #sidebar.collapsed { width: var(--nav-width-sm); }
+
+    /* Wordmark */
+    .sidebar-brand {
+      height: var(--topbar-h);
+      display: flex;
+      align-items: center;
+      padding: 0 18px;
+      border-bottom: 1px solid var(--border-subtle);
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .brand-icon {
+      width: 28px; height: 28px;
+      background: var(--accent-primary);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .brand-icon svg { width: 16px; height: 16px; fill: #fff; }
+
+    .brand-label {
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      transition: opacity var(--transition), width var(--transition);
+    }
+
+    #sidebar.collapsed .brand-label { opacity: 0; width: 0; }
+
+    /* Nav list */
+    .nav-list {
+      flex: 1;
+      padding: 12px 8px;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .nav-section-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 14px 10px 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      transition: opacity var(--transition);
+    }
+
+    #sidebar.collapsed .nav-section-label { opacity: 0; }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background var(--transition), color var(--transition);
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      font-weight: 500;
+      white-space: nowrap;
+      position: relative;
+      user-select: none;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      background: var(--accent-glow);
+      color: var(--accent-primary);
+    }
+
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 20%; bottom: 20%;
+      width: 3px;
+      border-radius: 0 2px 2px 0;
+      background: var(--accent-primary);
+    }
+
+    .nav-icon {
+      width: 18px; height: 18px;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .nav-icon svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+
+    .nav-label {
+      overflow: hidden;
+      transition: opacity var(--transition), width var(--transition);
+    }
+
+    #sidebar.collapsed .nav-label { opacity: 0; width: 0; }
+
+    /* Tooltip when collapsed */
+    #sidebar.collapsed .nav-item[data-tooltip]::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      left: calc(var(--nav-width-sm) + 8px);
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-muted);
+      color: var(--text-primary);
+      font-size: 0.8rem;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity var(--transition);
+      z-index: 200;
+    }
+
+    #sidebar.collapsed .nav-item[data-tooltip]:hover::after { opacity: 1; }
+
+    /* Sidebar footer */
+    .sidebar-footer {
+      padding: 12px 8px;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    /* Collapse toggle */
+    #sidebar-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px; height: 32px;
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      transition: background var(--transition), color var(--transition);
+    }
+
+    #sidebar-toggle:hover { background: var(--bg-hover); color: var(--text-primary); }
+    #sidebar-toggle svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
+
+    /* ═══════════════════════════════════════════════
+       MAIN LAYOUT
+    ═══════════════════════════════════════════════ */
+    #app-shell {
+      flex: 1;
+      margin-left: var(--nav-width);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      transition: margin-left var(--transition);
+    }
+
+    #app-shell.sidebar-collapsed { margin-left: var(--nav-width-sm); }
+
+    /* ═══════════════════════════════════════════════
+       TOP BAR
+    ═══════════════════════════════════════════════ */
+    #topbar {
+      height: var(--topbar-h);
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .topbar-title {
+      font-size: 1rem;
+      font-weight: 600;
+      flex: 1;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      width: 34px; height: 34px;
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-secondary);
+      transition: background var(--transition), color var(--transition);
+    }
+
+    .icon-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+    .icon-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* Theme toggle pill */
+    #theme-toggle {
+      width: 44px; height: 24px;
+      border-radius: 12px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-muted);
+      position: relative;
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+
+    #theme-toggle::after {
+      content: '';
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--accent-primary);
+      transition: transform var(--transition);
+    }
+
+    [data-theme="light"] #theme-toggle::after { transform: translateX(20px); }
+
+    /* Avatar */
+    .avatar {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-primary), #7c3aed);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    /* ═══════════════════════════════════════════════
+       PAGE AREA
+    ═══════════════════════════════════════════════ */
+    #page-area {
+      flex: 1;
+      padding: 28px 28px;
+      overflow-y: auto;
+    }
+
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ═══════════════════════════════════════════════
+       TYPOGRAPHY UTILITIES
+    ═══════════════════════════════════════════════ */
+    .page-heading {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .page-sub {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+    }
+
+    /* ═══════════════════════════════════════════════
+       CARD
+    ═══════════════════════════════════════════════ */
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .card-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    /* ═══════════════════════════════════════════════
+       GRID HELPERS
+    ═══════════════════════════════════════════════ */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .gap-16 { margin-bottom: 16px; }
+    .gap-24 { margin-bottom: 24px; }
+
+    /* ═══════════════════════════════════════════════
+       STAT CARD
+    ═══════════════════════════════════════════════ */
+    .stat-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .stat-value {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      font-family: var(--font-mono);
+      color: var(--text-primary);
+    }
+
+    .stat-delta {
+      font-size: 0.75rem;
+      color: var(--accent-green);
+    }
+
+    .stat-icon {
+      width: 32px; height: 32px;
+      border-radius: var(--radius-sm);
+      background: var(--accent-glow);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 4px;
+    }
+
+    .stat-icon svg { width: 16px; height: 16px; stroke: var(--accent-primary); fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* ═══════════════════════════════════════════════
+       PLACEHOLDER STATES
+    ═══════════════════════════════════════════════ */
+    .placeholder-section {
+      border: 1.5px dashed var(--border-muted);
+      border-radius: var(--radius-lg);
+      padding: 48px 24px;
+      text-align: center;
+      color: var(--text-muted);
+      margin-top: 24px;
+    }
+
+    .placeholder-section svg {
+      width: 36px; height: 36px;
+      stroke: var(--border-strong);
+      fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
+      margin-bottom: 12px;
+    }
+
+    .placeholder-section p {
+      font-size: 0.875rem;
+      max-width: 320px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* ═══════════════════════════════════════════════
+       PROGRESS BAR
+    ═══════════════════════════════════════════════ */
+    .progress-track {
+      height: 4px;
+      background: var(--border-subtle);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: var(--accent-primary);
+      transition: width 0.6s ease;
+    }
+
+    /* ═══════════════════════════════════════════════
+       BADGE
+    ═══════════════════════════════════════════════ */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 100px;
+      letter-spacing: 0.02em;
+    }
+
+    .badge-blue   { background: rgba(79,142,247,.15); color: var(--accent-primary); }
+    .badge-green  { background: rgba(62,207,142,.15); color: var(--accent-green);   }
+    .badge-amber  { background: rgba(245,166,35,.15);  color: var(--accent-amber);  }
+    .badge-red    { background: rgba(242,107,107,.15); color: var(--accent-red);    }
+
+    /* ═══════════════════════════════════════════════
+       DIVIDER
+    ═══════════════════════════════════════════════ */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border-subtle);
+      margin: 20px 0;
+    }
+
+    /* ═══════════════════════════════════════════════
+       MOBILE NAV OVERLAY
+    ═══════════════════════════════════════════════ */
+    #mobile-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 90;
+    }
+
+    #mobile-menu-btn {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 36px; height: 36px;
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+    }
+
+    #mobile-menu-btn:hover { background: var(--bg-hover); }
+    #mobile-menu-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
+
+    /* ═══════════════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════════════ */
+    @media (max-width: 900px) {
+      .grid-4 { grid-template-columns: 1fr 1fr; }
+      .grid-3 { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      #sidebar {
+        transform: translateX(-100%);
+        width: var(--nav-width) !important;
+        box-shadow: 4px 0 24px rgba(0,0,0,0.4);
+      }
+
+      #sidebar.mobile-open {
+        transform: translateX(0);
+      }
+
+      #mobile-overlay.visible { display: block; }
+      #mobile-menu-btn { display: flex; }
+      #sidebar-toggle { display: none; }
+
+      #app-shell { margin-left: 0 !important; }
+
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      #page-area { padding: 20px 16px; }
+    }
+
+    /* ═══════════════════════════════════════════════
+       SCROLLBAR
+    ═══════════════════════════════════════════════ */
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border-muted); border-radius: 2px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--border-strong); }
+
+    /* ═══════════════════════════════════════════════
+       FOCUS RING (ACCESSIBILITY)
+    ═══════════════════════════════════════════════ */
+    :focus-visible {
+      outline: 2px solid var(--accent-primary);
+      outline-offset: 2px;
+    }
+
+    /* ═══════════════════════════════════════════════
+       REDUCED MOTION
+    ═══════════════════════════════════════════════ */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; animation: none !important; }
+    }
+
+    /* ═══════════════════════════════════════════════
+       SETTINGS MODULE
+    ═══════════════════════════════════════════════ */
+
+    /* Two-column adaptive layout */
+    .settings-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .settings-col {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Card */
+    .settings-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 20px 22px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .settings-card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .settings-card-icon {
+      width: 30px; height: 30px;
+      border-radius: var(--radius-sm);
+      background: var(--accent-glow);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .settings-card-icon svg {
+      width: 15px; height: 15px;
+      stroke: var(--accent-primary);
+      fill: none; stroke-width: 1.75;
+      stroke-linecap: round; stroke-linejoin: round;
+    }
+
+    .settings-card-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* Field group */
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .field-label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      letter-spacing: 0.01em;
+    }
+
+    .field-hint {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: -4px;
+    }
+
+    .field-input {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-muted);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 0.875rem;
+      padding: 8px 11px;
+      width: 100%;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      outline: none;
+    }
+
+    .field-input:focus {
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .field-input:disabled {
+      opacity: 0.45;
+      cursor: default;
+    }
+
+    .field-input::placeholder { color: var(--text-muted); }
+
+    /* Native date/select styling */
+    .field-input[type="date"],
+    .field-select {
+      color-scheme: dark;
+      cursor: pointer;
+    }
+
+    [data-theme="light"] .field-input[type="date"],
+    [data-theme="light"] .field-select { color-scheme: light; }
+
+    /* Input with currency unit */
+    .field-with-unit {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .field-unit {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    .field-unit-left {
+      position: absolute;
+      left: 10px;
+      pointer-events: none;
+    }
+
+    .field-input-right { padding-left: 22px; }
+
+    /* Number field: hide spinners */
+    .field-input[type="number"]::-webkit-inner-spin-button,
+    .field-input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+    .field-input[type="number"] { -moz-appearance: textfield; }
+
+    /* Checkbox grid */
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-elevated);
+      transition: border-color var(--transition), background var(--transition);
+    }
+
+    .checkbox-item:hover { border-color: var(--border-strong); }
+
+    .checkbox-item input[type="checkbox"] { display: none; }
+
+    .checkbox-box {
+      width: 16px; height: 16px;
+      border: 1.5px solid var(--border-strong);
+      border-radius: 4px;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: background var(--transition), border-color var(--transition);
+    }
+
+    .checkbox-box::after {
+      content: '';
+      width: 8px; height: 5px;
+      border-left: 2px solid #fff;
+      border-bottom: 2px solid #fff;
+      transform: rotate(-45deg) translateY(-1px);
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+
+    .checkbox-item input:checked ~ .checkbox-box {
+      background: var(--accent-primary);
+      border-color: var(--accent-primary);
+    }
+
+    .checkbox-item input:checked ~ .checkbox-box::after { opacity: 1; }
+
+    .checkbox-item input:checked ~ .checkbox-label { color: var(--text-primary); }
+
+    .checkbox-label {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    /* Finance summary */
+    .finance-summary {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      margin-top: 2px;
+    }
+
+    .finance-summary-item {
+      flex: 1;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .finance-summary-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .finance-summary-value {
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      color: var(--accent-green);
+    }
+
+    .finance-summary-sep {
+      width: 1px;
+      align-self: stretch;
+      background: var(--border-subtle);
+    }
+
+    /* Range sliders */
+    .time-sliders { display: flex; flex-direction: column; gap: 14px; }
+
+    .slider-field { display: flex; flex-direction: column; gap: 6px; }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .slider-value {
+      font-size: 0.78rem;
+      font-family: var(--font-mono);
+      color: var(--accent-primary);
+      font-weight: 600;
+    }
+
+    .range-input {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--border-muted);
+      outline: none;
+      cursor: pointer;
+    }
+
+    .range-input::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--accent-primary);
+      border: 2px solid var(--bg-surface);
+      box-shadow: 0 0 0 1px var(--accent-primary);
+      cursor: pointer;
+      transition: transform var(--transition);
+    }
+
+    .range-input::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+    .range-input::-moz-range-thumb {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--accent-primary);
+      border: 2px solid var(--bg-surface);
+      cursor: pointer;
+    }
+
+    /* Zeit total bar */
+    .time-total-bar {
+      height: 8px;
+      border-radius: 4px;
+      background: var(--border-subtle);
+      display: flex;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+
+    .time-bar-segment { height: 100%; transition: width 0.3s ease; }
+    .seg-arbeit   { background: var(--accent-amber); }
+    .seg-lernen   { background: var(--accent-primary); }
+    .seg-freizeit { background: var(--accent-green); }
+
+    .time-total-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-align: right;
+    }
+
+    /* Priority / star rating */
+    .priority-list { display: flex; flex-direction: column; gap: 2px; }
+
+    .priority-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 4px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .priority-item:last-child { border-bottom: none; }
+
+    .priority-label {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .star-row {
+      display: flex;
+      gap: 2px;
+    }
+
+    .star {
+      font-size: 1.15rem;
+      color: var(--border-strong);
+      padding: 2px;
+      line-height: 1;
+      transition: color var(--transition), transform var(--transition);
+      cursor: pointer;
+    }
+
+    .star:hover,
+    .star.active { color: var(--accent-amber); }
+
+    .star:hover { transform: scale(1.15); }
+
+    /* Save toast */
+    .settings-toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--accent-green);
+      color: var(--accent-green);
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      z-index: 999;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      pointer-events: none;
+    }
+
+    .settings-toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .settings-toast svg {
+      width: 14px; height: 14px;
+      stroke: var(--accent-green);
+      fill: none; stroke-width: 2.5;
+      stroke-linecap: round; stroke-linejoin: round;
+    }
+
+    /* Responsive settings */
+    @media (max-width: 1024px) {
+      .settings-layout { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .field-row { grid-template-columns: 1fr; }
+      .checkbox-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ═══════════════════════════════════════════════
+       DEBUG LABEL (dev helper)
+    ═══════════════════════════════════════════════ */
+    .dev-tag {
+      position: fixed;
+      bottom: 12px; right: 12px;
+      font-size: 0.65rem;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      z-index: 9999;
+      pointer-events: none;
+    }
+  </style>
 </head>
+
 <body>
 
-<!-- MOBILE OVERLAY -->
-<div id="mobile-overlay"></div>
+  <!-- ── MOBILE OVERLAY ─────────────────────────── -->
+  <div id="mobile-overlay"></div>
 
-<!-- SIDEBAR -->
-<aside id="sidebar" role="navigation" aria-label="Hauptnavigation">
-  <div class="sidebar-brand">
-    <div class="brand-icon">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" fill="rgba(255,255,255,.9)"/></svg>
+  <!-- ══════════════════════════════════════════════
+       SIDEBAR
+  ═══════════════════════════════════════════════ -->
+  <aside id="sidebar" role="navigation" aria-label="Hauptnavigation">
+
+    <div class="sidebar-brand">
+      <div class="brand-icon" aria-hidden="true">
+        <!-- compass icon -->
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" fill="rgba(255,255,255,0.9)"/></svg>
+      </div>
+      <span class="brand-label">Lebensplaner</span>
     </div>
-    <span class="brand-label">Lebensplaner</span>
-  </div>
-  <ul class="nav-list" role="list">
-    <li class="nav-section-label">Übersicht</li>
-    <li class="nav-item active" data-page="dashboard" data-tooltip="Dashboard" tabindex="0" role="listitem" aria-current="page">
-      <span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>
-      <span class="nav-label">Dashboard</span>
-    </li>
-    <li class="nav-section-label">Persönlich</li>
-    <li class="nav-item" data-page="einstellungen" data-tooltip="Meine Einstellungen" tabindex="0" role="listitem">
-      <span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>
-      <span class="nav-label">Meine Einstellungen</span>
-    </li>
-    <li class="nav-section-label">Bereiche</li>
-    <li class="nav-item" data-page="studium" data-tooltip="Studium" tabindex="0" role="listitem">
-      <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M2 10l10-6 10 6-10 6z"/><path d="M6 12v6c0 0 2 2 6 2s6-2 6-2v-6"/></svg></span>
-      <span class="nav-label">Studium</span>
-    </li>
-    <li class="nav-item" data-page="finanzen" data-tooltip="Finanzen" tabindex="0" role="listitem">
-      <span class="nav-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
-      <span class="nav-label">Finanzen</span>
-    </li>
-    <li class="nav-item" data-page="strategie" data-tooltip="Strategie" tabindex="0" role="listitem">
-      <span class="nav-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>
-      <span class="nav-label">Strategie</span>
-    </li>
-    <li class="nav-section-label">Tools</li>
-    <li class="nav-item" data-page="chatbot" data-tooltip="Chatbot" tabindex="0" role="listitem">
-      <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
-      <span class="nav-label">Chatbot</span>
-    </li>
-    <li class="nav-item" data-page="notizen" data-tooltip="Notizen" tabindex="0" role="listitem">
-      <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>
-      <span class="nav-label">Notizen</span>
-    </li>
-  </ul>
-  <div class="sidebar-footer">
-    <button id="sidebar-toggle" title="Navigation ein-/ausklappen">
-      <svg id="toggle-icon" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-    </button>
-  </div>
-</aside>
 
-<!-- APP SHELL -->
-<div id="app-shell">
-  <header id="topbar" role="banner">
-    <button id="mobile-menu-btn" aria-label="Menü öffnen">
-      <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-    </button>
-    <span class="topbar-title" id="topbar-title">Dashboard</span>
-    <div class="topbar-actions">
-      <button class="icon-btn" title="Benachrichtigungen">
-        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    <ul class="nav-list" role="list">
+
+      <li class="nav-section-label">Übersicht</li>
+
+      <li class="nav-item active" data-page="dashboard" data-tooltip="Dashboard" role="listitem" tabindex="0" aria-current="page">
+        <span class="nav-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        </span>
+        <span class="nav-label">Dashboard</span>
+      </li>
+
+      <li class="nav-section-label">Persönlich</li>
+
+      <li class="nav-item" data-page="einstellungen" data-tooltip="Meine Einstellungen" role="listitem" tabindex="0">
+        <span class="nav-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        </span>
+        <span class="nav-label">Meine Einstellungen</span>
+      </li>
+
+      <li class="nav-section-label">Bereiche</li>
+
+      <li class="nav-item" data-page="studium" data-tooltip="Studium" role="listitem" tabindex="0">
+        <span class="nav-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M2 10l10-6 10 6-10 6z"/><path d="M6 12v6c0 0 2 2 6 2s6-2 6-2v-6"/></svg>
+        </span>
+        <span class="nav-label">Studium</span>
+      </li>
+
+      <li class="nav-item" data-page="finanzen" data-tooltip="Finanzen" role="listitem" tabindex="0">
+        <span class="nav-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </span>
+        <span class="nav-label">Finanzen</span>
+      </li>
+
+      <li class="nav-item" data-page="strategie" data-tooltip="Strategie" role="listitem" tabindex="0">
+        <span class="nav-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </span>
+        <span class="nav-label">Strategie</span>
+      </li>
+
+      <li class="nav-section-label">Tools</li>
+
+      <li class="nav-item" data-page="chatbot" data-tooltip="Chatbot" role="listitem" tabindex="0">
+        <span class="nav-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </span>
+        <span class="nav-label">Chatbot</span>
+      </li>
+
+      <li class="nav-item" data-page="notizen" data-tooltip="Notizen" role="listitem" tabindex="0">
+        <span class="nav-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </span>
+        <span class="nav-label">Notizen</span>
+      </li>
+
+    </ul>
+
+    <div class="sidebar-footer">
+      <button id="sidebar-toggle" title="Navigation ein-/ausklappen" aria-label="Navigation ein-/ausklappen">
+        <svg id="toggle-icon" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
-      <button id="theme-toggle" title="Dark/Light Mode" aria-label="Theme umschalten"></button>
-      <div class="avatar" tabindex="0" title="Profil">LP</div>
     </div>
-  </header>
 
-  <main id="page-area" role="main">
+  </aside>
 
-    <!-- ══ DASHBOARD ══════════════════════════════════ -->
-    <section class="page active" id="page-dashboard">
-      <h1 class="page-heading">Dashboard</h1>
-      <p class="page-sub">Dein persönlicher Überblick — anpassbar, flexibel, dauerhaft gespeichert.</p>
+  <!-- ══════════════════════════════════════════════
+       APP SHELL
+  ═══════════════════════════════════════════════ -->
+  <div id="app-shell">
 
-      <div class="db-toolbar">
-        <div class="db-toolbar-left">
-          <button class="db-btn db-btn-primary" id="db-add-btn">
-            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Karte
-          </button>
-          <button class="db-btn db-btn-ghost" id="db-cat-btn">
-            <svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Kategorie
-          </button>
-          <button class="db-btn db-btn-ghost" id="db-reset-btn">
-            <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.08"/></svg>Reset
-          </button>
-        </div>
-        <button class="db-btn db-btn-ghost" id="db-edit-btn">
-          <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Bearbeiten
+    <!-- TOP BAR -->
+    <header id="topbar" role="banner">
+      <button id="mobile-menu-btn" aria-label="Menü öffnen">
+        <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+
+      <span class="topbar-title" id="topbar-title">Dashboard</span>
+
+      <div class="topbar-actions">
+        <!-- Notifications -->
+        <button class="icon-btn" title="Benachrichtigungen" aria-label="Benachrichtigungen">
+          <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         </button>
-      </div>
 
-      <div class="db-grid" id="db-grid"></div>
+        <!-- Dark/Light toggle -->
+        <button id="theme-toggle" title="Dark/Light Mode" aria-label="Dark/Light Mode umschalten"></button>
 
-      <div class="db-hidden-tray" id="db-hidden-tray">
-        <div class="db-hidden-tray-title">Ausgeblendete Karten</div>
-        <div class="db-hidden-list" id="db-hidden-list"></div>
+        <!-- Avatar -->
+        <div class="avatar" title="Profil" aria-label="Profil" tabindex="0">LP</div>
       </div>
-    </section>
+    </header>
 
-    <!-- ══ EINSTELLUNGEN ══════════════════════════════ -->
-    <section class="page" id="page-einstellungen">
-      <h1 class="page-heading">Meine Einstellungen</h1>
-      <p class="page-sub">Persönliche Daten, Studium, Finanzen und Prioritäten — automatisch gespeichert.</p>
-      <div id="settings-toast" class="settings-toast" role="status" aria-live="polite">
-        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Gespeichert
-      </div>
-      <div class="settings-layout">
-        <div class="settings-col">
-          <!-- PERSÖNLICHE DATEN -->
-          <div class="settings-card">
-            <div class="settings-card-header">
-              <span class="settings-card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>
-              <h2 class="settings-card-title">Persönliche Daten</h2>
-            </div>
-            <div class="field-group">
-              <div class="field"><label class="field-label" for="s-name">Name</label><input class="field-input" type="text" id="s-name" data-key="personal.name" placeholder="Vollständiger Name"/></div>
-              <div class="field-row">
-                <div class="field"><label class="field-label" for="s-birthdate">Geburtsdatum</label><input class="field-input" type="date" id="s-birthdate" data-key="personal.birthdate"/></div>
-                <div class="field"><label class="field-label" for="s-age">Alter</label><input class="field-input" type="text" id="s-age" placeholder="—" disabled/></div>
-              </div>
-              <div class="field"><label class="field-label" for="s-location">Wohnort</label><input class="field-input" type="text" id="s-location" data-key="personal.location" placeholder="Stadt, Land"/></div>
-            </div>
+    <!-- PAGE AREA -->
+    <main id="page-area" role="main">
+
+      <!-- ══ DASHBOARD ════════════════════════════ -->
+      <section class="page active" id="page-dashboard" aria-labelledby="h-dashboard">
+        <h1 class="page-heading" id="h-dashboard">Dashboard</h1>
+        <p class="page-sub">Willkommen zurück — dein Leben auf einen Blick.</p>
+
+        <div class="grid-4 gap-16">
+          <div class="stat-card">
+            <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M2 10l10-6 10 6-10 6z"/><path d="M6 12v6c0 0 2 2 6 2s6-2 6-2v-6"/></svg></div>
+            <div class="stat-label">Studium</div>
+            <div class="stat-value" id="dash-studium-value">—</div>
+            <div class="stat-delta" id="dash-studium-delta">Noch kein Fortschritt</div>
           </div>
-          <!-- STUDIUM -->
-          <div class="settings-card">
-            <div class="settings-card-header">
-              <span class="settings-card-icon"><svg viewBox="0 0 24 24"><path d="M2 10l10-6 10 6-10 6z"/><path d="M6 12v6c0 0 2 2 6 2s6-2 6-2v-6"/></svg></span>
-              <h2 class="settings-card-title">Studium</h2>
-            </div>
-            <div class="field-group">
-              <div class="field"><label class="field-label" for="s-studiengang">Aktueller Studiengang</label><input class="field-input" type="text" id="s-studiengang" data-key="studium.studiengang" placeholder="z. B. Biologie B.Sc."/></div>
-              <div class="field-row">
-                <div class="field"><label class="field-label" for="s-bachelor-progress">Bachelorfortschritt</label><div class="field-with-unit"><input class="field-input" type="number" id="s-bachelor-progress" data-key="studium.bachelorProgress" min="0" max="100" placeholder="0"/><span class="field-unit">%</span></div></div>
-                <div class="field"><label class="field-label" for="s-fachsemester">Fachsemester</label><input class="field-input" type="number" id="s-fachsemester" data-key="studium.fachsemester" min="1" max="20" placeholder="1"/></div>
-              </div>
-              <div class="progress-track" style="height:6px;margin-top:0;"><div class="progress-fill" id="bachelor-progress-fill" style="width:0%"></div></div>
-              <div class="field"><label class="field-label" for="s-bachelor-date">Geplantes Bachelorabschlussdatum</label><input class="field-input" type="date" id="s-bachelor-date" data-key="studium.bachelorAbschluss"/></div>
-            </div>
+          <div class="stat-card">
+            <div class="stat-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+            <div class="stat-label">Finanzen</div>
+            <div class="stat-value" id="dash-finanzen-value">—</div>
+            <div class="stat-delta" id="dash-finanzen-delta">Noch keine Daten</div>
           </div>
-          <!-- BEWERBUNGEN -->
-          <div class="settings-card">
-            <div class="settings-card-header">
-              <span class="settings-card-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
-              <h2 class="settings-card-title">Bewerbungen</h2>
-            </div>
-            <div class="field-group">
-              <p class="field-hint">Welche Studiengänge werden angestrebt?</p>
-              <div class="checkbox-grid">
-                <label class="checkbox-item"><input type="checkbox" id="s-bew-medizin" data-key="bewerbungen.medizin"/><span class="checkbox-box"></span><span class="checkbox-label">Medizin</span></label>
-                <label class="checkbox-item"><input type="checkbox" id="s-bew-psychologie" data-key="bewerbungen.psychologie"/><span class="checkbox-box"></span><span class="checkbox-label">Psychologie</span></label>
-              </div>
-              <div class="field"><label class="field-label" for="s-bew-weitere">Weitere Studiengänge</label><input class="field-input" type="text" id="s-bew-weitere" data-key="bewerbungen.weitere" placeholder="z. B. Pharmazie, Zahnmedizin …"/></div>
-              <div class="field"><label class="field-label" for="s-bew-beginn">Gewünschter Studienbeginn</label>
-                <select class="field-input field-select" id="s-bew-beginn" data-key="bewerbungen.studienbeginn">
-                  <option value="">— bitte wählen —</option>
-                  <option value="WS2425">WS 2024/25</option><option value="SS25">SS 2025</option>
-                  <option value="WS2526">WS 2025/26</option><option value="SS26">SS 2026</option>
-                  <option value="WS2627">WS 2026/27</option><option value="SS27">SS 2027</option>
-                  <option value="WS2728">WS 2027/28</option>
-                </select>
-              </div>
-            </div>
+          <div class="stat-card">
+            <div class="stat-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+            <div class="stat-label">Strategie</div>
+            <div class="stat-value">—</div>
+            <div class="stat-delta">Ziele noch nicht definiert</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+            <div class="stat-label">Notizen</div>
+            <div class="stat-value">0</div>
+            <div class="stat-delta">Keine Einträge</div>
           </div>
         </div>
-        <div class="settings-col">
-          <!-- FINANZEN -->
-          <div class="settings-card">
-            <div class="settings-card-header">
-              <span class="settings-card-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
-              <h2 class="settings-card-title">Finanzen</h2>
-            </div>
-            <div class="field-group">
-              <div class="field-row">
-                <div class="field"><label class="field-label" for="s-budget">Budget / Monat</label><div class="field-with-unit"><span class="field-unit field-unit-left">€</span><input class="field-input field-input-right" type="number" id="s-budget" data-key="finanzen.budget" min="0" placeholder="0"/></div></div>
-                <div class="field"><label class="field-label" for="s-ruecklagen">Rücklagen</label><div class="field-with-unit"><span class="field-unit field-unit-left">€</span><input class="field-input field-input-right" type="number" id="s-ruecklagen" data-key="finanzen.ruecklagen" min="0" placeholder="0"/></div></div>
-              </div>
-              <div class="field-row">
-                <div class="field"><label class="field-label" for="s-einkommen">Einkommen / Monat</label><div class="field-with-unit"><span class="field-unit field-unit-left">€</span><input class="field-input field-input-right" type="number" id="s-einkommen" data-key="finanzen.einkommen" min="0" placeholder="0"/></div></div>
-                <div class="field"><label class="field-label" for="s-bafoeg">BAföG / Monat</label><div class="field-with-unit"><span class="field-unit field-unit-left">€</span><input class="field-input field-input-right" type="number" id="s-bafoeg" data-key="finanzen.bafoeg" min="0" placeholder="0"/></div></div>
-              </div>
-              <div class="finance-summary">
-                <div class="finance-summary-item"><span class="finance-summary-label">Gesamteinnahmen</span><span class="finance-summary-value" id="s-total-income">€ 0</span></div>
-                <div class="finance-summary-sep"></div>
-                <div class="finance-summary-item"><span class="finance-summary-label">Budget verbleibend</span><span class="finance-summary-value" id="s-budget-remaining">€ 0</span></div>
-              </div>
+
+        <div class="grid-2" style="margin-top:16px;">
+          <div class="card">
+            <div class="card-title">Studium</div>
+            <div id="dash-studium-detail" class="placeholder-section" style="margin-top:0;">
+              <p>Noch keine Studiumsdaten hinterlegt.</p>
             </div>
           </div>
-          <!-- ZEIT -->
-          <div class="settings-card">
-            <div class="settings-card-header">
-              <span class="settings-card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
-              <h2 class="settings-card-title">Zeit / Woche</h2>
-            </div>
-            <div class="field-group">
-              <p class="field-hint">Wie viele Stunden pro Woche planst du ein?</p>
-              <div class="time-sliders">
-                <div class="slider-field"><div class="slider-header"><label class="field-label" for="s-arbeitszeit">Arbeitszeit</label><span class="slider-value" id="s-arbeitszeit-val">0 h</span></div><input type="range" class="range-input" id="s-arbeitszeit" data-key="zeit.arbeitszeit" min="0" max="60" value="0"/></div>
-                <div class="slider-field"><div class="slider-header"><label class="field-label" for="s-lernzeit">Lernzeit</label><span class="slider-value" id="s-lernzeit-val">0 h</span></div><input type="range" class="range-input" id="s-lernzeit" data-key="zeit.lernzeit" min="0" max="60" value="0"/></div>
-                <div class="slider-field"><div class="slider-header"><label class="field-label" for="s-freizeit">Freizeit</label><span class="slider-value" id="s-freizeit-val">0 h</span></div><input type="range" class="range-input" id="s-freizeit" data-key="zeit.freizeit" min="0" max="60" value="0"/></div>
-              </div>
-              <div class="time-total-bar"><div class="time-bar-segment seg-arbeit" id="seg-arbeit"></div><div class="time-bar-segment seg-lernen" id="seg-lernen"></div><div class="time-bar-segment seg-freizeit" id="seg-frei"></div></div>
-              <div class="time-total-label">Geplant: <strong id="s-zeit-total">0</strong> / 168 h/Woche</div>
-            </div>
-          </div>
-          <!-- PRIORITÄTEN -->
-          <div class="settings-card">
-            <div class="settings-card-header">
-              <span class="settings-card-icon"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
-              <h2 class="settings-card-title">Prioritäten</h2>
-            </div>
-            <div class="field-group">
-              <p class="field-hint">1 = unwichtig · 5 = sehr wichtig</p>
-              <div class="priority-list">
-                <div class="priority-item"><span class="priority-label">Sicherheit</span><div class="star-row" data-key="prioritaeten.sicherheit"><button class="star" data-v="1">★</button><button class="star" data-v="2">★</button><button class="star" data-v="3">★</button><button class="star" data-v="4">★</button><button class="star" data-v="5">★</button></div></div>
-                <div class="priority-item"><span class="priority-label">Einkommen</span><div class="star-row" data-key="prioritaeten.einkommen"><button class="star" data-v="1">★</button><button class="star" data-v="2">★</button><button class="star" data-v="3">★</button><button class="star" data-v="4">★</button><button class="star" data-v="5">★</button></div></div>
-                <div class="priority-item"><span class="priority-label">Karriere</span><div class="star-row" data-key="prioritaeten.karriere"><button class="star" data-v="1">★</button><button class="star" data-v="2">★</button><button class="star" data-v="3">★</button><button class="star" data-v="4">★</button><button class="star" data-v="5">★</button></div></div>
-                <div class="priority-item"><span class="priority-label">Interesse</span><div class="star-row" data-key="prioritaeten.interesse"><button class="star" data-v="1">★</button><button class="star" data-v="2">★</button><button class="star" data-v="3">★</button><button class="star" data-v="4">★</button><button class="star" data-v="5">★</button></div></div>
-                <div class="priority-item"><span class="priority-label">Flexibilität</span><div class="star-row" data-key="prioritaeten.flexibilitaet"><button class="star" data-v="1">★</button><button class="star" data-v="2">★</button><button class="star" data-v="3">★</button><button class="star" data-v="4">★</button><button class="star" data-v="5">★</button></div></div>
-                <div class="priority-item"><span class="priority-label">Prestige</span><div class="star-row" data-key="prioritaeten.prestige"><button class="star" data-v="1">★</button><button class="star" data-v="2">★</button><button class="star" data-v="3">★</button><button class="star" data-v="4">★</button><button class="star" data-v="5">★</button></div></div>
-                <div class="priority-item"><span class="priority-label">Work-Life-Balance</span><div class="star-row" data-key="prioritaeten.worklife"><button class="star" data-v="1">★</button><button class="star" data-v="2">★</button><button class="star" data-v="3">★</button><button class="star" data-v="4">★</button><button class="star" data-v="5">★</button></div></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ══ STUDIUM ════════════════════════════════════ -->
-    <section class="page" id="page-studium">
-      <h1 class="page-heading">Studium</h1><p class="page-sub">Semester, Module, Prüfungen und Lernfortschritt.</p>
-      <div class="placeholder-section"><svg viewBox="0 0 24 24"><path d="M2 10l10-6 10 6-10 6z"/><path d="M6 12v6c0 0 2 2 6 2s6-2 6-2v-6"/></svg><p>Folgt in der nächsten Ausbaustufe.</p></div>
-    </section>
-
-    <!-- ══ FINANZEN ═══════════════════════════════════ -->
-    <section class="page" id="page-finanzen">
-      <h1 class="page-heading">Finanzen</h1><p class="page-sub">Einnahmen, Ausgaben, Budget und Sparziele.</p>
-      <div class="placeholder-section"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><p>Folgt in der nächsten Ausbaustufe.</p></div>
-    </section>
-
-    <!-- ══ STRATEGIE ══════════════════════════════════ -->
-    <section class="page" id="page-strategie">
-      <h1 class="page-heading">Strategie</h1>
-      <p class="page-sub">Planung, Analyse und Szenarien für deinen Lebensweg.</p>
-
-      <!-- Modul-Header -->
-      <div class="strat-modul-header">
-        <span class="strat-modul-tag">Modul</span>
-        <h2 class="strat-modul-title">Bewerbung vor Bachelorabschluss</h2>
-        <p class="strat-modul-desc">Analysiere, ob und wie du dich vor deinem Abschluss bewerben kannst — vollständig lokal berechnet, keine Daten werden übertragen.</p>
-      </div>
-
-      <div class="strat-layout">
-
-        <!-- ── LEFT: Input panel ── -->
-        <div>
-          <div class="strat-input-panel">
-            <div class="strat-panel-title">Deine Daten</div>
-
-            <div class="strat-field">
-              <label class="strat-label" for="bwa-bachelor-date">
-                <span class="strat-label-dot blue"></span>Geplantes Bachelorabschlussdatum
-              </label>
-              <input class="strat-input" type="date" id="bwa-bachelor-date"/>
-            </div>
-            <div class="strat-field">
-              <label class="strat-label" for="bwa-apply-date">
-                <span class="strat-label-dot amber"></span>Bewerbungsdatum (Einreichung)
-              </label>
-              <input class="strat-input" type="date" id="bwa-apply-date"/>
-            </div>
-            <div class="strat-field">
-              <label class="strat-label" for="bwa-start-date">
-                <span class="strat-label-dot green"></span>Gewünschter Studienbeginn
-              </label>
-              <input class="strat-input" type="date" id="bwa-start-date"/>
-            </div>
-            <div class="strat-field">
-              <label class="strat-label" for="bwa-target">
-                <span class="strat-label-dot purple"></span>Zielstudiengang
-              </label>
-              <input class="strat-input" type="text" id="bwa-target" placeholder="z. B. Humanmedizin"/>
-            </div>
-
-            <button class="strat-analyze-btn" id="bwa-analyze-btn">
-              <svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;vertical-align:middle;margin-right:6px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              Jetzt analysieren
-            </button>
-            <button class="strat-clear-btn" id="bwa-clear-btn">Eingaben zurücksetzen</button>
-
-            <!-- Dauerhafter Hinweis -->
-            <div class="strat-disclaimer">
-              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              <span>Bitte aktuelle Regeln bei <strong>Hochschulstart</strong> und der jeweiligen <strong>Hochschule</strong> prüfen. Diese Analyse ersetzt keine Rechtsberatung und erhebt keinen Anspruch auf Vollständigkeit oder Aktualität.</span>
+          <div class="card">
+            <div class="card-title">Finanzen</div>
+            <div id="dash-finanzen-detail" class="placeholder-section" style="margin-top:0;">
+              <p>Noch keine Finanzdaten hinterlegt.</p>
             </div>
           </div>
         </div>
 
-        <!-- ── RIGHT: Results ── -->
-        <div class="strat-results" id="bwa-results">
-
-          <!-- Empty state -->
-          <div class="strat-empty" id="bwa-empty">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            <p>Gib deine Daten links ein und klicke auf <strong>„Jetzt analysieren"</strong>, um eine automatische Auswertung deiner Bewerbungssituation zu erhalten.</p>
+        <div class="grid-2" style="margin-top:16px;">
+          <div class="card">
+            <div class="card-title">Bewerbungen</div>
+            <div id="dash-bewerbungen-detail" class="placeholder-section" style="margin-top:0;">
+              <p>Noch keine Bewerbungsdaten hinterlegt.</p>
+            </div>
           </div>
-
-          <!-- Output (hidden until analysis) -->
-          <div id="bwa-output" style="display:none;"></div>
-
+          <div class="card">
+            <div class="card-title">Top-Prioritäten</div>
+            <div id="dash-prioritaeten-detail" class="placeholder-section" style="margin-top:0;">
+              <p>Noch keine Prioritäten bewertet.</p>
+            </div>
+          </div>
         </div>
 
-      </div><!-- /strat-layout -->
-
-      <!-- Hinweis immer sichtbar am Ende -->
-      <div class="strat-footer-notice">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <span>Bitte aktuelle Regeln bei <strong>Hochschulstart</strong> und der jeweiligen <strong>Hochschule</strong> prüfen.</span>
-      </div>
-
-    </section>
-
-    <!-- ══ CHATBOT ════════════════════════════════════ -->
-    <section class="page" id="page-chatbot">
-      <h1 class="page-heading">Chatbot</h1><p class="page-sub">KI-Assistent für Planung, Analyse und Beratung.</p>
-      <div class="placeholder-section"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><p>ChatEngine ist bereit — wird in der nächsten Stufe verknüpft.</p></div>
-    </section>
-
-    <!-- ══ NOTIZEN ════════════════════════════════════ -->
-    <section class="page" id="page-notizen">
-      <h1 class="page-heading">Notizen</h1><p class="page-sub">Freie Gedanken, Ideen und Notizblöcke.</p>
-      <div class="placeholder-section"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><p>Folgt in der nächsten Ausbaustufe.</p></div>
-    </section>
-
-  </main>
-</div><!-- /app-shell -->
-
-<!-- ══ MODAL: ADD / EDIT CARD ═══════════════════════ -->
-<div class="modal-backdrop" id="modal-card" role="dialog" aria-modal="true">
-  <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title" id="modal-card-title">Karte hinzufügen</span>
-      <button class="modal-close" id="mc-close"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    </div>
-    <div class="modal-body">
-      <div class="mf-group"><label class="mf-label" for="mc-title">Titel *</label><input class="mf-input" type="text" id="mc-title" placeholder="Kartentitel …"/></div>
-      <div class="mf-row">
-        <div class="mf-group"><label class="mf-label" for="mc-category">Kategorie</label><select class="mf-input" id="mc-category"></select></div>
-        <div class="mf-group"><label class="mf-label" for="mc-size">Breite</label>
-          <select class="mf-input" id="mc-size">
-            <option value="col-3">Schmal (25%)</option>
-            <option value="col-4">Klein (33%)</option>
-            <option value="col-6" selected>Mittel (50%)</option>
-            <option value="col-8">Groß (66%)</option>
-            <option value="col-12">Voll (100%)</option>
-          </select>
+        <div class="grid-2" style="margin-top:16px;">
+          <div class="card">
+            <div class="card-title">Heutige Aufgaben</div>
+            <div class="placeholder-section">
+              <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <p>Aufgaben werden hier erscheinen, sobald du sie im Strategie-Bereich anlegst.</p>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Letzte Notizen</div>
+            <div class="placeholder-section">
+              <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <p>Deine letzten Notizen werden hier angezeigt.</p>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="mf-group">
-        <label class="mf-label">Widget-Typ</label>
-        <div class="wt-grid" id="mc-wt-grid">
-          <label class="wt-opt sel"><input type="radio" name="mc-wt" value="text" checked/><div class="wt-ico">📝</div><div class="wt-nm">Text</div></label>
-          <label class="wt-opt"><input type="radio" name="mc-wt" value="stat"/><div class="wt-ico">📊</div><div class="wt-nm">Kennzahl</div></label>
-          <label class="wt-opt"><input type="radio" name="mc-wt" value="list"/><div class="wt-ico">📋</div><div class="wt-nm">Liste</div></label>
-          <label class="wt-opt"><input type="radio" name="mc-wt" value="progress"/><div class="wt-ico">⏳</div><div class="wt-nm">Fortschritt</div></label>
-          <label class="wt-opt"><input type="radio" name="mc-wt" value="link"/><div class="wt-ico">🔗</div><div class="wt-nm">Link</div></label>
-          <label class="wt-opt"><input type="radio" name="mc-wt" value="custom"/><div class="wt-ico">✨</div><div class="wt-nm">Freitext</div></label>
+      </section>
+
+      <!-- ══ EINSTELLUNGEN ═════════════════════════ -->
+      <section class="page" id="page-einstellungen" aria-labelledby="h-einstellungen">
+        <h1 class="page-heading" id="h-einstellungen">Meine Einstellungen</h1>
+        <p class="page-sub">Persönliche Daten, Studium, Finanzen und Prioritäten — automatisch gespeichert.</p>
+
+        <!-- Save toast -->
+        <div id="settings-toast" class="settings-toast" role="status" aria-live="polite">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          Gespeichert
         </div>
-      </div>
-      <div id="mc-content-fields"></div>
-    </div>
-    <div class="modal-footer">
-      <button class="db-btn db-btn-ghost" id="mc-cancel">Abbrechen</button>
-      <button class="db-btn db-btn-primary" id="mc-save">Speichern</button>
-    </div>
-  </div>
-</div>
 
-<!-- ══ MODAL: KATEGORIE ═══════════════════════════════ -->
-<div class="modal-backdrop" id="modal-cat" role="dialog" aria-modal="true">
-  <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title">Kategorien</span>
-      <button class="modal-close" id="mcat-close"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    </div>
-    <div class="modal-body">
-      <div id="cat-list-ui"></div>
-      <div class="modal-sep">Neue Kategorie erstellen</div>
-      <div class="mf-row">
-        <div class="mf-group"><label class="mf-label" for="cat-new-name">Name</label><input class="mf-input" type="text" id="cat-new-name" placeholder="z. B. Gesundheit"/></div>
-        <div class="mf-group"><label class="mf-label" for="cat-new-color">Farbe</label><input class="mf-input" type="color" id="cat-new-color" value="#4f8ef7"/></div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="db-btn db-btn-ghost" id="mcat-cancel">Schließen</button>
-      <button class="db-btn db-btn-primary" id="mcat-add">Anlegen</button>
-    </div>
-  </div>
-</div>
+        <div class="settings-layout">
 
-<!-- ══ CONTEXT MENU ════════════════════════════════════ -->
-<div class="ctx-menu" id="ctx-menu" role="menu">
-  <div class="ctx-item" id="ctx-edit" role="menuitem"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Bearbeiten</div>
-  <div class="ctx-item" id="ctx-dup" role="menuitem"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Duplizieren</div>
-  <div class="ctx-item" id="ctx-up" role="menuitem"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>Nach oben</div>
-  <div class="ctx-item" id="ctx-down" role="menuitem"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>Nach unten</div>
-  <div class="ctx-sep"></div>
-  <div class="ctx-item" id="ctx-hide" role="menuitem"><svg viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>Ausblenden</div>
-  <div class="ctx-sep"></div>
-  <div class="ctx-item danger" id="ctx-del" role="menuitem"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>Löschen</div>
-</div>
+          <!-- ── LEFT COLUMN ───────────────────── -->
+          <div class="settings-col">
 
-<div class="dev-tag">v0.5 · strategie</div>
+            <!-- PERSÖNLICHE DATEN -->
+            <div class="settings-card" id="scard-personal">
+              <div class="settings-card-header">
+                <span class="settings-card-icon">
+                  <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                </span>
+                <h2 class="settings-card-title">Persönliche Daten</h2>
+              </div>
+              <div class="field-group">
+                <div class="field">
+                  <label class="field-label" for="s-name">Name</label>
+                  <input class="field-input" type="text" id="s-name" data-key="personal.name" placeholder="Vollständiger Name" autocomplete="name" />
+                </div>
+                <div class="field-row">
+                  <div class="field">
+                    <label class="field-label" for="s-birthdate">Geburtsdatum</label>
+                    <input class="field-input" type="date" id="s-birthdate" data-key="personal.birthdate" />
+                  </div>
+                  <div class="field">
+                    <label class="field-label" for="s-age">Alter</label>
+                    <input class="field-input" type="text" id="s-age" placeholder="—" disabled />
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="field-label" for="s-location">Wohnort</label>
+                  <input class="field-input" type="text" id="s-location" data-key="personal.location" placeholder="Stadt, Land" autocomplete="address-level2" />
+                </div>
+              </div>
+            </div>
 
-<script>
-'use strict';
-/* ═══════════════════════ APP STATE ═══════════════════════ */
-const AppState={
-  currentPage:'dashboard',theme:'dark',sidebarOpen:true,
-  user:{name:'Lebensplaner',initials:'LP'},
-  studium:{},finanzen:{},strategie:{},notizen:[],settings:{},
-  _listeners:{},
-  set(k,v){this[k]=v;this._emit(k,v);},
-  on(k,fn){if(!this._listeners[k])this._listeners[k]=[];this._listeners[k].push(fn);},
-  _emit(k,v){(this._listeners[k]||[]).forEach(fn=>fn(v));}
-};
+            <!-- STUDIUM -->
+            <div class="settings-card" id="scard-studium">
+              <div class="settings-card-header">
+                <span class="settings-card-icon">
+                  <svg viewBox="0 0 24 24"><path d="M2 10l10-6 10 6-10 6z"/><path d="M6 12v6c0 0 2 2 6 2s6-2 6-2v-6"/></svg>
+                </span>
+                <h2 class="settings-card-title">Studium</h2>
+              </div>
+              <div class="field-group">
+                <div class="field">
+                  <label class="field-label" for="s-studiengang">Aktueller Studiengang</label>
+                  <input class="field-input" type="text" id="s-studiengang" data-key="studium.studiengang" placeholder="z. B. Biologie B.Sc." />
+                </div>
+                <div class="field-row">
+                  <div class="field">
+                    <label class="field-label" for="s-bachelor-progress">Bachelorfortschritt</label>
+                    <div class="field-with-unit">
+                      <input class="field-input" type="number" id="s-bachelor-progress" data-key="studium.bachelorProgress" min="0" max="100" placeholder="0" />
+                      <span class="field-unit">%</span>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label class="field-label" for="s-fachsemester">Fachsemester</label>
+                    <input class="field-input" type="number" id="s-fachsemester" data-key="studium.fachsemester" min="1" max="20" placeholder="1" />
+                  </div>
+                </div>
+                <!-- Progress bar -->
+                <div class="progress-track" id="bachelor-progress-track" style="margin-top:0; height:6px;">
+                  <div class="progress-fill" id="bachelor-progress-fill" style="width:0%"></div>
+                </div>
+                <div class="field">
+                  <label class="field-label" for="s-bachelor-date">Geplantes Bachelorabschlussdatum</label>
+                  <input class="field-input" type="date" id="s-bachelor-date" data-key="studium.bachelorAbschluss" />
+                </div>
+              </div>
+            </div>
 
-/* ═══════════════════════ STORAGE MANAGER ═══════════════════════ */
-const SM={
-  P:'lp_',
-  save(k,v){try{localStorage.setItem(this.P+k,JSON.stringify(v));return true;}catch(e){return false;}},
-  load(k,fb=null){try{const r=localStorage.getItem(this.P+k);return r!==null?JSON.parse(r):fb;}catch(e){return fb;}},
-  remove(k){localStorage.removeItem(this.P+k);},
-  persist(){this.save('state',{theme:AppState.theme,user:AppState.user,studium:AppState.studium,finanzen:AppState.finanzen,strategie:AppState.strategie,notizen:AppState.notizen,settings:AppState.settings});},
-  restore(){const s=this.load('state');if(s)Object.assign(AppState,s);}
-};
+            <!-- BEWERBUNGEN -->
+            <div class="settings-card" id="scard-bewerbungen">
+              <div class="settings-card-header">
+                <span class="settings-card-icon">
+                  <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                </span>
+                <h2 class="settings-card-title">Bewerbungen</h2>
+              </div>
+              <div class="field-group">
+                <p class="field-hint">Welche Studiengänge werden angestrebt?</p>
+                <div class="checkbox-grid">
+                  <label class="checkbox-item">
+                    <input type="checkbox" id="s-bew-medizin" data-key="bewerbungen.medizin" />
+                    <span class="checkbox-box"></span>
+                    <span class="checkbox-label">Medizin</span>
+                  </label>
+                  <label class="checkbox-item">
+                    <input type="checkbox" id="s-bew-psychologie" data-key="bewerbungen.psychologie" />
+                    <span class="checkbox-box"></span>
+                    <span class="checkbox-label">Psychologie</span>
+                  </label>
+                </div>
+                <div class="field">
+                  <label class="field-label" for="s-bew-weitere">Weitere Studiengänge</label>
+                  <input class="field-input" type="text" id="s-bew-weitere" data-key="bewerbungen.weitere" placeholder="z. B. Pharmazie, Zahnmedizin …" />
+                </div>
+                <div class="field">
+                  <label class="field-label" for="s-bew-beginn">Gewünschter Studienbeginn</label>
+                  <select class="field-input field-select" id="s-bew-beginn" data-key="bewerbungen.studienbeginn">
+                    <option value="">— bitte wählen —</option>
+                    <option value="WS2425">WS 2024/25</option>
+                    <option value="SS25">SS 2025</option>
+                    <option value="WS2526">WS 2025/26</option>
+                    <option value="SS26">SS 2026</option>
+                    <option value="WS2627">WS 2026/27</option>
+                    <option value="SS27">SS 2027</option>
+                    <option value="WS2728">WS 2027/28</option>
+                  </select>
+                </div>
+              </div>
+            </div>
 
-/* ═══════════════════════ UI MANAGER ═══════════════════════ */
-const UIManager={
-  sidebar:document.getElementById('sidebar'),
-  appShell:document.getElementById('app-shell'),
-  topbarTitle:document.getElementById('topbar-title'),
-  pages:document.querySelectorAll('.page'),
-  navItems:document.querySelectorAll('.nav-item[data-page]'),
-  mobileBtn:document.getElementById('mobile-menu-btn'),
-  overlay:document.getElementById('mobile-overlay'),
-  TITLES:{dashboard:'Dashboard',einstellungen:'Meine Einstellungen',studium:'Studium',finanzen:'Finanzen',strategie:'Strategie',chatbot:'Chatbot',notizen:'Notizen'},
-  init(){
-    this._bindNav();
-    // sidebar toggle
-    const st=document.getElementById('sidebar-toggle');
-    const ti=document.getElementById('toggle-icon');
-    let col=SM.load('sidebarCollapsed',false);
-    const setCol=c=>{this.sidebar.classList.toggle('collapsed',c);this.appShell.classList.toggle('sidebar-collapsed',c);ti.setAttribute('points',c?'9 18 15 12 9 6':'15 18 9 12 15 6');};
-    setCol(col);
-    st.addEventListener('click',()=>{col=!col;setCol(col);SM.save('sidebarCollapsed',col);});
-    // theme
-    document.getElementById('theme-toggle').addEventListener('click',()=>{
-      const n=AppState.theme==='dark'?'light':'dark';
-      AppState.set('theme',n);
-      document.documentElement.setAttribute('data-theme',n);
-      SM.save('theme',n);
-    });
-    // mobile
-    this.mobileBtn.addEventListener('click',()=>{this.sidebar.classList.add('mobile-open');this.overlay.classList.add('visible');});
-    this.overlay.addEventListener('click',()=>{this.sidebar.classList.remove('mobile-open');this.overlay.classList.remove('visible');});
-    document.documentElement.setAttribute('data-theme',AppState.theme);
-    this.navigateTo(AppState.currentPage);
-  },
-  navigateTo(p){
-    if(!document.getElementById('page-'+p))return;
-    AppState.set('currentPage',p);
-    this.pages.forEach(x=>x.classList.toggle('active',x.id==='page-'+p));
-    this.navItems.forEach(i=>{const a=i.dataset.page===p;i.classList.toggle('active',a);i.setAttribute('aria-current',a?'page':'false');});
-    this.topbarTitle.textContent=this.TITLES[p]||p;
-    this.sidebar.classList.remove('mobile-open');this.overlay.classList.remove('visible');
-    SM.save('lastPage',p);
-  },
-  _bindNav(){this.navItems.forEach(i=>{const go=()=>this.navigateTo(i.dataset.page);i.addEventListener('click',go);i.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}});});}
-};
+          </div><!-- /left col -->
 
-/* ═══════════════════════ ANALYSIS ENGINE (scaffold) ═══════════════════════ */
-const AnalysisEngine={getDashboardSummary(){return{notizenCount:(AppState.notizen||[]).length};}};
+          <!-- ── RIGHT COLUMN ──────────────────── -->
+          <div class="settings-col">
 
-/* ═══════════════════════ ACTION ENGINE (scaffold) ═══════════════════════ */
-const ActionEngine={
-  update(d,p){const n=typeof p==='function'?p(AppState[d]):p;AppState.set(d,n);SM.persist();},
-  addNotiz(text){const n={id:Date.now(),text,createdAt:new Date().toISOString()};this.update('notizen',p=>[...(p||[]),n]);return n;},
-  deleteNotiz(id){this.update('notizen',p=>(p||[]).filter(n=>n.id!==id));}
-};
+            <!-- FINANZEN -->
+            <div class="settings-card" id="scard-finanzen">
+              <div class="settings-card-header">
+                <span class="settings-card-icon">
+                  <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </span>
+                <h2 class="settings-card-title">Finanzen</h2>
+              </div>
+              <div class="field-group">
+                <div class="field-row">
+                  <div class="field">
+                    <label class="field-label" for="s-budget">Monatliches Budget</label>
+                    <div class="field-with-unit">
+                      <span class="field-unit field-unit-left">€</span>
+                      <input class="field-input field-input-right" type="number" id="s-budget" data-key="finanzen.budget" min="0" placeholder="0" />
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label class="field-label" for="s-ruecklagen">Rücklagen</label>
+                    <div class="field-with-unit">
+                      <span class="field-unit field-unit-left">€</span>
+                      <input class="field-input field-input-right" type="number" id="s-ruecklagen" data-key="finanzen.ruecklagen" min="0" placeholder="0" />
+                    </div>
+                  </div>
+                </div>
+                <div class="field-row">
+                  <div class="field">
+                    <label class="field-label" for="s-einkommen">Einkommen / Monat</label>
+                    <div class="field-with-unit">
+                      <span class="field-unit field-unit-left">€</span>
+                      <input class="field-input field-input-right" type="number" id="s-einkommen" data-key="finanzen.einkommen" min="0" placeholder="0" />
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label class="field-label" for="s-bafoeg">BAföG / Monat</label>
+                    <div class="field-with-unit">
+                      <span class="field-unit field-unit-left">€</span>
+                      <input class="field-input field-input-right" type="number" id="s-bafoeg" data-key="finanzen.bafoeg" min="0" placeholder="0" />
+                    </div>
+                  </div>
+                </div>
+                <!-- Summary row -->
+                <div class="finance-summary">
+                  <div class="finance-summary-item">
+                    <span class="finance-summary-label">Gesamteinnahmen</span>
+                    <span class="finance-summary-value" id="s-total-income">€ 0</span>
+                  </div>
+                  <div class="finance-summary-sep"></div>
+                  <div class="finance-summary-item">
+                    <span class="finance-summary-label">Budget verbleibend</span>
+                    <span class="finance-summary-value" id="s-budget-remaining">€ 0</span>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-/* ═══════════════════════ CHAT ENGINE (scaffold) ═══════════════════════ */
-const ChatEngine={
-  history:[],
-  async send(msg){this.history.push({role:'user',content:msg});const r='[ChatEngine] Noch nicht implementiert.';this.history.push({role:'assistant',content:r});return r;},
-  clearHistory(){this.history=[];}
-};
+            <!-- ZEITPLANUNG -->
+            <div class="settings-card" id="scard-zeit">
+              <div class="settings-card-header">
+                <span class="settings-card-icon">
+                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </span>
+                <h2 class="settings-card-title">Zeit / Woche</h2>
+              </div>
+              <div class="field-group">
+                <p class="field-hint">Wie viele Stunden pro Woche planst du ein?</p>
+                <div class="time-sliders">
+                  <div class="slider-field">
+                    <div class="slider-header">
+                      <label class="field-label" for="s-arbeitszeit">Arbeitszeit</label>
+                      <span class="slider-value" id="s-arbeitszeit-val">0 h</span>
+                    </div>
+                    <input type="range" class="range-input" id="s-arbeitszeit" data-key="zeit.arbeitszeit" min="0" max="60" step="1" value="0" />
+                  </div>
+                  <div class="slider-field">
+                    <div class="slider-header">
+                      <label class="field-label" for="s-lernzeit">Lernzeit</label>
+                      <span class="slider-value" id="s-lernzeit-val">0 h</span>
+                    </div>
+                    <input type="range" class="range-input" id="s-lernzeit" data-key="zeit.lernzeit" min="0" max="60" step="1" value="0" />
+                  </div>
+                  <div class="slider-field">
+                    <div class="slider-header">
+                      <label class="field-label" for="s-freizeit">Freizeit</label>
+                      <span class="slider-value" id="s-freizeit-val">0 h</span>
+                    </div>
+                    <input type="range" class="range-input" id="s-freizeit" data-key="zeit.freizeit" min="0" max="60" step="1" value="0" />
+                  </div>
+                </div>
+                <!-- Zeit total bar -->
+                <div class="time-total-bar">
+                  <div class="time-bar-segment seg-arbeit" id="seg-arbeit"></div>
+                  <div class="time-bar-segment seg-lernen" id="seg-lernen"></div>
+                  <div class="time-bar-segment seg-freizeit" id="seg-frei"></div>
+                </div>
+                <div class="time-total-label">
+                  Geplant: <strong id="s-zeit-total">0</strong> / 168 h/Woche
+                </div>
+              </div>
+            </div>
 
-/* ═══════════════════════ SETTINGS ENGINE ═══════════════════════ */
-const SettingsEngine={
-  DEFAULTS:{
-    personal:{name:'',birthdate:'',location:''},
-    studium:{studiengang:'',bachelorProgress:0,fachsemester:1,bachelorAbschluss:''},
-    bewerbungen:{medizin:false,psychologie:false,weitere:'',studienbeginn:''},
-    finanzen:{budget:0,ruecklagen:0,einkommen:0,bafoeg:0},
-    zeit:{arbeitszeit:0,lernzeit:0,freizeit:0},
-    prioritaeten:{sicherheit:0,einkommen:0,karriere:0,interesse:0,flexibilitaet:0,prestige:0,worklife:0}
-  },
-  _tt:null,
-  init(){
-    const saved=SM.load('settings_data',{});
-    this._d=this._merge(this._clone(this.DEFAULTS),saved);
-    this._bindInputs();this._bindSliders();this._bindStars();this._populate();this._derive();
-  },
-  _bindInputs(){
-    document.querySelectorAll('[data-key]').forEach(el=>{
-      if(el.type==='range'||el.classList.contains('star-row'))return;
-      el.addEventListener(el.type==='checkbox'?'change':'input',()=>{
-        this._set(this._d,el.dataset.key,el.type==='checkbox'?el.checked:el.value);
-        this._persist();this._derive();
-      });
-    });
-  },
-  _bindSliders(){
-    ['arbeitszeit','lernzeit','freizeit'].forEach(k=>{
-      const el=document.getElementById('s-'+k);
-      if(!el)return;
-      el.addEventListener('input',()=>{
-        document.getElementById('s-'+k+'-val').textContent=el.value+' h';
-        this._set(this._d,'zeit.'+k,Number(el.value));
-        this._persist();this._updateTimeBar();
-      });
-    });
-  },
-  _bindStars(){
-    document.querySelectorAll('.star-row').forEach(row=>{
-      const stars=row.querySelectorAll('.star');
-      stars.forEach(s=>{
-        s.addEventListener('click',()=>{const v=Number(s.dataset.v);this._set(this._d,row.dataset.key,v);this._renderStars(row,v);this._persist();});
-        s.addEventListener('mouseenter',()=>this._renderStars(row,Number(s.dataset.v)));
-        s.addEventListener('mouseleave',()=>this._renderStars(row,this._get(this._d,row.dataset.key)||0));
-      });
-    });
-  },
-  _populate(){
-    document.querySelectorAll('[data-key]').forEach(el=>{
-      if(el.classList.contains('star-row'))return;
-      const v=this._get(this._d,el.dataset.key);
-      if(v===null||v===undefined)return;
-      if(el.type==='checkbox')el.checked=!!v;else el.value=v;
-    });
-    ['arbeitszeit','lernzeit','freizeit'].forEach(k=>{
-      const el=document.getElementById('s-'+k);
-      const lb=document.getElementById('s-'+k+'-val');
-      const v=this._d.zeit[k]||0;
-      if(el)el.value=v;if(lb)lb.textContent=v+' h';
-    });
-    document.querySelectorAll('.star-row').forEach(row=>{this._renderStars(row,this._get(this._d,row.dataset.key)||0);});
-  },
-  _derive(){
-    const bd=this._d.personal.birthdate;
-    const ageEl=document.getElementById('s-age');
-    if(ageEl)ageEl.value=bd?this._calcAge(bd)+' Jahre':'';
-    const pct=Math.min(100,Math.max(0,Number(this._d.studium.bachelorProgress)||0));
-    const fill=document.getElementById('bachelor-progress-fill');
-    if(fill)fill.style.width=pct+'%';
-    const inc=(Number(this._d.finanzen.einkommen)||0)+(Number(this._d.finanzen.bafoeg)||0);
-    const rem=inc-(Number(this._d.finanzen.budget)||0);
-    const incEl=document.getElementById('s-total-income');
-    const remEl=document.getElementById('s-budget-remaining');
-    if(incEl)incEl.textContent='€ '+inc.toLocaleString('de-DE');
-    if(remEl){remEl.textContent='€ '+rem.toLocaleString('de-DE');remEl.style.color=rem>=0?'var(--accent-green)':'var(--accent-red)';}
-    this._updateTimeBar();
-  },
-  _updateTimeBar(){
-    const a=Number(this._d.zeit.arbeitszeit)||0,l=Number(this._d.zeit.lernzeit)||0,f=Number(this._d.zeit.freizeit)||0,cap=168;
-    const sa=document.getElementById('seg-arbeit'),sl=document.getElementById('seg-lernen'),sf=document.getElementById('seg-frei');
-    if(sa)sa.style.width=Math.min(a/cap*100,100).toFixed(1)+'%';
-    if(sl)sl.style.width=Math.min(l/cap*100,100).toFixed(1)+'%';
-    if(sf)sf.style.width=Math.min(f/cap*100,100).toFixed(1)+'%';
-    const tot=document.getElementById('s-zeit-total');if(tot)tot.textContent=a+l+f;
-  },
-  _renderStars(row,v){row.querySelectorAll('.star').forEach(s=>s.classList.toggle('active',Number(s.dataset.v)<=v));},
-  _persist(){SM.save('settings_data',this._d);this._toast();},
-  _toast(){
-    const t=document.getElementById('settings-toast');if(!t)return;
-    t.classList.add('show');clearTimeout(this._tt);this._tt=setTimeout(()=>t.classList.remove('show'),1800);
-  },
-  _get(o,path){return path.split('.').reduce((x,k)=>x&&x[k]!==undefined?x[k]:null,o);},
-  _set(o,path,val){const ks=path.split('.');let c=o;for(let i=0;i<ks.length-1;i++){if(!c[ks[i]])c[ks[i]]={};c=c[ks[i]];}c[ks[ks.length-1]]=val;},
-  _merge(t,s){for(const k of Object.keys(s||{})){if(s[k]&&typeof s[k]==='object'&&!Array.isArray(s[k])){if(!t[k])t[k]={};this._merge(t[k],s[k]);}else t[k]=s[k];}return t;},
-  _clone(o){return JSON.parse(JSON.stringify(o));},
-  _calcAge(d){const b=new Date(d);if(isNaN(b))return 0;const td=new Date();let a=td.getFullYear()-b.getFullYear();if(td.getMonth()-b.getMonth()<0||(td.getMonth()===b.getMonth()&&td.getDate()<b.getDate()))a--;return a;}
-};
+            <!-- PRIORITÄTEN -->
+            <div class="settings-card" id="scard-prioritaeten">
+              <div class="settings-card-header">
+                <span class="settings-card-icon">
+                  <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                </span>
+                <h2 class="settings-card-title">Prioritäten</h2>
+              </div>
+              <div class="field-group">
+                <p class="field-hint">Wie wichtig sind dir diese Faktoren? (1 = unwichtig, 5 = sehr wichtig)</p>
+                <div class="priority-list">
+                  <div class="priority-item">
+                    <span class="priority-label">Sicherheit</span>
+                    <div class="star-row" data-key="prioritaeten.sicherheit">
+                      <button class="star" data-v="1" aria-label="1 Stern">★</button>
+                      <button class="star" data-v="2" aria-label="2 Sterne">★</button>
+                      <button class="star" data-v="3" aria-label="3 Sterne">★</button>
+                      <button class="star" data-v="4" aria-label="4 Sterne">★</button>
+                      <button class="star" data-v="5" aria-label="5 Sterne">★</button>
+                    </div>
+                  </div>
+                  <div class="priority-item">
+                    <span class="priority-label">Einkommen</span>
+                    <div class="star-row" data-key="prioritaeten.einkommen">
+                      <button class="star" data-v="1" aria-label="1 Stern">★</button>
+                      <button class="star" data-v="2" aria-label="2 Sterne">★</button>
+                      <button class="star" data-v="3" aria-label="3 Sterne">★</button>
+                      <button class="star" data-v="4" aria-label="4 Sterne">★</button>
+                      <button class="star" data-v="5" aria-label="5 Sterne">★</button>
+                    </div>
+                  </div>
+                  <div class="priority-item">
+                    <span class="priority-label">Karriere</span>
+                    <div class="star-row" data-key="prioritaeten.karriere">
+                      <button class="star" data-v="1" aria-label="1 Stern">★</button>
+                      <button class="star" data-v="2" aria-label="2 Sterne">★</button>
+                      <button class="star" data-v="3" aria-label="3 Sterne">★</button>
+                      <button class="star" data-v="4" aria-label="4 Sterne">★</button>
+                      <button class="star" data-v="5" aria-label="5 Sterne">★</button>
+                    </div>
+                  </div>
+                  <div class="priority-item">
+                    <span class="priority-label">Interesse</span>
+                    <div class="star-row" data-key="prioritaeten.interesse">
+                      <button class="star" data-v="1" aria-label="1 Stern">★</button>
+                      <button class="star" data-v="2" aria-label="2 Sterne">★</button>
+                      <button class="star" data-v="3" aria-label="3 Sterne">★</button>
+                      <button class="star" data-v="4" aria-label="4 Sterne">★</button>
+                      <button class="star" data-v="5" aria-label="5 Sterne">★</button>
+                    </div>
+                  </div>
+                  <div class="priority-item">
+                    <span class="priority-label">Flexibilität</span>
+                    <div class="star-row" data-key="prioritaeten.flexibilitaet">
+                      <button class="star" data-v="1" aria-label="1 Stern">★</button>
+                      <button class="star" data-v="2" aria-label="2 Sterne">★</button>
+                      <button class="star" data-v="3" aria-label="3 Sterne">★</button>
+                      <button class="star" data-v="4" aria-label="4 Sterne">★</button>
+                      <button class="star" data-v="5" aria-label="5 Sterne">★</button>
+                    </div>
+                  </div>
+                  <div class="priority-item">
+                    <span class="priority-label">Prestige</span>
+                    <div class="star-row" data-key="prioritaeten.prestige">
+                      <button class="star" data-v="1" aria-label="1 Stern">★</button>
+                      <button class="star" data-v="2" aria-label="2 Sterne">★</button>
+                      <button class="star" data-v="3" aria-label="3 Sterne">★</button>
+                      <button class="star" data-v="4" aria-label="4 Sterne">★</button>
+                      <button class="star" data-v="5" aria-label="5 Sterne">★</button>
+                    </div>
+                  </div>
+                  <div class="priority-item">
+                    <span class="priority-label">Work-Life-Balance</span>
+                    <div class="star-row" data-key="prioritaeten.worklife">
+                      <button class="star" data-v="1" aria-label="1 Stern">★</button>
+                      <button class="star" data-v="2" aria-label="2 Sterne">★</button>
+                      <button class="star" data-v="3" aria-label="3 Sterne">★</button>
+                      <button class="star" data-v="4" aria-label="4 Sterne">★</button>
+                      <button class="star" data-v="5" aria-label="5 Sterne">★</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-/* ═══════════════════════════════════════════════════════
-   DASHBOARD ENGINE
-═══════════════════════════════════════════════════════ */
-const DashboardEngine = {
+          </div><!-- /right col -->
 
-  /* Default data */
-  DEFAULT_CATS: [
-    {id:'cat-general',  name:'Allgemein',   color:'#4f8ef7'},
-    {id:'cat-studium',  name:'Studium',     color:'#3ecf8e'},
-    {id:'cat-finanzen', name:'Finanzen',    color:'#f5a623'},
-    {id:'cat-strategie',name:'Strategie',   color:'#9b6cf7'},
-    {id:'cat-health',   name:'Gesundheit',  color:'#f26b6b'},
-  ],
-  DEFAULT_CARDS: [
-    {id:'c-welcome',   title:'Willkommen',          category:'cat-general',   size:'col-12', type:'text',     hidden:false, content:{text:'Willkommen in deinem Lebensplaner! Klicke rechts oben auf „Bearbeiten", um Karten anzupassen, zu verschieben, zu duplizieren oder neue hinzuzufügen.'}},
-    {id:'c-studium',   title:'Studium',              category:'cat-studium',   size:'col-4',  type:'stat',     hidden:false, content:{value:'—', sub:'Bachelorfortschritt'}},
-    {id:'c-finanzen',  title:'Finanzen',             category:'cat-finanzen',  size:'col-4',  type:'stat',     hidden:false, content:{value:'—', sub:'Monatliches Budget'}},
-    {id:'c-strategie', title:'Strategie',            category:'cat-strategie', size:'col-4',  type:'stat',     hidden:false, content:{value:'—', sub:'Offene Ziele'}},
-    {id:'c-tasks',     title:'Aufgaben heute',       category:'cat-general',   size:'col-6',  type:'list',     hidden:false, content:{items:['Keine Aufgaben eingetragen']}},
-    {id:'c-notes',     title:'Letzte Notizen',       category:'cat-general',   size:'col-6',  type:'list',     hidden:false, content:{items:['Noch keine Notizen']}},
-    {id:'c-progress',  title:'Bachelorfortschritt',  category:'cat-studium',   size:'col-6',  type:'progress', hidden:false, content:{label:'Bachelor B.Sc.', value:0}},
-    {id:'c-budget',    title:'Budget-Überblick',     category:'cat-finanzen',  size:'col-6',  type:'text',     hidden:false, content:{text:'Trage deine Einnahmen in den Einstellungen ein, um hier eine automatische Übersicht zu sehen.'}},
-  ],
+        </div><!-- /settings-layout -->
+      </section>
 
-  /* State */
-  _cats: [],
-  _cards: [],
-  _editMode: false,
-  _dragSrcId: null,
-  _ctxId: null,
-  _editId: null,
+      <!-- ══ STUDIUM ════════════════════════════════ -->
+      <section class="page" id="page-studium" aria-labelledby="h-studium">
+        <h1 class="page-heading" id="h-studium">Studium</h1>
+        <p class="page-sub">Semester, Module, Prüfungen und Lernfortschritt.</p>
+        <div class="placeholder-section">
+          <svg viewBox="0 0 24 24"><path d="M2 10l10-6 10 6-10 6z"/><path d="M6 12v6c0 0 2 2 6 2s6-2 6-2v-6"/></svg>
+          <p>Studiumsdaten und Fortschritts-Tracking folgen in der nächsten Ausbaustufe.</p>
+        </div>
+      </section>
 
-  /* ── Init ─────────────────────────────────────────── */
-  init() {
-    this._cats  = SM.load('db_cats',  null) || this._clone(this.DEFAULT_CATS);
-    this._cards = SM.load('db_cards', null) || this._clone(this.DEFAULT_CARDS);
-    this._render();
-    this._bindToolbar();
-    this._bindModals();
-    this._bindCtxMenu();
-    // Close ctx on outside click
-    document.addEventListener('click', e => {
-      if(!document.getElementById('ctx-menu').contains(e.target)) this._closeCtx();
-    });
-    document.addEventListener('keydown', e => { if(e.key==='Escape'){this._closeCtx();this._closeModals();} });
-  },
+      <!-- ══ FINANZEN ════════════════════════════════ -->
+      <section class="page" id="page-finanzen" aria-labelledby="h-finanzen">
+        <h1 class="page-heading" id="h-finanzen">Finanzen</h1>
+        <p class="page-sub">Einnahmen, Ausgaben, Budget und Sparziele.</p>
+        <div class="placeholder-section">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          <p>Finanzübersicht und Budget-Tracking folgen in der nächsten Ausbaustufe.</p>
+        </div>
+      </section>
 
-  /* ── Render ────────────────────────────────────────── */
-  _render() {
-    this._renderGrid();
-    this._renderTray();
-    this._fillCatSelect();
-  },
+      <!-- ══ STRATEGIE ══════════════════════════════ -->
+      <section class="page" id="page-strategie" aria-labelledby="h-strategie">
+        <h1 class="page-heading" id="h-strategie">Strategie</h1>
+        <p class="page-sub">Langfristige Ziele, Meilensteine und Wochenplanung.</p>
+        <div class="placeholder-section">
+          <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <p>Ziel-Framework und Strategieplanung folgen in der nächsten Ausbaustufe.</p>
+        </div>
+      </section>
 
-  _renderGrid() {
-    const grid = document.getElementById('db-grid');
-    grid.innerHTML = '';
-    grid.classList.toggle('db-edit-mode', this._editMode);
-    this._cards.filter(c => !c.hidden).forEach(card => grid.appendChild(this._buildCard(card)));
-  },
+      <!-- ══ CHATBOT ════════════════════════════════ -->
+      <section class="page" id="page-chatbot" aria-labelledby="h-chatbot">
+        <h1 class="page-heading" id="h-chatbot">Chatbot</h1>
+        <p class="page-sub">KI-Assistent für Planung, Analyse und Beratung.</p>
+        <div class="placeholder-section">
+          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <p>Der KI-Assistent wird hier integriert — ChatEngine ist bereits in der Architektur verankert.</p>
+        </div>
+      </section>
 
-  _renderTray() {
-    const hidden = this._cards.filter(c => c.hidden);
-    const tray   = document.getElementById('db-hidden-tray');
-    const list   = document.getElementById('db-hidden-list');
-    tray.classList.toggle('visible', hidden.length > 0);
-    list.innerHTML = '';
-    hidden.forEach(c => {
-      const cat  = this._cat(c.category);
-      const chip = document.createElement('div');
-      chip.className = 'db-hidden-chip';
-      chip.innerHTML =
-        `<span style="width:8px;height:8px;border-radius:50%;background:${cat.color};flex-shrink:0;display:inline-block;"></span>` +
-        `<span>${this._esc(c.title)}</span>` +
-        `<button class="db-restore-btn" title="Wiederherstellen">Einblenden</button>`;
-      chip.querySelector('.db-restore-btn').addEventListener('click', () => {
-        c.hidden = false; this._save(); this._render();
-      });
-      list.appendChild(chip);
-    });
-  },
+      <!-- ══ NOTIZEN ═════════════════════════════════ -->
+      <section class="page" id="page-notizen" aria-labelledby="h-notizen">
+        <h1 class="page-heading" id="h-notizen">Notizen</h1>
+        <p class="page-sub">Freie Gedanken, Ideen und Notizblöcke.</p>
+        <div class="placeholder-section">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <p>Notizen und Tags folgen in der nächsten Ausbaustufe.</p>
+        </div>
+      </section>
 
-  /* ── Build card DOM ────────────────────────────────── */
-  _buildCard(card) {
-    const cat = this._cat(card.category);
-    const el  = document.createElement('div');
-    el.className = 'db-grid-card ' + card.size;
-    el.dataset.cardId = card.id;
-    el.draggable = true;
+    </main><!-- /page-area -->
+  </div><!-- /app-shell -->
 
-    /* Header */
-    const hdr = document.createElement('div');
-    hdr.className = 'dbc-header';
-    hdr.innerHTML = `
-      <span class="dbc-drag-handle" title="Ziehen zum Verschieben">
-        <svg width="10" height="16" viewBox="0 0 10 16"><circle cx="2.5" cy="2"  r="1.5"/><circle cx="7.5" cy="2"  r="1.5"/><circle cx="2.5" cy="6"  r="1.5"/><circle cx="7.5" cy="6"  r="1.5"/><circle cx="2.5" cy="10" r="1.5"/><circle cx="7.5" cy="10" r="1.5"/><circle cx="2.5" cy="14" r="1.5"/><circle cx="7.5" cy="14" r="1.5"/></svg>
-      </span>
-      <span class="dbc-dot" style="background:${cat.color}"></span>
-      <span class="dbc-title">${this._esc(card.title)}</span>
-      <div class="dbc-actions">
-        <button class="dbc-ab" data-act="edit" title="Bearbeiten">
-          <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        </button>
-        <button class="dbc-ab" data-act="dup" title="Duplizieren">
-          <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-        </button>
-        <button class="dbc-ab" data-act="up" title="Nach oben verschieben">
-          <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
-        </button>
-        <button class="dbc-ab" data-act="down" title="Nach unten verschieben">
-          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <button class="dbc-ab" data-act="hide" title="Ausblenden">
-          <svg viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-        </button>
-        <button class="dbc-ab red" data-act="del" title="Löschen">
-          <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-        </button>
-        <button class="dbc-ab" data-act="more" title="Mehr Optionen">
-          <svg viewBox="0 0 24 24"><circle cx="5"  cy="12" r="1" fill="currentColor"/><circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="19" cy="12" r="1" fill="currentColor"/></svg>
-        </button>
-      </div>`;
+  <div class="dev-tag">v0.3 · dashboard live</div>
 
-    /* Body */
-    const body = document.createElement('div');
-    body.className = 'dbc-body';
-    body.innerHTML = this._widget(card);
+  <!-- ══════════════════════════════════════════════
+       JAVASCRIPT ARCHITECTURE
+  ═══════════════════════════════════════════════ -->
+  <script>
+  'use strict';
 
-    el.appendChild(hdr);
-    el.appendChild(body);
+  /* ═══════════════════════════════════════════════
+     APP STATE  — single source of truth
+  ═══════════════════════════════════════════════ */
+  const AppState = {
+    currentPage : 'dashboard',
+    theme       : 'dark',
+    sidebarOpen : true,       // desktop collapsed state
+    user        : {
+      name    : 'Lebensplaner',
+      initials: 'LP',
+    },
+    studium  : {},
+    finanzen : {},
+    strategie: {},
+    notizen  : [],
+    settings : {},
 
-    /* Action button events */
-    hdr.querySelectorAll('[data-act]').forEach(btn => {
-      btn.addEventListener('click', e => {
-        e.stopPropagation();
-        const act = btn.dataset.act;
-        if(act==='edit')  this._openEdit(card.id);
-        if(act==='dup')   this._dup(card.id);
-        if(act==='up')    this._move(card.id, -1);
-        if(act==='down')  this._move(card.id,  1);
-        if(act==='hide')  this._hide(card.id);
-        if(act==='del')   { if(confirm(`Karte „${card.title}" wirklich löschen?`)) this._del(card.id); }
-        if(act==='more')  this._openCtx(e, card.id);
-      });
-    });
+    /** Notify listeners when state changes */
+    _listeners: {},
 
-    /* Drag & Drop */
-    el.addEventListener('dragstart', e => {
-      this._dragSrcId = card.id;
-      e.dataTransfer.effectAllowed = 'move';
-      e.dataTransfer.setData('text/plain', card.id);
-      setTimeout(() => el.classList.add('dragging'), 0);
-    });
-    el.addEventListener('dragend', () => {
-      el.classList.remove('dragging');
-      document.querySelectorAll('.db-grid-card').forEach(x => x.classList.remove('drag-over'));
-      this._dragSrcId = null;
-    });
-    el.addEventListener('dragover', e => {
-      if(!this._dragSrcId || this._dragSrcId===card.id || !this._editMode) return;
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'move';
-      document.querySelectorAll('.db-grid-card').forEach(x => x.classList.remove('drag-over'));
-      el.classList.add('drag-over');
-    });
-    el.addEventListener('dragleave', () => el.classList.remove('drag-over'));
-    el.addEventListener('drop', e => {
-      e.preventDefault();
-      el.classList.remove('drag-over');
-      if(!this._dragSrcId || this._dragSrcId===card.id) return;
-      const si = this._cards.findIndex(c => c.id===this._dragSrcId);
-      const ti = this._cards.findIndex(c => c.id===card.id);
-      if(si<0||ti<0) return;
-      const [moved] = this._cards.splice(si, 1);
-      this._cards.splice(ti, 0, moved);
-      this._save();
-      this._renderGrid();
-      this._renderTray();
-    });
+    set(key, value) {
+      this[key] = value;
+      this._emit(key, value);
+    },
 
-    return el;
-  },
+    on(key, fn) {
+      if (!this._listeners[key]) this._listeners[key] = [];
+      this._listeners[key].push(fn);
+    },
 
-  /* ── Widget renderer ───────────────────────────────── */
-  _widget(card) {
-    const c = card.content || {};
-    switch(card.type) {
-      case 'stat':
-        return `<div class="widget-stat-num">${this._esc(String(c.value||'—'))}</div><div class="widget-stat-sub">${this._esc(c.sub||'')}</div>`;
-      case 'list': {
-        const items = Array.isArray(c.items) ? c.items : [];
-        return `<div class="widget-list">${
-          items.length
-            ? items.map(i=>`<div class="widget-list-item"><span class="widget-list-dot"></span><span>${this._esc(i)}</span></div>`).join('')
-            : '<span style="color:var(--text-muted);font-size:.8rem;">Keine Einträge</span>'
-        }</div>`;
+    _emit(key, value) {
+      (this._listeners[key] || []).forEach(fn => fn(value));
+    },
+  };
+
+
+  /* ═══════════════════════════════════════════════
+     STORAGE MANAGER  — localStorage abstraction
+  ═══════════════════════════════════════════════ */
+  const StorageManager = {
+    PREFIX: 'lp_',
+
+    save(key, value) {
+      try {
+        localStorage.setItem(this.PREFIX + key, JSON.stringify(value));
+        return true;
+      } catch (e) {
+        console.warn('[StorageManager] save failed:', e);
+        return false;
       }
-      case 'progress': {
-        const pct = Math.min(100, Math.max(0, Number(c.value)||0));
-        return `<div class="widget-progress-label"><span>${this._esc(c.label||'Fortschritt')}</span><span class="widget-progress-pct">${pct}%</span></div><div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>`;
+    },
+
+    load(key, fallback = null) {
+      try {
+        const raw = localStorage.getItem(this.PREFIX + key);
+        return raw !== null ? JSON.parse(raw) : fallback;
+      } catch (e) {
+        console.warn('[StorageManager] load failed:', e);
+        return fallback;
       }
-      case 'link':
-        return `<a class="widget-link" href="${this._esc(c.url||'#')}" target="_blank" rel="noopener">${this._esc(c.label||c.url||'Link')}<svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>`;
-      case 'custom':
-        return `<div class="widget-text" style="white-space:pre-wrap">${this._esc(c.text||'')}</div>`;
-      case 'text':
-      default:
-        return `<div class="widget-text">${this._esc(c.text||'')}</div>`;
-    }
-  },
+    },
 
-  /* ── Toolbar ────────────────────────────────────────── */
-  _bindToolbar() {
-    document.getElementById('db-add-btn').addEventListener('click', () => this._openAdd());
-    document.getElementById('db-cat-btn').addEventListener('click', () => this._openCatModal());
-    document.getElementById('db-edit-btn').addEventListener('click', () => this._toggleEdit());
-    document.getElementById('db-reset-btn').addEventListener('click', () => {
-      if(confirm('Dashboard zurücksetzen? Alle eigenen Karten und Kategorien gehen verloren.')) {
-        this._cats  = this._clone(this.DEFAULT_CATS);
-        this._cards = this._clone(this.DEFAULT_CARDS);
-        this._save();
-        this._editMode = false;
-        this._render();
-        this._styleEditBtn();
+    remove(key) {
+      localStorage.removeItem(this.PREFIX + key);
+    },
+
+    clear() {
+      Object.keys(localStorage)
+        .filter(k => k.startsWith(this.PREFIX))
+        .forEach(k => localStorage.removeItem(k));
+    },
+
+    /** Persist the entire AppState (subset) */
+    persistState() {
+      this.save('state', {
+        theme   : AppState.theme,
+        user    : AppState.user,
+        studium : AppState.studium,
+        finanzen: AppState.finanzen,
+        strategie: AppState.strategie,
+        notizen : AppState.notizen,
+        settings: AppState.settings,
+      });
+    },
+
+    /** Restore AppState from localStorage on boot */
+    restoreState() {
+      const saved = this.load('state');
+      if (!saved) return;
+      Object.assign(AppState, saved);
+    },
+  };
+
+
+  /* ═══════════════════════════════════════════════
+     UI MANAGER  — DOM interactions & navigation
+  ═══════════════════════════════════════════════ */
+  const UIManager = {
+    sidebar      : document.getElementById('sidebar'),
+    appShell     : document.getElementById('app-shell'),
+    topbarTitle  : document.getElementById('topbar-title'),
+    pages        : document.querySelectorAll('.page'),
+    navItems     : document.querySelectorAll('.nav-item[data-page]'),
+    themeToggle  : document.getElementById('theme-toggle'),
+    sidebarToggle: document.getElementById('sidebar-toggle'),
+    toggleIcon   : document.getElementById('toggle-icon'),
+    mobileBtn    : document.getElementById('mobile-menu-btn'),
+    overlay      : document.getElementById('mobile-overlay'),
+
+    PAGE_TITLES: {
+      dashboard    : 'Dashboard',
+      einstellungen: 'Meine Einstellungen',
+      studium      : 'Studium',
+      finanzen     : 'Finanzen',
+      strategie    : 'Strategie',
+      chatbot      : 'Chatbot',
+      notizen      : 'Notizen',
+    },
+
+    init() {
+      this._bindNav();
+      this._bindSidebarToggle();
+      this._bindThemeToggle();
+      this._bindMobile();
+      this._applyTheme(AppState.theme);
+      this.navigateTo(AppState.currentPage);
+    },
+
+    navigateTo(pageId) {
+      if (!document.getElementById(`page-${pageId}`)) return;
+
+      AppState.set('currentPage', pageId);
+
+      // Update pages
+      this.pages.forEach(p => p.classList.toggle('active', p.id === `page-${pageId}`));
+
+      // Update nav items
+      this.navItems.forEach(item => {
+        const isActive = item.dataset.page === pageId;
+        item.classList.toggle('active', isActive);
+        item.setAttribute('aria-current', isActive ? 'page' : 'false');
+      });
+
+      // Update topbar title
+      this.topbarTitle.textContent = this.PAGE_TITLES[pageId] || pageId;
+
+      // Close mobile nav if open
+      this._closeMobileNav();
+
+      // Persist navigation state
+      StorageManager.save('lastPage', pageId);
+    },
+
+    _bindNav() {
+      this.navItems.forEach(item => {
+        const go = () => this.navigateTo(item.dataset.page);
+        item.addEventListener('click', go);
+        item.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+      });
+    },
+
+    _bindSidebarToggle() {
+      let collapsed = StorageManager.load('sidebarCollapsed', false);
+      this._setSidebarCollapsed(collapsed);
+
+      this.sidebarToggle.addEventListener('click', () => {
+        collapsed = !collapsed;
+        this._setSidebarCollapsed(collapsed);
+        StorageManager.save('sidebarCollapsed', collapsed);
+      });
+    },
+
+    _setSidebarCollapsed(state) {
+      this.sidebar.classList.toggle('collapsed', state);
+      this.appShell.classList.toggle('sidebar-collapsed', state);
+      // flip chevron
+      this.toggleIcon.setAttribute('points', state ? '9 18 15 12 9 6' : '15 18 9 12 15 6');
+    },
+
+    _bindThemeToggle() {
+      this.themeToggle.addEventListener('click', () => {
+        const next = AppState.theme === 'dark' ? 'light' : 'dark';
+        AppState.set('theme', next);
+        this._applyTheme(next);
+        StorageManager.save('theme', next);
+      });
+    },
+
+    _applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+    },
+
+    _bindMobile() {
+      this.mobileBtn.addEventListener('click', () => this._openMobileNav());
+      this.overlay.addEventListener('click', () => this._closeMobileNav());
+    },
+
+    _openMobileNav() {
+      this.sidebar.classList.add('mobile-open');
+      this.overlay.classList.add('visible');
+    },
+
+    _closeMobileNav() {
+      this.sidebar.classList.remove('mobile-open');
+      this.overlay.classList.remove('visible');
+    },
+  };
+
+
+  /* ═══════════════════════════════════════════════
+     ANALYSIS ENGINE  — data aggregation & metrics
+     (scaffold — methods to be implemented per module)
+  ═══════════════════════════════════════════════ */
+  const AnalysisEngine = {
+    /**
+     * Compute a summary object for the Dashboard.
+     * @returns {Object} summary metrics
+     */
+    getDashboardSummary() {
+      return {
+        studiumProgress : this._studiumProgress(),
+        finanzBalance   : this._finanzBalance(),
+        strategieScore  : this._strategieScore(),
+        notizenCount    : (AppState.notizen || []).length,
+      };
+    },
+
+    _studiumProgress() {
+      // TODO: calculate from AppState.studium
+      return null;
+    },
+
+    _finanzBalance() {
+      // TODO: calculate from AppState.finanzen
+      return null;
+    },
+
+    _strategieScore() {
+      // TODO: calculate from AppState.strategie
+      return null;
+    },
+  };
+
+
+  /* ═══════════════════════════════════════════════
+     ACTION ENGINE  — CRUD operations on state
+     (scaffold — to be extended per module)
+  ═══════════════════════════════════════════════ */
+  const ActionEngine = {
+    /**
+     * Generic state mutation with auto-persist.
+     * @param {string} domain  - 'studium' | 'finanzen' | 'strategie' | 'notizen' | 'settings'
+     * @param {*}      payload - new value or updater function
+     */
+    update(domain, payload) {
+      const next = typeof payload === 'function'
+        ? payload(AppState[domain])
+        : payload;
+      AppState.set(domain, next);
+      StorageManager.persistState();
+    },
+
+    addNotiz(text) {
+      const notiz = { id: Date.now(), text, createdAt: new Date().toISOString() };
+      this.update('notizen', prev => [...(prev || []), notiz]);
+      return notiz;
+    },
+
+    deleteNotiz(id) {
+      this.update('notizen', prev => (prev || []).filter(n => n.id !== id));
+    },
+  };
+
+
+  /* ═══════════════════════════════════════════════
+     CHAT ENGINE  — AI assistant interface
+     (scaffold — to be wired to API in next phase)
+  ═══════════════════════════════════════════════ */
+  const ChatEngine = {
+    history: [],
+
+    /**
+     * Send a message and receive a response.
+     * @param {string} userMessage
+     * @returns {Promise<string>} assistant reply
+     */
+    async send(userMessage) {
+      this.history.push({ role: 'user', content: userMessage });
+
+      // TODO: call AI API (Anthropic / OpenAI)
+      const reply = '[ChatEngine] Noch nicht implementiert.';
+
+      this.history.push({ role: 'assistant', content: reply });
+      return reply;
+    },
+
+    clearHistory() {
+      this.history = [];
+    },
+  };
+
+
+  /* ═══════════════════════════════════════════════
+     SETTINGS ENGINE  — Einstellungen module
+  ═══════════════════════════════════════════════ */
+  const SettingsEngine = {
+
+    /** Default settings shape */
+    DEFAULTS: {
+      personal     : { name: '', birthdate: '', location: '' },
+      studium      : { studiengang: '', bachelorProgress: 0, fachsemester: 1, bachelorAbschluss: '' },
+      bewerbungen  : { medizin: false, psychologie: false, weitere: '', studienbeginn: '' },
+      finanzen     : { budget: 0, ruecklagen: 0, einkommen: 0, bafoeg: 0 },
+      zeit         : { arbeitszeit: 0, lernzeit: 0, freizeit: 0 },
+      prioritaeten : { sicherheit: 0, einkommen: 0, karriere: 0, interesse: 0, flexibilitaet: 0, prestige: 0, worklife: 0 },
+    },
+
+    _toastTimer: null,
+
+    init() {
+      // Merge saved data into defaults
+      const saved = StorageManager.load('settings_data', {});
+      this._data  = this._deepMerge(this._deepClone(this.DEFAULTS), saved);
+
+      this._bindInputs();
+      this._bindSliders();
+      this._bindStars();
+      this._populateAll();
+      this._updateDerived();
+    },
+
+    /** ── Bind text / number / date / select / checkbox inputs ── */
+    _bindInputs() {
+      document.querySelectorAll('[data-key]').forEach(el => {
+        if (el.type === 'range' || el.classList.contains('star-row')) return;
+        const event = el.type === 'checkbox' ? 'change' : 'input';
+        el.addEventListener(event, () => {
+          const val = el.type === 'checkbox' ? el.checked : el.value;
+          this._setNested(this._data, el.dataset.key, val);
+          this._persist();
+          this._updateDerived();
+        });
+      });
+    },
+
+    /** ── Bind range sliders ── */
+    _bindSliders() {
+      ['arbeitszeit', 'lernzeit', 'freizeit'].forEach(key => {
+        const el = document.getElementById(`s-${key}`);
+        if (!el) return;
+        el.addEventListener('input', () => {
+          document.getElementById(`s-${key}-val`).textContent = `${el.value} h`;
+          this._setNested(this._data, `zeit.${key}`, Number(el.value));
+          this._persist();
+          this._updateTimeBar();
+        });
+      });
+    },
+
+    /** ── Bind star ratings ── */
+    _bindStars() {
+      document.querySelectorAll('.star-row').forEach(row => {
+        const stars = row.querySelectorAll('.star');
+        stars.forEach(star => {
+          star.addEventListener('click', () => {
+            const val = Number(star.dataset.v);
+            this._setNested(this._data, row.dataset.key, val);
+            this._renderStars(row, val);
+            this._persist();
+          });
+          // Hover preview
+          star.addEventListener('mouseenter', () => this._hoverStars(row, Number(star.dataset.v)));
+          star.addEventListener('mouseleave', () => {
+            const cur = this._getNested(this._data, row.dataset.key) || 0;
+            this._renderStars(row, cur);
+          });
+        });
+      });
+    },
+
+    /** ── Populate all form controls from _data ── */
+    _populateAll() {
+      // Text / number / date / select
+      document.querySelectorAll('[data-key]').forEach(el => {
+        if (el.classList.contains('star-row')) return;
+        const val = this._getNested(this._data, el.dataset.key);
+        if (val === null || val === undefined) return;
+        if (el.type === 'checkbox') { el.checked = !!val; }
+        else { el.value = val; }
+      });
+
+      // Sliders — set value + label
+      ['arbeitszeit', 'lernzeit', 'freizeit'].forEach(key => {
+        const el  = document.getElementById(`s-${key}`);
+        const lbl = document.getElementById(`s-${key}-val`);
+        const val = this._data.zeit[key] || 0;
+        if (el)  el.value = val;
+        if (lbl) lbl.textContent = `${val} h`;
+      });
+
+      // Stars
+      document.querySelectorAll('.star-row').forEach(row => {
+        const val = this._getNested(this._data, row.dataset.key) || 0;
+        this._renderStars(row, val);
+      });
+    },
+
+    /** ── Recompute derived values after any change ── */
+    _updateDerived() {
+      // Age from birthdate
+      const bd  = this._data.personal.birthdate;
+      const age = bd ? this._calcAge(bd) : null;
+      const ageEl = document.getElementById('s-age');
+      if (ageEl) ageEl.value = age !== null ? `${age} Jahre` : '';
+
+      // Bachelor progress bar
+      const pct = Math.min(100, Math.max(0, Number(this._data.studium.bachelorProgress) || 0));
+      const fill = document.getElementById('bachelor-progress-fill');
+      if (fill) fill.style.width = `${pct}%`;
+
+      // Finance summary
+      const inc = (Number(this._data.finanzen.einkommen) || 0) + (Number(this._data.finanzen.bafoeg) || 0);
+      const rem = inc - (Number(this._data.finanzen.budget) || 0);
+      const incEl = document.getElementById('s-total-income');
+      const remEl = document.getElementById('s-budget-remaining');
+      if (incEl) incEl.textContent = `€ ${inc.toLocaleString('de-DE')}`;
+      if (remEl) {
+        remEl.textContent = `€ ${rem.toLocaleString('de-DE')}`;
+        remEl.style.color = rem >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
       }
-    });
-  },
 
-  _toggleEdit() {
-    this._editMode = !this._editMode;
-    this._renderGrid();
-    this._styleEditBtn();
-    if(this._editMode) this._renderTray();
-  },
+      this._updateTimeBar();
+    },
 
-  _styleEditBtn() {
-    const btn = document.getElementById('db-edit-btn');
-    btn.classList.toggle('db-btn-active', this._editMode);
-    btn.classList.toggle('db-btn-ghost',  !this._editMode);
-  },
+    _updateTimeBar() {
+      const a  = Number(this._data.zeit.arbeitszeit) || 0;
+      const l  = Number(this._data.zeit.lernzeit)    || 0;
+      const f  = Number(this._data.zeit.freizeit)    || 0;
+      const total = Math.max(a + l + f, 1);
+      const cap   = 168;
 
-  /* ── Card operations ─────────────────────────────────── */
-  _dup(id) {
-    const idx = this._cards.findIndex(c => c.id===id);
-    if(idx<0) return;
-    const copy = this._clone(this._cards[idx]);
-    copy.id    = 'c-' + Date.now();
-    copy.title = this._cards[idx].title + ' (Kopie)';
-    copy.hidden = false;
-    this._cards.splice(idx+1, 0, copy);
-    this._save(); this._render();
-  },
+      const pA = Math.min((a / cap) * 100, 100).toFixed(1);
+      const pL = Math.min((l / cap) * 100, 100).toFixed(1);
+      const pF = Math.min((f / cap) * 100, 100).toFixed(1);
 
-  _move(id, dir) {
-    const vis = this._cards.filter(c => !c.hidden);
-    const vi  = vis.findIndex(c => c.id===id);
-    if(vi<0) return;
-    const ti  = vi + dir;
-    if(ti<0 || ti>=vis.length) return;
-    const ai  = this._cards.indexOf(vis[vi]);
-    const bi  = this._cards.indexOf(vis[ti]);
-    [this._cards[ai], this._cards[bi]] = [this._cards[bi], this._cards[ai]];
-    this._save(); this._renderGrid();
-  },
+      const sa = document.getElementById('seg-arbeit');
+      const sl = document.getElementById('seg-lernen');
+      const sf = document.getElementById('seg-frei');
+      if (sa) sa.style.width = `${pA}%`;
+      if (sl) sl.style.width = `${pL}%`;
+      if (sf) sf.style.width = `${pF}%`;
 
-  _hide(id) {
-    const c = this._cards.find(x => x.id===id);
-    if(c){c.hidden=true; this._save(); this._render();}
-  },
+      const tot = document.getElementById('s-zeit-total');
+      if (tot) tot.textContent = a + l + f;
+    },
 
-  _del(id) {
-    this._cards = this._cards.filter(c => c.id!==id);
-    this._save(); this._render();
-  },
+    _renderStars(row, val) {
+      row.querySelectorAll('.star').forEach(s => {
+        s.classList.toggle('active', Number(s.dataset.v) <= val);
+      });
+    },
 
-  /* ── Add / Edit modal ────────────────────────────────── */
-  _openAdd() {
-    this._editId = null;
-    document.getElementById('modal-card-title').textContent = 'Karte hinzufügen';
-    document.getElementById('mc-title').value = '';
-    document.getElementById('mc-size').value  = 'col-6';
-    this._fillCatSelect();
-    this._pickWt('text');
-    this._contentFields('text', {});
-    document.getElementById('modal-card').classList.add('open');
-    document.getElementById('mc-title').focus();
-  },
+    _hoverStars(row, val) {
+      row.querySelectorAll('.star').forEach(s => {
+        s.classList.toggle('active', Number(s.dataset.v) <= val);
+      });
+    },
 
-  _openEdit(id) {
-    const card = this._cards.find(c => c.id===id);
-    if(!card) return;
-    this._editId = id;
-    document.getElementById('modal-card-title').textContent = 'Karte bearbeiten';
-    document.getElementById('mc-title').value = card.title;
-    document.getElementById('mc-size').value  = card.size;
-    this._fillCatSelect(card.category);
-    this._pickWt(card.type);
-    this._contentFields(card.type, card.content||{});
-    document.getElementById('modal-card').classList.add('open');
-    document.getElementById('mc-title').focus();
-  },
+    _persist() {
+      StorageManager.save('settings_data', this._data);
+      this._showToast();
+      updateDashboard();
+    },
 
-  _pickWt(type) {
-    document.querySelectorAll('.wt-opt').forEach(opt => {
-      const radio = opt.querySelector('input[type="radio"]');
-      const match = radio && radio.value===type;
-      opt.classList.toggle('sel', match);
-      if(match) radio.checked = true;
-    });
-  },
+    _showToast() {
+      const t = document.getElementById('settings-toast');
+      if (!t) return;
+      t.classList.add('show');
+      clearTimeout(this._toastTimer);
+      this._toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+    },
 
-  _contentFields(type, c) {
-    const wrap = document.getElementById('mc-content-fields');
-    wrap.innerHTML = '';
-    const addF = (id, lbl, html) => {
-      const g = document.createElement('div');
-      g.className = 'mf-group';
-      g.innerHTML = `<label class="mf-label" for="${id}">${lbl}</label>${html}`;
-      wrap.appendChild(g);
-    };
-    switch(type) {
-      case 'text': case 'custom':
-        addF('mc-text','Inhalt',`<textarea class="mf-input" id="mc-text" rows="3" placeholder="Text …">${this._esc(c.text||'')}</textarea>`); break;
-      case 'stat':
-        addF('mc-sv','Wert',`<input class="mf-input" id="mc-sv" type="text" value="${this._esc(String(c.value||''))}" placeholder="z. B. 42"/>`);
-        addF('mc-ss','Beschriftung',`<input class="mf-input" id="mc-ss" type="text" value="${this._esc(c.sub||'')}" placeholder="z. B. Aufgaben offen"/>`); break;
-      case 'list': {
-        const v=(c.items||[]).join('\n');
-        addF('mc-li','Einträge (eine Zeile = ein Eintrag)',`<textarea class="mf-input" id="mc-li" rows="4" placeholder="Eintrag 1\nEintrag 2 …">${this._esc(v)}</textarea>`); break;
+    /** ── Utility: deep get/set with dot-path ── */
+    _getNested(obj, path) {
+      return path.split('.').reduce((o, k) => (o && o[k] !== undefined ? o[k] : null), obj);
+    },
+
+    _setNested(obj, path, value) {
+      const keys = path.split('.');
+      let cur = obj;
+      for (let i = 0; i < keys.length - 1; i++) {
+        if (!cur[keys[i]]) cur[keys[i]] = {};
+        cur = cur[keys[i]];
       }
-      case 'progress':
-        addF('mc-pl','Beschriftung',`<input class="mf-input" id="mc-pl" type="text" value="${this._esc(c.label||'')}" placeholder="z. B. Bachelor"/>`);
-        addF('mc-pv','Wert (0–100)',`<input class="mf-input" id="mc-pv" type="number" min="0" max="100" value="${c.value||0}"/>`); break;
-      case 'link':
-        addF('mc-lu','URL',`<input class="mf-input" id="mc-lu" type="url" value="${this._esc(c.url||'')}" placeholder="https://…"/>`);
-        addF('mc-ll','Anzeigetext',`<input class="mf-input" id="mc-ll" type="text" value="${this._esc(c.label||'')}" placeholder="Link-Text"/>`); break;
-    }
-  },
+      cur[keys[keys.length - 1]] = value;
+    },
 
-  _readFields(type) {
-    const v = id => document.getElementById(id);
-    switch(type) {
-      case 'text': case 'custom': return {text: v('mc-text')?.value||''};
-      case 'stat':     return {value: v('mc-sv')?.value||'—', sub: v('mc-ss')?.value||''};
-      case 'list':     return {items: (v('mc-li')?.value||'').split('\n').map(s=>s.trim()).filter(Boolean)};
-      case 'progress': return {label: v('mc-pl')?.value||'', value: Number(v('mc-pv')?.value)||0};
-      case 'link':     return {url: v('mc-lu')?.value||'#', label: v('mc-ll')?.value||''};
-      default:         return {};
-    }
-  },
-
-  /* ── Modal bindings ─────────────────────────────────── */
-  _bindModals() {
-    /* Card modal close */
-    const closeCard = () => document.getElementById('modal-card').classList.remove('open');
-    document.getElementById('mc-close').addEventListener('click',  closeCard);
-    document.getElementById('mc-cancel').addEventListener('click', closeCard);
-    document.getElementById('modal-card').addEventListener('click', e => { if(e.target===document.getElementById('modal-card')) closeCard(); });
-
-    /* Widget type switching */
-    document.getElementById('mc-wt-grid').addEventListener('click', e => {
-      const opt = e.target.closest('.wt-opt');
-      if(!opt) return;
-      const radio = opt.querySelector('input[type="radio"]');
-      if(!radio) return;
-      this._pickWt(radio.value);
-      this._contentFields(radio.value, {});
-    });
-
-    /* Save */
-    document.getElementById('mc-save').addEventListener('click', () => {
-      const title = document.getElementById('mc-title').value.trim();
-      if(!title){ document.getElementById('mc-title').focus(); return; }
-      const type    = document.querySelector('input[name="mc-wt"]:checked')?.value || 'text';
-      const cat     = document.getElementById('mc-category').value;
-      const size    = document.getElementById('mc-size').value;
-      const content = this._readFields(type);
-      if(this._editId) {
-        const card = this._cards.find(c => c.id===this._editId);
-        if(card){ card.title=title; card.type=type; card.category=cat; card.size=size; card.content=content; }
-      } else {
-        this._cards.push({id:'c-'+Date.now(), title, category:cat, size, type, hidden:false, content});
-      }
-      this._save(); this._render(); closeCard();
-    });
-
-    /* Category modal */
-    const closeCat = () => document.getElementById('modal-cat').classList.remove('open');
-    document.getElementById('mcat-close').addEventListener('click',  closeCat);
-    document.getElementById('mcat-cancel').addEventListener('click', closeCat);
-    document.getElementById('modal-cat').addEventListener('click', e => { if(e.target===document.getElementById('modal-cat')) closeCat(); });
-    document.getElementById('mcat-add').addEventListener('click', () => {
-      const name = document.getElementById('cat-new-name').value.trim();
-      if(!name) return;
-      const color = document.getElementById('cat-new-color').value;
-      this._cats.push({id:'cat-'+Date.now(), name, color});
-      this._save();
-      this._renderCatList();
-      this._fillCatSelect();
-      document.getElementById('cat-new-name').value = '';
-    });
-  },
-
-  /* ── Category modal ─────────────────────────────────── */
-  _openCatModal() {
-    this._renderCatList();
-    document.getElementById('modal-cat').classList.add('open');
-  },
-
-  _renderCatList() {
-    const wrap = document.getElementById('cat-list-ui');
-    if(!this._cats.length){ wrap.innerHTML = '<p style="color:var(--text-muted);font-size:.83rem;">Keine Kategorien vorhanden.</p>'; return; }
-    wrap.innerHTML = this._cats.map(cat => `
-      <div style="display:flex;align-items:center;gap:10px;padding:8px 2px;border-bottom:1px solid var(--border-subtle);">
-        <span style="width:12px;height:12px;border-radius:50%;background:${cat.color};flex-shrink:0;display:inline-block;"></span>
-        <span style="flex:1;font-size:.875rem;">${this._esc(cat.name)}</span>
-        <button class="dbc-ab red" data-delcat="${cat.id}" title="Kategorie löschen" style="opacity:1;pointer-events:auto;">
-          <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-        </button>
-      </div>`).join('');
-    wrap.querySelectorAll('[data-delcat]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        if(confirm('Kategorie löschen?')){
-          this._cats = this._cats.filter(c => c.id!==btn.dataset.delcat);
-          this._save(); this._renderCatList(); this._fillCatSelect();
+    _deepMerge(target, source) {
+      for (const key of Object.keys(source || {})) {
+        if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+          if (!target[key]) target[key] = {};
+          this._deepMerge(target[key], source[key]);
+        } else {
+          target[key] = source[key];
         }
-      });
-    });
-  },
+      }
+      return target;
+    },
 
-  _fillCatSelect(selectedId) {
-    const sel = document.getElementById('mc-category');
-    if(!sel) return;
-    sel.innerHTML = this._cats.map(c =>
-      `<option value="${c.id}"${c.id===selectedId?' selected':''}>${this._esc(c.name)}</option>`
-    ).join('');
-  },
+    _deepClone(obj) { return JSON.parse(JSON.stringify(obj)); },
 
-  /* ── Context menu ────────────────────────────────────── */
-  _openCtx(e, id) {
-    this._ctxId = id;
-    const menu = document.getElementById('ctx-menu');
-    menu.classList.add('open');
-    const x = Math.min(e.clientX, window.innerWidth  - 200);
-    const y = Math.min(e.clientY, window.innerHeight - 240);
-    menu.style.left = x + 'px';
-    menu.style.top  = y + 'px';
-  },
+    _calcAge(dateStr) {
+      const birth = new Date(dateStr);
+      if (isNaN(birth)) return null;
+      const today = new Date();
+      let age = today.getFullYear() - birth.getFullYear();
+      const m = today.getMonth() - birth.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+      return age;
+    },
+  };
 
-  _closeCtx() {
-    document.getElementById('ctx-menu').classList.remove('open');
-  },
 
-  _closeModals() {
-    document.getElementById('modal-card').classList.remove('open');
-    document.getElementById('modal-cat').classList.remove('open');
-  },
+  /* ═══════════════════════════════════════════════
+     UPDATE DASHBOARD  — central read-only renderer
+     Reads from SettingsEngine._data (i.e. localStorage
+     key "lp_settings_data") and writes the current
+     values into the Dashboard page. Never mutates state.
+  ═══════════════════════════════════════════════ */
+  function updateDashboard() {
+    // Defensive fallback: re-load directly from storage if
+    // SettingsEngine hasn't initialized yet for some reason.
+    const data = (SettingsEngine && SettingsEngine._data)
+      ? SettingsEngine._data
+      : StorageManager.load('settings_data', SettingsEngine.DEFAULTS);
 
-  _bindCtxMenu() {
-    document.getElementById('ctx-edit').addEventListener('click', () => { this._openEdit(this._ctxId); this._closeCtx(); });
-    document.getElementById('ctx-dup').addEventListener('click',  () => { this._dup(this._ctxId);       this._closeCtx(); });
-    document.getElementById('ctx-up').addEventListener('click',   () => { this._move(this._ctxId, -1);  this._closeCtx(); });
-    document.getElementById('ctx-down').addEventListener('click', () => { this._move(this._ctxId,  1);  this._closeCtx(); });
-    document.getElementById('ctx-hide').addEventListener('click', () => { this._hide(this._ctxId);      this._closeCtx(); });
-    document.getElementById('ctx-del').addEventListener('click',  () => {
-      const c = this._cards.find(x=>x.id===this._ctxId);
-      if(c && confirm(`Karte „${c.title}" löschen?`)){ this._del(this._ctxId); }
-      this._closeCtx();
-    });
-  },
+    const PLACEHOLDER = '—';
+    const fmtDate = (val) => {
+      if (!val) return null;
+      const d = new Date(val);
+      if (isNaN(d)) return null;
+      return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    };
+    const setText = (id, text) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = text;
+    };
 
-  /* ── Persist ─────────────────────────────────────────── */
-  _save() {
-    SM.save('db_cats',  this._cats);
-    SM.save('db_cards', this._cards);
-  },
+    /* ── Studium ───────────────────────────────────── */
+    const studium = data.studium || {};
+    const pct = Number(studium.bachelorProgress);
+    const hasPct = !isNaN(pct) && studium.bachelorProgress !== '' && studium.bachelorProgress !== null;
 
-  /* ── Utils ───────────────────────────────────────────── */
-  _cat(id)  { return this._cats.find(c=>c.id===id) || {color:'#5a6880', name:'Allgemein'}; },
-  _esc(s)   { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); },
-  _clone(o) { return JSON.parse(JSON.stringify(o)); },
-};
+    setText('dash-studium-value', hasPct ? `${pct}%` : PLACEHOLDER);
+    setText('dash-studium-delta', studium.studiengang ? studium.studiengang : 'Studiengang nicht angegeben');
 
-/* ═══════════════════════════════════════════════════════
-   STRATEGIE ENGINE — Bewerbung vor Bachelorabschluss
-═══════════════════════════════════════════════════════ */
-const StrategieEngine = {
-
-  init() {
-    const saved = SM.load('strategie_bwa', {});
-    if (saved.bachelorDate) document.getElementById('bwa-bachelor-date').value = saved.bachelorDate;
-    if (saved.applyDate)    document.getElementById('bwa-apply-date').value    = saved.applyDate;
-    if (saved.startDate)    document.getElementById('bwa-start-date').value    = saved.startDate;
-    if (saved.target)       document.getElementById('bwa-target').value       = saved.target;
-
-    document.getElementById('bwa-analyze-btn').addEventListener('click', () => this._analyze());
-    document.getElementById('bwa-clear-btn').addEventListener('click',   () => this._clear());
-
-    ['bwa-bachelor-date','bwa-apply-date','bwa-start-date','bwa-target'].forEach(id => {
-      document.getElementById(id).addEventListener('input', () => this._saveInputs());
-    });
-  },
-
-  _saveInputs() {
-    SM.save('strategie_bwa', {
-      bachelorDate: document.getElementById('bwa-bachelor-date').value,
-      applyDate:    document.getElementById('bwa-apply-date').value,
-      startDate:    document.getElementById('bwa-start-date').value,
-      target:       document.getElementById('bwa-target').value,
-    });
-  },
-
-  _clear() {
-    ['bwa-bachelor-date','bwa-apply-date','bwa-start-date','bwa-target'].forEach(id => { document.getElementById(id).value = ''; });
-    SM.remove('strategie_bwa');
-    document.getElementById('bwa-empty').style.display = '';
-    const out = document.getElementById('bwa-output');
-    out.style.display = 'none';
-    out.innerHTML = '';
-  },
-
-  _analyze() {
-    const bachelorVal = document.getElementById('bwa-bachelor-date').value;
-    const applyVal    = document.getElementById('bwa-apply-date').value;
-    const startVal    = document.getElementById('bwa-start-date').value;
-    const target      = document.getElementById('bwa-target').value.trim() || 'Zielstudiengang';
-
-    if (!bachelorVal || !applyVal || !startVal) {
-      alert('Bitte alle drei Datumswerte ausfüllen (Bachelorabschluss, Bewerbungsdatum, Studienbeginn).');
-      return;
+    const studiumDetailEl = document.getElementById('dash-studium-detail');
+    if (studiumDetailEl) {
+      const abschlussDate = fmtDate(studium.bachelorAbschluss);
+      studiumDetailEl.innerHTML = `
+        <p style="text-align:left;max-width:none;margin:0;">
+          <strong>Studiengang:</strong> ${studium.studiengang ? escapeHtml(studium.studiengang) : PLACEHOLDER}<br/>
+          <strong>Bachelorfortschritt:</strong> ${hasPct ? pct + '%' : PLACEHOLDER}<br/>
+          <strong>Bachelorabschluss:</strong> ${abschlussDate ? abschlussDate : PLACEHOLDER}
+        </p>`;
     }
 
-    const bachelorDate = new Date(bachelorVal);
-    const applyDate    = new Date(applyVal);
-    const startDate    = new Date(startVal);
-    const today = new Date(); today.setHours(0,0,0,0);
+    /* ── Finanzen ──────────────────────────────────── */
+    const finanzen = data.finanzen || {};
+    const budget    = Number(finanzen.budget)    || 0;
+    const einkommen = Number(finanzen.einkommen) || 0;
+    const bafoeg    = Number(finanzen.bafoeg)    || 0;
+    const hasFinanzData = !!(finanzen.budget || finanzen.einkommen || finanzen.bafoeg);
+    const gesamteinnahmen = einkommen + bafoeg;
 
-    const monthsFromToday = d => Math.round((d - today) / (1000*60*60*24*30.44));
-    const daysBetween     = (a,b) => Math.round((b - a) / (1000*60*60*24));
+    setText('dash-finanzen-value', hasFinanzData ? `€ ${gesamteinnahmen.toLocaleString('de-DE')}` : PLACEHOLDER);
+    setText('dash-finanzen-delta', hasFinanzData ? 'Gesamteinnahmen / Monat' : 'Noch keine Daten');
 
-    const daysApplyToBachelor   = daysBetween(applyDate, bachelorDate);
-    const daysBachelorToStart   = daysBetween(bachelorDate, startDate);
-    const monthsToApply    = monthsFromToday(applyDate);
-    const monthsToBachelor = monthsFromToday(bachelorDate);
-    const monthsToStart    = monthsFromToday(startDate);
+    const finanzenDetailEl = document.getElementById('dash-finanzen-detail');
+    if (finanzenDetailEl) {
+      finanzenDetailEl.innerHTML = `
+        <p style="text-align:left;max-width:none;margin:0;">
+          <strong>Budget:</strong> ${finanzen.budget ? '€ ' + budget.toLocaleString('de-DE') : PLACEHOLDER}<br/>
+          <strong>Einkommen:</strong> ${finanzen.einkommen ? '€ ' + einkommen.toLocaleString('de-DE') : PLACEHOLDER}<br/>
+          <strong>BAföG:</strong> ${finanzen.bafoeg ? '€ ' + bafoeg.toLocaleString('de-DE') : PLACEHOLDER}<br/>
+          <strong>Gesamteinnahmen:</strong> ${hasFinanzData ? '€ ' + gesamteinnahmen.toLocaleString('de-DE') : PLACEHOLDER}
+        </p>`;
+    }
 
-    const applyBeforeBachelor  = applyDate < bachelorDate;
-    const enrollBeforeBachelor = startDate < bachelorDate;
-    const gapDays = daysBachelorToStart;
+    /* ── Bewerbungen ───────────────────────────────── */
+    const bewerbungen = data.bewerbungen || {};
+    const bewerbungenDetailEl = document.getElementById('dash-bewerbungen-detail');
+    if (bewerbungenDetailEl) {
+      const studienbeginnLabels = {
+        WS2425: 'WS 2024/25', SS25: 'SS 2025', WS2526: 'WS 2025/26',
+        SS26: 'SS 2026', WS2627: 'WS 2026/27', SS27: 'SS 2027', WS2728: 'WS 2027/28',
+      };
+      const studienbeginnText = bewerbungen.studienbeginn
+        ? (studienbeginnLabels[bewerbungen.studienbeginn] || bewerbungen.studienbeginn)
+        : PLACEHOLDER;
 
-    const fmtDate = d => d.toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit', year:'numeric'});
-    const fmtMonate = m => { if (m <= 0) return 'bereits vergangen'; if (m < 1) return 'in wenigen Wochen'; return `in ${Math.round(m)} Monat${Math.round(m)===1?'':'en'}`; };
+      bewerbungenDetailEl.innerHTML = `
+        <p style="text-align:left;max-width:none;margin:0;">
+          <strong>Medizin:</strong> ${bewerbungen.medizin ? 'Ja' : 'Nein'}<br/>
+          <strong>Psychologie:</strong> ${bewerbungen.psychologie ? 'Ja' : 'Nein'}<br/>
+          <strong>Studienbeginn:</strong> ${studienbeginnText}
+        </p>`;
+    }
 
-    const icoCheck = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
-    const icoX     = '<svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
-    const icoWarn  = '<svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
-    const icoQ     = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
-    const badgeSvg = color => color === 'green' ? icoCheck : color === 'red' ? icoX : icoWarn;
-    const listItem = (color, ico, text) => `<div class="strat-list-item"><span class="strat-li-icon ${color}">${ico}</span><span>${text}</span></div>`;
+    /* ── Prioritäten ───────────────────────────────── */
+    const prioritaeten = data.prioritaeten || {};
+    const prioritaetenDetailEl = document.getElementById('dash-prioritaeten-detail');
+    if (prioritaetenDetailEl) {
+      const labels = {
+        sicherheit: 'Sicherheit', einkommen: 'Einkommen', karriere: 'Karriere',
+        interesse: 'Interesse', flexibilitaet: 'Flexibilität', prestige: 'Prestige', worklife: 'Work-Life-Balance',
+      };
+      const entries = Object.keys(labels)
+        .map(key => ({ key, label: labels[key], value: Number(prioritaeten[key]) || 0 }))
+        .filter(e => e.value > 0)
+        .sort((a, b) => b.value - a.value)
+        .slice(0, 3);
 
-    /* Risiken */
-    const risks = [];
-    if (enrollBeforeBachelor) risks.push(listItem('red', icoX, `<strong>Einschreibung ${Math.abs(gapDays)} Tage vor Bachelorabschluss</strong> — Hochschulen fordern meist den Abschlussnachweis bis zur Immatrikulation.`));
-    if (applyBeforeBachelor)  risks.push(listItem('amber', icoWarn, `Bei Bewerbung sind voraussichtlich noch ${Math.abs(daysApplyToBachelor)} Tage bis zum Abschluss — laufendes Studium muss nachgewiesen werden.`));
-    if (gapDays < 60 && !enrollBeforeBachelor) risks.push(listItem('amber', icoWarn, `Nur ${gapDays} Tage zwischen Abschluss (${fmtDate(bachelorDate)}) und Studienbeginn (${fmtDate(startDate)}) — Zeugnisausstellung braucht oft 4–12 Wochen.`));
-    if (applyDate < today) risks.push(listItem('red', icoX, 'Das eingegebene Bewerbungsdatum liegt in der Vergangenheit.'));
-    if (daysApplyToBachelor > 365) risks.push(listItem('amber', icoWarn, 'Über 12 Monate zwischen Bewerbung und Abschluss — langfristige Planung nötig, Zulassungsbedingungen können sich ändern.'));
+      if (entries.length === 0) {
+        prioritaetenDetailEl.innerHTML = `<p>Noch keine Prioritäten bewertet.</p>`;
+      } else {
+        prioritaetenDetailEl.innerHTML = `
+          <p style="text-align:left;max-width:none;margin:0;">
+            ${entries.map(e => `<strong>${e.label}:</strong> ${'★'.repeat(e.value)}${'☆'.repeat(5 - e.value)}`).join('<br/>')}
+          </p>`;
+      }
+    }
+  }
 
-    /* Vorteile */
-    const benefits = [];
-    if (applyBeforeBachelor) benefits.push(listItem('green', icoCheck, 'Bewerbung vor Abschluss ermöglicht lückenlosen Übergang ohne Wartesemester.'));
-    if (!enrollBeforeBachelor && gapDays >= 90) benefits.push(listItem('green', icoCheck, `${gapDays} Tage Puffer zwischen Abschluss und Studienbeginn — ausreichend Zeit für Zeugnisausstellung und Immatrikulation.`));
-    if (!enrollBeforeBachelor) benefits.push(listItem('green', icoCheck, 'Abschluss liegt vor Studienbeginn — Nachweis rechtzeitig möglich.'));
-    if (monthsToApply > 3) benefits.push(listItem('green', icoCheck, `${Math.round(monthsToApply)} Monate bis zur Bewerbung — genug Vorbereitungszeit.`));
-    if (!applyBeforeBachelor) benefits.push(listItem('green', icoCheck, 'Bewerbung nach Abschluss — kein Nachweis über laufendes Studium nötig.'));
+  /** Minimal HTML-escape helper used by updateDashboard() */
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
 
-    /* Offene Fragen */
-    const questions = [
-      listItem('blue', icoQ, `Akzeptiert <strong>${this._esc(target)}</strong> Bewerbungen mit noch ausstehendem Abschluss? → Zulassungsordnung prüfen.`),
-      listItem('blue', icoQ, 'Welches Datum gilt als Abschlussdatum: Kolloquium, Einreichung oder Zeugnis?'),
-      listItem('blue', icoQ, 'Bis wann muss der Abschlussnachweis spätestens nachgereicht werden? (Oft: bis Semesterbeginn oder 4 Wochen nach Immatrikulation)'),
-      listItem('blue', icoQ, 'Gibt es eine Bedingungszulassung („vorbehaltliche Zulassung") für ausstehende Abschlüsse?'),
-      listItem('blue', icoQ, 'Ist eine Zweitimmatrikulation für die Übergangszeit möglich und sinnvoll?'),
-    ];
-    if (applyBeforeBachelor) questions.push(listItem('blue', icoQ, 'Welche aktuellen Leistungen (ECTS, Noten) müssen bei Bewerbung bereits vorliegen?'));
 
-    const html = `
-    <div class="strat-summary-bar">
-      <div class="strat-summary-item"><div class="strat-summary-label">Zielstudiengang</div><div class="strat-summary-value" style="color:var(--accent-purple);font-size:.85rem;">${this._esc(target)}</div></div>
-      <div class="strat-summary-sep"></div>
-      <div class="strat-summary-item"><div class="strat-summary-label">Bewerbung</div><div class="strat-summary-value" style="color:var(--accent-amber)">${fmtDate(applyDate)}</div></div>
-      <div class="strat-summary-sep"></div>
-      <div class="strat-summary-item"><div class="strat-summary-label">Abschluss</div><div class="strat-summary-value" style="color:var(--accent-primary)">${fmtDate(bachelorDate)}</div></div>
-      <div class="strat-summary-sep"></div>
-      <div class="strat-summary-item"><div class="strat-summary-label">Studienbeginn</div><div class="strat-summary-value" style="color:var(--accent-green)">${fmtDate(startDate)}</div></div>
-    </div>
+  /* ═══════════════════════════════════════════════
+  ═══════════════════════════════════════════════ */
+  (function boot() {
+    // 1. Restore persisted state
+    StorageManager.restoreState();
 
-    <div class="strat-timeline">
-      <div class="strat-timeline-title">Zeitlinie</div>
-      <div class="strat-tl-track">
-        <div class="strat-tl-item">
-          <div class="strat-tl-dot blue"></div>
-          <div class="strat-tl-date">Heute · ${fmtDate(today)}</div>
-          <div class="strat-tl-label">Ausgangspunkt</div>
-          <div class="strat-tl-desc">Bewerbung ${fmtMonate(monthsToApply)} · Abschluss ${fmtMonate(monthsToBachelor)} · Studienbeginn ${fmtMonate(monthsToStart)}</div>
-        </div>
-        <div class="strat-tl-item">
-          <div class="strat-tl-dot amber"></div>
-          <div class="strat-tl-date">${fmtDate(applyDate)}</div>
-          <div class="strat-tl-label">Bewerbungsdatum</div>
-          <div class="strat-tl-desc">${applyBeforeBachelor ? `${Math.abs(daysApplyToBachelor)} Tage vor Bachelorabschluss — laufendes Studium muss nachgewiesen werden` : 'Nach Bachelorabschluss — Abschlussnachweis liegt vor'}</div>
-        </div>
-        <div class="strat-tl-item">
-          <div class="strat-tl-dot blue"></div>
-          <div class="strat-tl-date">${fmtDate(bachelorDate)}</div>
-          <div class="strat-tl-label">Geplanter Bachelorabschluss</div>
-          <div class="strat-tl-desc">${daysBachelorToStart > 0 ? `${daysBachelorToStart} Tage vor Studienbeginn — Puffer für Zeugnisausstellung` : `${Math.abs(daysBachelorToStart)} Tage nach Studienbeginn — kritisch`}</div>
-        </div>
-        <div class="strat-tl-item">
-          <div class="strat-tl-dot ${enrollBeforeBachelor ? 'red' : 'green'}"></div>
-          <div class="strat-tl-date">${fmtDate(startDate)}</div>
-          <div class="strat-tl-label">Gewünschter Studienbeginn</div>
-          <div class="strat-tl-desc">${enrollBeforeBachelor ? `⚠ Liegt ${Math.abs(daysBachelorToStart)} Tage vor Abschluss — Immatrikulation ohne Zeugnis risikobehaftet` : `✓ ${gapDays} Tage nach Abschluss`}</div>
-        </div>
-      </div>
-    </div>
+    // Restore theme from dedicated key (faster than full state parse)
+    const savedTheme = StorageManager.load('theme', 'dark');
+    AppState.theme = savedTheme;
 
-    <div class="strat-status-grid">
-      <div class="strat-status-card">
-        <div class="strat-status-card-title">Status bei Bewerbung</div>
-        <div class="strat-status-badge ${applyBeforeBachelor ? 'amber' : 'green'}">${badgeSvg(applyBeforeBachelor ? 'amber' : 'green')}${applyBeforeBachelor ? 'Abschluss ausstehend' : 'Abschluss vorhanden'}</div>
-        <div class="strat-status-months">${Math.abs(daysApplyToBachelor)}</div>
-        <div class="strat-status-months-label">Tage ${applyBeforeBachelor ? 'bis' : 'nach'} Bachelorabschluss</div>
-        <div class="strat-status-detail" style="margin-top:10px">${applyBeforeBachelor ? 'Bei Einreichung der Bewerbung ist der Bachelor noch nicht abgeschlossen. Hochschulen verlangen i.d.R. einen Nachweis über das laufende Studium und die voraussichtliche Abschlussnote.' : 'Der Bachelor ist zum Bewerbungszeitpunkt bereits abgeschlossen. Das Zeugnis kann direkt eingereicht werden.'}</div>
-      </div>
-      <div class="strat-status-card">
-        <div class="strat-status-card-title">Status bei Einschreibung</div>
-        <div class="strat-status-badge ${enrollBeforeBachelor ? 'red' : gapDays < 90 ? 'amber' : 'green'}">${badgeSvg(enrollBeforeBachelor ? 'red' : gapDays < 90 ? 'amber' : 'green')}${enrollBeforeBachelor ? 'Kritisch' : 'Abschluss vorhanden'}</div>
-        <div class="strat-status-months">${Math.abs(daysBachelorToStart)}</div>
-        <div class="strat-status-months-label">Tage ${enrollBeforeBachelor ? 'bis' : 'nach'} Bachelorabschluss</div>
-        <div class="strat-status-detail" style="margin-top:10px">${enrollBeforeBachelor ? '⚠ Einschreibung liegt vor dem geplanten Abschluss. Die meisten Hochschulen fordern den Abschlussnachweis spätestens zur Immatrikulation.' : gapDays < 90 ? `Nur ${gapDays} Tage Puffer. Zeugnisausstellung dauert oft 4–12 Wochen — knapp.` : `${gapDays} Tage Puffer zwischen Abschluss und Studienbeginn. Zeitlich komfortabel.`}</div>
-      </div>
-    </div>
+    // Restore last page
+    const lastPage = StorageManager.load('lastPage', 'dashboard');
+    AppState.currentPage = lastPage;
 
-    <div class="strat-list-card">
-      <div class="strat-list-card-title red">⚠ Mögliche Risiken</div>
-      ${risks.length ? risks.join('') : listItem('green', icoCheck, 'Keine wesentlichen Risiken erkannt.')}
-    </div>
-    <div class="strat-list-card">
-      <div class="strat-list-card-title green">✓ Mögliche Vorteile</div>
-      ${benefits.length ? benefits.join('') : listItem('amber', icoWarn, 'Keine eindeutigen Vorteile erkennbar — Situation prüfen.')}
-    </div>
-    <div class="strat-list-card">
-      <div class="strat-list-card-title blue">? Offene Fragen</div>
-      ${questions.join('')}
-    </div>
+    // 2. Boot UI
+    UIManager.init();
 
-    <div class="strat-disclaimer">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      <span>Bitte aktuelle Regeln bei <strong>Hochschulstart</strong> und der jeweiligen <strong>Hochschule</strong> prüfen. Lokale Berechnung — keine Rechtsberatung — keine Gewähr auf Aktualität oder Vollständigkeit.</span>
-    </div>`;
+    // 3. Boot module engines
+    SettingsEngine.init();
 
-    document.getElementById('bwa-empty').style.display = 'none';
-    const out = document.getElementById('bwa-output');
-    out.innerHTML = html;
-    out.style.display = 'flex';
-    out.style.flexDirection = 'column';
-    out.style.gap = '14px';
-  },
+    // 4. Initial dashboard render (auto-update on load)
+    updateDashboard();
 
-  _esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); },
-};
+    // 5. Log architecture (dev)
+    console.info('%cLebensplaner v0.3 — Dashboard Live-Update aktiv', 'color:#4f8ef7;font-weight:600');
+    console.table({
+      AppState      : '✔ initialisiert',
+      StorageManager: '✔ initialisiert',
+      UIManager     : '✔ initialisiert',
+      SettingsEngine: '✔ aktiv',
+      updateDashboard: '✔ aktiv',
+      AnalysisEngine: '✔ scaffold',
+      ActionEngine  : '✔ scaffold',
+      ChatEngine    : '✔ scaffold',
+    });
+  })();
+  </script>
 
-/* ═══════════════════════ BOOT ═══════════════════════ */
-(function boot(){
-  SM.restore();
-  AppState.theme       = SM.load('theme','dark');
-  AppState.currentPage = SM.load('lastPage','dashboard');
-  UIManager.init();
-  SettingsEngine.init();
-  DashboardEngine.init();
-  StrategieEngine.init();
-  console.info('%cLebensplaner v0.5 — Strategie-Modul aktiv','color:#4f8ef7;font-weight:600');
-  console.table({AppState:'✔',SM:'✔',UIManager:'✔',SettingsEngine:'✔',DashboardEngine:'✔',StrategieEngine:'✔',AnalysisEngine:'scaffold',ActionEngine:'scaffold',ChatEngine:'scaffold'});
-})();
-</script>
 </body>
 </html>
