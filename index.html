@@ -996,6 +996,106 @@
     @media (max-width: 640px) {
       .field-row { grid-template-columns: 1fr; }
       .checkbox-grid { grid-template-columns: 1fr; }
+      .bwa-input-row { grid-template-columns: 1fr; }
+      .bwa-status-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ═══════════════════════════════════════════════
+       STRATEGIE MODULE: Bewerbung vor Bachelorabschluss
+       (new — scoped, does not alter existing classes)
+    ═══════════════════════════════════════════════ */
+    .bwa-input-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+    }
+
+    .bwa-status-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .bwa-status-card {
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-elevated);
+    }
+
+    .bwa-status-card.green  { border-color: rgba(62,207,142,.35);  background: rgba(62,207,142,.08);  }
+    .bwa-status-card.amber  { border-color: rgba(245,166,35,.35);  background: rgba(245,166,35,.08);  }
+    .bwa-status-card.red    { border-color: rgba(242,107,107,.35); background: rgba(242,107,107,.08); }
+
+    .bwa-status-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .bwa-status-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .bwa-status-title.green { color: var(--accent-green); }
+    .bwa-status-title.amber { color: var(--accent-amber); }
+    .bwa-status-title.red   { color: var(--accent-red);   }
+
+    .bwa-status-detail {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    .bwa-section-title {
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin: 18px 0 8px;
+    }
+
+    .bwa-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .bwa-list-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.83rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .bwa-list-item .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 6px;
+    }
+
+    .bwa-list-item.risk .dot   { background: var(--accent-red);   }
+    .bwa-list-item.benefit .dot { background: var(--accent-green); }
+    .bwa-list-item.question .dot { background: var(--accent-primary); }
+
+    .bwa-empty-hint {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      padding: 10px 0;
     }
 
     /* ═══════════════════════════════════════════════
@@ -1559,9 +1659,41 @@
       <section class="page" id="page-strategie" aria-labelledby="h-strategie">
         <h1 class="page-heading" id="h-strategie">Strategie</h1>
         <p class="page-sub">Langfristige Ziele, Meilensteine und Wochenplanung.</p>
-        <div class="placeholder-section">
-          <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-          <p>Ziel-Framework und Strategieplanung folgen in der nächsten Ausbaustufe.</p>
+
+        <!-- ── Modul: Bewerbung vor Bachelorabschluss ───────────── -->
+        <div class="card" style="margin-bottom:8px;">
+          <div class="card-title">Strategie: Bewerbung vor Bachelorabschluss</div>
+          <p style="font-size:.83rem;color:var(--text-secondary);margin-bottom:18px;line-height:1.55;">
+            Trage deine drei Eckdaten ein. Die App berechnet daraus lokal deinen Status bei Bewerbung und Einschreibung, mögliche Risiken, Vorteile und offene Fragen.
+          </p>
+
+          <div class="field-group">
+            <div class="bwa-input-row">
+              <div class="field">
+                <label class="field-label" for="bwa-bachelor-date">Bachelorabschlussdatum</label>
+                <input class="field-input" type="date" id="bwa-bachelor-date" />
+              </div>
+              <div class="field">
+                <label class="field-label" for="bwa-apply-date">Bewerbungsdatum</label>
+                <input class="field-input" type="date" id="bwa-apply-date" />
+              </div>
+              <div class="field">
+                <label class="field-label" for="bwa-start-date">Studienbeginn</label>
+                <input class="field-input" type="date" id="bwa-start-date" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Live result area, updated automatically on input -->
+          <div id="bwa-result" style="margin-top:20px;"></div>
+
+          <!-- Permanent legal/process notice -->
+          <div style="display:flex;align-items:flex-start;gap:8px;margin-top:18px;padding:10px 12px;background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.25);border-radius:var(--radius-sm);">
+            <svg viewBox="0 0 24 24" style="width:15px;height:15px;flex-shrink:0;margin-top:1px;stroke:var(--accent-amber);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <p style="font-size:.78rem;color:var(--accent-amber);line-height:1.5;margin:0;">
+              Bitte aktuelle Regeln bei Hochschulstart und der jeweiligen Hochschule prüfen. Diese Analyse beruht ausschließlich auf lokalen Berechnungen deiner eingegebenen Daten und stellt <strong>keine Rechtsberatung</strong> dar.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -2120,6 +2252,221 @@
 
 
   /* ═══════════════════════════════════════════════
+     STRATEGIE: BEWERBUNG VOR BACHELORABSCHLUSS
+     Self-contained module. Reads/writes only its own
+     storage key ("lp_strategie_bwa") via StorageManager.
+     Does not touch AppState.studium/finanzen or any
+     other module's data. Purely local date arithmetic —
+     no network calls, no external APIs.
+  ═══════════════════════════════════════════════ */
+  const StrategieBwaEngine = {
+
+    STORAGE_KEY: 'strategie_bwa',
+
+    _els: {},
+
+    init() {
+      this._els = {
+        bachelor: document.getElementById('bwa-bachelor-date'),
+        apply:    document.getElementById('bwa-apply-date'),
+        start:    document.getElementById('bwa-start-date'),
+        result:   document.getElementById('bwa-result'),
+      };
+
+      // Module only exists on the Strategie page — bail out gracefully
+      // if the markup isn't present (keeps boot() safe either way).
+      if (!this._els.bachelor || !this._els.apply || !this._els.start || !this._els.result) return;
+
+      const saved = StorageManager.load(this.STORAGE_KEY, {});
+      if (saved.bachelorDate) this._els.bachelor.value = saved.bachelorDate;
+      if (saved.applyDate)    this._els.apply.value    = saved.applyDate;
+      if (saved.startDate)    this._els.start.value    = saved.startDate;
+
+      [this._els.bachelor, this._els.apply, this._els.start].forEach(el => {
+        el.addEventListener('input', () => {
+          this._persist();
+          this._render();
+        });
+      });
+
+      this._render();
+    },
+
+    _persist() {
+      StorageManager.save(this.STORAGE_KEY, {
+        bachelorDate: this._els.bachelor.value,
+        applyDate:    this._els.apply.value,
+        startDate:    this._els.start.value,
+      });
+    },
+
+    _parseDate(str) {
+      if (!str) return null;
+      const d = new Date(str + 'T00:00:00');
+      return isNaN(d.getTime()) ? null : d;
+    },
+
+    _daysBetween(a, b) {
+      const MS_PER_DAY = 1000 * 60 * 60 * 24;
+      return Math.round((b.getTime() - a.getTime()) / MS_PER_DAY);
+    },
+
+    _fmtDate(d) {
+      return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    },
+
+    /** Core local analysis — pure function of the three dates. */
+    _analyze(bachelor, apply, start) {
+      const daysApplyToBachelor = this._daysBetween(apply, bachelor);   // >0: Bewerbung vor Abschluss
+      const daysBachelorToStart = this._daysBetween(bachelor, start);   // >0: Abschluss vor Studienbeginn
+
+      /* ── Status bei Bewerbung ── */
+      let applyStatus;
+      if (daysApplyToBachelor > 0) {
+        applyStatus = {
+          color: daysApplyToBachelor > 90 ? 'amber' : 'green',
+          title: 'Bewerbung vor Abschluss',
+          detail: `Zum Bewerbungszeitpunkt liegt der Bachelorabschluss noch ${daysApplyToBachelor} Tag(e) in der Zukunft. Viele Hochschulen akzeptieren das, verlangen aber meist einen Nachweis über das voraussichtliche Abschlussdatum.`,
+        };
+      } else if (daysApplyToBachelor === 0) {
+        applyStatus = {
+          color: 'amber',
+          title: 'Bewerbung am Abschlusstag',
+          detail: 'Bewerbungsdatum und Bachelorabschluss fallen auf denselben Tag. Das ist organisatorisch eng — Pufferzeit prüfen.',
+        };
+      } else {
+        applyStatus = {
+          color: 'green',
+          title: 'Bewerbung nach Abschluss',
+          detail: `Der Bachelorabschluss liegt zum Bewerbungszeitpunkt bereits ${Math.abs(daysApplyToBachelor)} Tag(e) zurück. Der Abschlussnachweis kann direkt beigelegt werden.`,
+        };
+      }
+
+      /* ── Status bei Einschreibung ── */
+      let enrollStatus;
+      if (daysBachelorToStart > 30) {
+        enrollStatus = {
+          color: 'green',
+          title: 'Ausreichend Puffer bis Studienbeginn',
+          detail: `Zwischen Abschluss und Studienbeginn liegen ${daysBachelorToStart} Tage. Das reicht in der Regel für Zeugnisausstellung und Immatrikulation.`,
+        };
+      } else if (daysBachelorToStart >= 0) {
+        enrollStatus = {
+          color: 'amber',
+          title: 'Knapper Zeitrahmen bis Studienbeginn',
+          detail: `Nur ${daysBachelorToStart} Tag(e) zwischen Abschluss und Studienbeginn. Zeugnisausstellung kann je Hochschule mehrere Wochen dauern — Engpassrisiko.`,
+        };
+      } else {
+        enrollStatus = {
+          color: 'red',
+          title: 'Studienbeginn vor Abschluss',
+          detail: `Der Studienbeginn liegt ${Math.abs(daysBachelorToStart)} Tag(e) vor dem geplanten Bachelorabschluss. Eine Einschreibung ohne vorliegenden Abschluss ist an den meisten Hochschulen nicht oder nur bedingt möglich.`,
+        };
+      }
+
+      /* ── Risiken ── */
+      const risks = [];
+      if (daysBachelorToStart < 0) {
+        risks.push('Immatrikulation ohne vorliegendes Abschlusszeugnis kann zur Ablehnung oder zum Verlust des Studienplatzes führen.');
+      }
+      if (daysBachelorToStart >= 0 && daysBachelorToStart <= 30) {
+        risks.push('Knappe Zeitspanne für Notenspiegel, Zeugnisausstellung oder Beglaubigungen vor Immatrikulationsfrist.');
+      }
+      if (daysApplyToBachelor > 0) {
+        risks.push('Bewerbung mit vorläufigem Leistungsstand — endgültige Abschlussnote kann abweichen.');
+      }
+      if (daysApplyToBachelor > 180) {
+        risks.push('Große zeitliche Distanz zwischen Bewerbung und Abschluss erhöht das Risiko unvorhergesehener Studienverzögerungen.');
+      }
+      if (risks.length === 0) risks.push('Keine zeitkritischen Risiken anhand der eingegebenen Daten erkennbar.');
+
+      /* ── Vorteile ── */
+      const benefits = [];
+      if (daysApplyToBachelor > 0) {
+        benefits.push('Frühzeitige Bewerbung sichert ggü. Bewerbungsfristen Planungssicherheit für den Übergang.');
+      }
+      if (daysBachelorToStart > 30) {
+        benefits.push('Komfortabler Puffer reduziert Stress bei Zeugnisausstellung und Immatrikulationsformalitäten.');
+      }
+      if (daysApplyToBachelor <= 0) {
+        benefits.push('Abschlusszeugnis liegt bei Bewerbung bereits vor — vollständige Unterlagen ohne Nachreichung möglich.');
+      }
+      if (benefits.length === 0) benefits.push('Kein eindeutiger zeitlicher Vorteil anhand der eingegebenen Daten erkennbar.');
+
+      /* ── Offene Fragen ── */
+      const questions = [
+        'Akzeptiert die Zielhochschule Bewerbungen mit vorläufigem bzw. noch ausstehendem Abschlusszeugnis?',
+        'Bis zu welchem Termin muss das endgültige Zeugnis spätestens nachgereicht werden?',
+        'Gibt es eine Frist für die Immatrikulation, die vor dem geplanten Studienbeginn liegt?',
+        'Welche Nachweise (z. B. Notenspiegel, vorläufige Bescheinigung) werden bei der Bewerbung konkret verlangt?',
+      ];
+      if (daysBachelorToStart < 0) {
+        questions.unshift('Bietet die Hochschule eine Sondereinschreibung oder Nachfrist für Abschlüsse nach Studienbeginn an?');
+      }
+
+      /* ── Gesamtampel (worst-case der beiden Status) ── */
+      const severityOrder = { green: 0, amber: 1, red: 2 };
+      const overall = severityOrder[applyStatus.color] >= severityOrder[enrollStatus.color] ? applyStatus.color : enrollStatus.color;
+
+      return { applyStatus, enrollStatus, risks, benefits, questions, overall, daysApplyToBachelor, daysBachelorToStart };
+    },
+
+    _render() {
+      const bachelorVal = this._els.bachelor.value;
+      const applyVal    = this._els.apply.value;
+      const startVal    = this._els.start.value;
+
+      const bachelor = this._parseDate(bachelorVal);
+      const apply    = this._parseDate(applyVal);
+      const start    = this._parseDate(startVal);
+
+      if (!bachelor || !apply || !start) {
+        this._els.result.innerHTML = `<p class="bwa-empty-hint">Bitte alle drei Daten eingeben, um die automatische Analyse zu sehen.</p>`;
+        return;
+      }
+
+      const a = this._analyze(bachelor, apply, start);
+
+      const renderList = (items, type) => items.map(text =>
+        `<div class="bwa-list-item ${type}"><span class="dot"></span><span>${this._escapeHtml(text)}</span></div>`
+      ).join('');
+
+      this._els.result.innerHTML = `
+        <div class="bwa-status-grid">
+          <div class="bwa-status-card ${a.applyStatus.color}">
+            <div class="bwa-status-label">Status bei Bewerbung</div>
+            <div class="bwa-status-title ${a.applyStatus.color}">${this._escapeHtml(a.applyStatus.title)}</div>
+            <div class="bwa-status-detail">${this._escapeHtml(a.applyStatus.detail)}</div>
+          </div>
+          <div class="bwa-status-card ${a.enrollStatus.color}">
+            <div class="bwa-status-label">Status bei Einschreibung</div>
+            <div class="bwa-status-title ${a.enrollStatus.color}">${this._escapeHtml(a.enrollStatus.title)}</div>
+            <div class="bwa-status-detail">${this._escapeHtml(a.enrollStatus.detail)}</div>
+          </div>
+        </div>
+
+        <div class="bwa-section-title">Mögliche Risiken</div>
+        <div class="bwa-list">${renderList(a.risks, 'risk')}</div>
+
+        <div class="bwa-section-title">Mögliche Vorteile</div>
+        <div class="bwa-list">${renderList(a.benefits, 'benefit')}</div>
+
+        <div class="bwa-section-title">Offene Fragen</div>
+        <div class="bwa-list">${renderList(a.questions, 'question')}</div>
+      `;
+    },
+
+    _escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    },
+  };
+
+
+  /* ═══════════════════════════════════════════════
      UPDATE DASHBOARD  — central read-only renderer
      Reads from SettingsEngine._data (i.e. localStorage
      key "lp_settings_data") and writes the current
@@ -2259,21 +2606,23 @@
 
     // 3. Boot module engines
     SettingsEngine.init();
+    StrategieBwaEngine.init();
 
     // 4. Initial dashboard render (auto-update on load)
     updateDashboard();
 
     // 5. Log architecture (dev)
-    console.info('%cLebensplaner v0.3 — Dashboard Live-Update aktiv', 'color:#4f8ef7;font-weight:600');
+    console.info('%cLebensplaner v0.4 — Strategie: Bewerbung vor Bachelorabschluss aktiv', 'color:#4f8ef7;font-weight:600');
     console.table({
-      AppState      : '✔ initialisiert',
-      StorageManager: '✔ initialisiert',
-      UIManager     : '✔ initialisiert',
-      SettingsEngine: '✔ aktiv',
-      updateDashboard: '✔ aktiv',
-      AnalysisEngine: '✔ scaffold',
-      ActionEngine  : '✔ scaffold',
-      ChatEngine    : '✔ scaffold',
+      AppState         : '✔ initialisiert',
+      StorageManager   : '✔ initialisiert',
+      UIManager        : '✔ initialisiert',
+      SettingsEngine   : '✔ aktiv',
+      StrategieBwaEngine: '✔ aktiv',
+      updateDashboard  : '✔ aktiv',
+      AnalysisEngine   : '✔ scaffold',
+      ActionEngine     : '✔ scaffold',
+      ChatEngine       : '✔ scaffold',
     });
   })();
   </script>
