@@ -996,106 +996,120 @@
     @media (max-width: 640px) {
       .field-row { grid-template-columns: 1fr; }
       .checkbox-grid { grid-template-columns: 1fr; }
-      .bwa-input-row { grid-template-columns: 1fr; }
-      .bwa-status-grid { grid-template-columns: 1fr; }
+      .ae-table-row { grid-template-columns: 1fr; }
     }
 
     /* ═══════════════════════════════════════════════
-       STRATEGIE MODULE: Bewerbung vor Bachelorabschluss
+       ANALYSE-ENGINE: Studienwege-Vergleich
        (new — scoped, does not alter existing classes)
     ═══════════════════════════════════════════════ */
-    .bwa-input-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 12px;
-    }
-
-    .bwa-status-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-bottom: 16px;
-    }
-
-    .bwa-status-card {
-      border-radius: var(--radius-md);
-      padding: 16px 18px;
-      border: 1px solid var(--border-subtle);
-      background: var(--bg-elevated);
-    }
-
-    .bwa-status-card.green  { border-color: rgba(62,207,142,.35);  background: rgba(62,207,142,.08);  }
-    .bwa-status-card.amber  { border-color: rgba(245,166,35,.35);  background: rgba(245,166,35,.08);  }
-    .bwa-status-card.red    { border-color: rgba(242,107,107,.35); background: rgba(242,107,107,.08); }
-
-    .bwa-status-label {
-      font-size: 0.72rem;
+    .ae-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 16px;
+      border-radius: var(--radius-sm);
+      background: var(--accent-primary);
+      color: #fff;
+      font-size: 0.85rem;
       font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--text-muted);
-      margin-bottom: 8px;
+      cursor: pointer;
+      transition: background 160ms ease;
+      margin-bottom: 18px;
     }
 
-    .bwa-status-title {
-      font-size: 0.95rem;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
+    .ae-btn:hover { background: #3d7de0; }
 
-    .bwa-status-title.green { color: var(--accent-green); }
-    .bwa-status-title.amber { color: var(--accent-amber); }
-    .bwa-status-title.red   { color: var(--accent-red);   }
-
-    .bwa-status-detail {
-      font-size: 0.82rem;
-      color: var(--text-secondary);
-      line-height: 1.55;
-    }
-
-    .bwa-section-title {
-      font-size: 0.78rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--text-muted);
-      margin: 18px 0 8px;
-    }
-
-    .bwa-list {
+    .ae-rank-list {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 10px;
     }
 
-    .bwa-list-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-      font-size: 0.83rem;
-      color: var(--text-secondary);
-      line-height: 1.5;
-      padding: 8px 10px;
-      border-radius: var(--radius-sm);
+    .ae-path-card {
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
       background: var(--bg-elevated);
+      padding: 16px 18px;
+    }
+
+    .ae-path-card.green { border-color: rgba(62,207,142,.35); }
+    .ae-path-card.amber { border-color: rgba(245,166,35,.35); }
+    .ae-path-card.red   { border-color: rgba(242,107,107,.35); }
+
+    .ae-path-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .ae-path-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .ae-path-score {
+      font-family: var(--font-mono);
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .ae-path-score.green { color: var(--accent-green); }
+    .ae-path-score.amber { color: var(--accent-amber); }
+    .ae-path-score.red   { color: var(--accent-red);   }
+
+    .ae-criteria-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin: 10px 0;
+    }
+
+    .ae-criterion {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding: 6px 8px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
       border: 1px solid var(--border-subtle);
     }
 
-    .bwa-list-item .dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      flex-shrink: 0;
-      margin-top: 6px;
+    .ae-criterion-label {
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
     }
 
-    .bwa-list-item.risk .dot   { background: var(--accent-red);   }
-    .bwa-list-item.benefit .dot { background: var(--accent-green); }
-    .bwa-list-item.question .dot { background: var(--accent-primary); }
+    .ae-criterion-value {
+      font-size: 0.85rem;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      color: var(--text-primary);
+    }
 
-    .bwa-empty-hint {
+    .ae-note-block {
+      margin-top: 8px;
+      font-size: 0.8rem;
+      line-height: 1.5;
+    }
+
+    .ae-note-block.recommend { color: var(--accent-green); }
+    .ae-note-block.warning   { color: var(--accent-red);   }
+
+    .ae-empty-hint {
       font-size: 0.82rem;
       color: var(--text-muted);
       padding: 10px 0;
+    }
+
+    @media (max-width: 900px) {
+      .ae-criteria-grid { grid-template-columns: repeat(2, 1fr); }
     }
 
     /* ═══════════════════════════════════════════════
@@ -1659,41 +1673,23 @@
       <section class="page" id="page-strategie" aria-labelledby="h-strategie">
         <h1 class="page-heading" id="h-strategie">Strategie</h1>
         <p class="page-sub">Langfristige Ziele, Meilensteine und Wochenplanung.</p>
+        <div class="placeholder-section">
+          <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <p>Ziel-Framework und Strategieplanung folgen in der nächsten Ausbaustufe.</p>
+        </div>
 
-        <!-- ── Modul: Bewerbung vor Bachelorabschluss ───────────── -->
-        <div class="card" style="margin-bottom:8px;">
-          <div class="card-title">Strategie: Bewerbung vor Bachelorabschluss</div>
-          <p style="font-size:.83rem;color:var(--text-secondary);margin-bottom:18px;line-height:1.55;">
-            Trage deine drei Eckdaten ein. Die App berechnet daraus lokal deinen Status bei Bewerbung und Einschreibung, mögliche Risiken, Vorteile und offene Fragen.
+        <!-- ── Modul: Studienwege-Analyse ───────────────────────── -->
+        <div class="card" style="margin-top:16px;">
+          <div class="card-title">Analyse: Studienwege im Vergleich</div>
+          <p style="font-size:.83rem;color:var(--text-secondary);margin-bottom:16px;line-height:1.55;">
+            Vergleicht Medizin, Psychologie und Graphic Design (inkl. Kombinationen) auf Basis deiner Profildaten aus „Meine Einstellungen". Bewertet werden Zeitaufwand, Risiko, Karrierepotenzial, Finanzierbarkeit, persönliche Prioritäten, Studienbelastung und Job-Kompatibilität.
           </p>
 
-          <div class="field-group">
-            <div class="bwa-input-row">
-              <div class="field">
-                <label class="field-label" for="bwa-bachelor-date">Bachelorabschlussdatum</label>
-                <input class="field-input" type="date" id="bwa-bachelor-date" />
-              </div>
-              <div class="field">
-                <label class="field-label" for="bwa-apply-date">Bewerbungsdatum</label>
-                <input class="field-input" type="date" id="bwa-apply-date" />
-              </div>
-              <div class="field">
-                <label class="field-label" for="bwa-start-date">Studienbeginn</label>
-                <input class="field-input" type="date" id="bwa-start-date" />
-              </div>
-            </div>
-          </div>
+          <button class="ae-btn" id="ae-run-btn" type="button">
+            Analyse aktualisieren
+          </button>
 
-          <!-- Live result area, updated automatically on input -->
-          <div id="bwa-result" style="margin-top:20px;"></div>
-
-          <!-- Permanent legal/process notice -->
-          <div style="display:flex;align-items:flex-start;gap:8px;margin-top:18px;padding:10px 12px;background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.25);border-radius:var(--radius-sm);">
-            <svg viewBox="0 0 24 24" style="width:15px;height:15px;flex-shrink:0;margin-top:1px;stroke:var(--accent-amber);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            <p style="font-size:.78rem;color:var(--accent-amber);line-height:1.5;margin:0;">
-              Bitte aktuelle Regeln bei Hochschulstart und der jeweiligen Hochschule prüfen. Diese Analyse beruht ausschließlich auf lokalen Berechnungen deiner eingegebenen Daten und stellt <strong>keine Rechtsberatung</strong> dar.
-            </p>
-          </div>
+          <div id="ae-result"></div>
         </div>
       </section>
 
@@ -2252,208 +2248,291 @@
 
 
   /* ═══════════════════════════════════════════════
-     STRATEGIE: BEWERBUNG VOR BACHELORABSCHLUSS
-     Self-contained module. Reads/writes only its own
-     storage key ("lp_strategie_bwa") via StorageManager.
-     Does not touch AppState.studium/finanzen or any
-     other module's data. Purely local date arithmetic —
-     no network calls, no external APIs.
+     ANALYSE-ENGINE: Studienwege im Vergleich
+     Self-contained module. Reads profile data from
+     SettingsEngine._data (no separate storage key
+     needed — purely derived/computed on demand).
+     No network calls, no external APIs.
   ═══════════════════════════════════════════════ */
-  const StrategieBwaEngine = {
+  const AnalyseEngine = {
 
-    STORAGE_KEY: 'strategie_bwa',
+    /* Die sieben zu vergleichenden Studienwege */
+    PATHS: [
+      'Medizin',
+      'Psychologie',
+      'Graphic Design',
+      'Graphic Design + Medizin',
+      'Graphic Design + Psychologie',
+      'Graphic Design → Medizin',
+      'Graphic Design → Psychologie',
+    ],
+
+    /* Kriterien-Gewichte für den Gesamtscore (Summe = 1.0) */
+    WEIGHTS: {
+      zeitaufwand:        0.15,
+      risiko:             0.15,
+      karrierepotenzial:  0.15,
+      finanzierbarkeit:   0.15,
+      prioritaeten:       0.15,
+      studienbelastung:   0.15,
+      jobKompatibilitaet: 0.10,
+    },
+
+    /**
+     * Basisprofile je Studienweg (0–100, unabhängig vom Nutzerprofil).
+     * Diese Werte bilden grobe, allgemein bekannte Eigenschaften der
+     * jeweiligen Wege ab (Regelstudienzeit, Numerus-clausus-Druck,
+     * Praxisanteil etc.) und werden anschließend mit den persönlichen
+     * Profildaten kombiniert/angepasst.
+     */
+    BASE_PROFILES: {
+      'Medizin': {
+        zeitaufwand: 25, risiko: 55, karrierepotenzial: 90, finanzierbarkeit: 35,
+        studienbelastung: 15, jobKompatibilitaet: 20,
+        notes: { dauerJahre: 6, nc: true, praxisanteil: 'hoch' },
+      },
+      'Psychologie': {
+        zeitaufwand: 55, risiko: 40, karrierepotenzial: 65, finanzierbarkeit: 60,
+        studienbelastung: 50, jobKompatibilitaet: 55,
+        notes: { dauerJahre: 5, nc: true, praxisanteil: 'mittel' },
+      },
+      'Graphic Design': {
+        zeitaufwand: 70, risiko: 45, karrierepotenzial: 55, finanzierbarkeit: 70,
+        studienbelastung: 65, jobKompatibilitaet: 80,
+        notes: { dauerJahre: 3.5, nc: false, praxisanteil: 'sehr hoch' },
+      },
+      'Graphic Design + Medizin': {
+        zeitaufwand: 10, risiko: 75, karrierepotenzial: 80, finanzierbarkeit: 25,
+        studienbelastung: 5, jobKompatibilitaet: 25,
+        notes: { dauerJahre: 9.5, nc: true, praxisanteil: 'hoch' },
+      },
+      'Graphic Design + Psychologie': {
+        zeitaufwand: 35, risiko: 55, karrierepotenzial: 65, finanzierbarkeit: 45,
+        studienbelastung: 30, jobKompatibilitaet: 60,
+        notes: { dauerJahre: 8.5, nc: true, praxisanteil: 'mittel' },
+      },
+      'Graphic Design → Medizin': {
+        zeitaufwand: 30, risiko: 60, karrierepotenzial: 85, finanzierbarkeit: 40,
+        studienbelastung: 25, jobKompatibilitaet: 50,
+        notes: { dauerJahre: 9.5, nc: true, praxisanteil: 'hoch' },
+      },
+      'Graphic Design → Psychologie': {
+        zeitaufwand: 50, risiko: 45, karrierepotenzial: 68, finanzierbarkeit: 55,
+        studienbelastung: 45, jobKompatibilitaet: 65,
+        notes: { dauerJahre: 8.5, nc: true, praxisanteil: 'mittel' },
+      },
+    },
 
     _els: {},
 
     init() {
       this._els = {
-        bachelor: document.getElementById('bwa-bachelor-date'),
-        apply:    document.getElementById('bwa-apply-date'),
-        start:    document.getElementById('bwa-start-date'),
-        result:   document.getElementById('bwa-result'),
+        runBtn: document.getElementById('ae-run-btn'),
+        result: document.getElementById('ae-result'),
       };
 
-      // Module only exists on the Strategie page — bail out gracefully
-      // if the markup isn't present (keeps boot() safe either way).
-      if (!this._els.bachelor || !this._els.apply || !this._els.start || !this._els.result) return;
+      // Modul existiert nur auf der Strategie-Seite — sicher abbrechen,
+      // falls das Markup (noch) nicht vorhanden ist.
+      if (!this._els.runBtn || !this._els.result) return;
 
-      const saved = StorageManager.load(this.STORAGE_KEY, {});
-      if (saved.bachelorDate) this._els.bachelor.value = saved.bachelorDate;
-      if (saved.applyDate)    this._els.apply.value    = saved.applyDate;
-      if (saved.startDate)    this._els.start.value    = saved.startDate;
+      this._els.runBtn.addEventListener('click', () => this._render());
 
-      [this._els.bachelor, this._els.apply, this._els.start].forEach(el => {
-        el.addEventListener('input', () => {
-          this._persist();
-          this._render();
-        });
-      });
-
+      // Erst-Render direkt beim Laden, basierend auf aktuellem Profil
       this._render();
     },
 
-    _persist() {
-      StorageManager.save(this.STORAGE_KEY, {
-        bachelorDate: this._els.bachelor.value,
-        applyDate:    this._els.apply.value,
-        startDate:    this._els.start.value,
-      });
+    /** Liest das aktuelle Profil aus SettingsEngine (gleiche Quelle wie updateDashboard). */
+    _getProfile() {
+      return (SettingsEngine && SettingsEngine._data)
+        ? SettingsEngine._data
+        : StorageManager.load('settings_data', SettingsEngine.DEFAULTS);
     },
 
-    _parseDate(str) {
-      if (!str) return null;
-      const d = new Date(str + 'T00:00:00');
-      return isNaN(d.getTime()) ? null : d;
-    },
+    _clamp(n) { return Math.max(0, Math.min(100, Math.round(n))); },
 
-    _daysBetween(a, b) {
-      const MS_PER_DAY = 1000 * 60 * 60 * 24;
-      return Math.round((b.getTime() - a.getTime()) / MS_PER_DAY);
-    },
+    /**
+     * Personalisiert die Basisbewertung eines Studienwegs anhand der
+     * Profildaten (Finanzen, Zeitbudget, Prioritäten, Bewerbungsinteresse).
+     * Reine, lokale Berechnung — keine Netzwerkaufrufe.
+     */
+    _scorePath(pathName, profile) {
+      const base = this.BASE_PROFILES[pathName];
+      const finanzen     = profile.finanzen     || {};
+      const zeit         = profile.zeit         || {};
+      const prioritaeten = profile.prioritaeten || {};
+      const bewerbungen  = profile.bewerbungen  || {};
 
-    _fmtDate(d) {
-      return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
-    },
+      const scores = { ...base };
 
-    /** Core local analysis — pure function of the three dates. */
-    _analyze(bachelor, apply, start) {
-      const daysApplyToBachelor = this._daysBetween(apply, bachelor);   // >0: Bewerbung vor Abschluss
-      const daysBachelorToStart = this._daysBetween(bachelor, start);   // >0: Abschluss vor Studienbeginn
+      /* ── Finanzierbarkeit: Einkommen + BAföG vs. Budget ── */
+      const einkommen = Number(finanzen.einkommen) || 0;
+      const bafoeg     = Number(finanzen.bafoeg)    || 0;
+      const budget      = Number(finanzen.budget)    || 0;
+      const gesamteinnahmen = einkommen + bafoeg;
+      if (gesamteinnahmen > 0 || budget > 0) {
+        const deckungsgrad = budget > 0 ? gesamteinnahmen / budget : 1;
+        const finanzBonus = this._clamp((deckungsgrad - 1) * 30); // ±30 Punkte Spielraum
+        scores.finanzierbarkeit = this._clamp(base.finanzierbarkeit + finanzBonus);
+      }
 
-      /* ── Status bei Bewerbung ── */
-      let applyStatus;
-      if (daysApplyToBachelor > 0) {
-        applyStatus = {
-          color: daysApplyToBachelor > 90 ? 'amber' : 'green',
-          title: 'Bewerbung vor Abschluss',
-          detail: `Zum Bewerbungszeitpunkt liegt der Bachelorabschluss noch ${daysApplyToBachelor} Tag(e) in der Zukunft. Viele Hochschulen akzeptieren das, verlangen aber meist einen Nachweis über das voraussichtliche Abschlussdatum.`,
-        };
-      } else if (daysApplyToBachelor === 0) {
-        applyStatus = {
-          color: 'amber',
-          title: 'Bewerbung am Abschlusstag',
-          detail: 'Bewerbungsdatum und Bachelorabschluss fallen auf denselben Tag. Das ist organisatorisch eng — Pufferzeit prüfen.',
-        };
+      /* ── Zeitaufwand: vorhandenes Lernzeit-Budget vs. Belastung des Wegs ── */
+      const lernzeit = Number(zeit.lernzeit) || 0;
+      if (lernzeit > 0) {
+        // Wege mit hoher Studienbelastung (niedriger studienbelastung-Wert)
+        // profitieren stärker von viel verfügbarer Lernzeit.
+        const belastungsfaktor = (100 - base.studienbelastung) / 100;
+        const zeitBonus = this._clamp((lernzeit - 20) * belastungsfaktor * 0.8);
+        scores.zeitaufwand = this._clamp(base.zeitaufwand + zeitBonus);
+      }
+
+      /* ── Studienbelastung: Arbeitszeit reduziert verfügbare Kapazität ── */
+      const arbeitszeit = Number(zeit.arbeitszeit) || 0;
+      if (arbeitszeit > 0) {
+        const arbeitsMalus = this._clamp(arbeitszeit * 0.6);
+        scores.studienbelastung = this._clamp(base.studienbelastung - arbeitsMalus * 0.4);
+      }
+
+      /* ── Persönliche Prioritäten: gewichtete Übereinstimmung ── */
+      const sicherheit    = Number(prioritaeten.sicherheit)    || 0;
+      const einkommenPrio = Number(prioritaeten.einkommen)     || 0;
+      const karrierePrio  = Number(prioritaeten.karriere)      || 0;
+      const interessePrio = Number(prioritaeten.interesse)     || 0;
+      const flexPrio       = Number(prioritaeten.flexibilitaet) || 0;
+      const prestigePrio   = Number(prioritaeten.prestige)      || 0;
+      const wlbPrio         = Number(prioritaeten.worklife)      || 0;
+      const prioSum = sicherheit + einkommenPrio + karrierePrio + interessePrio + flexPrio + prestigePrio + wlbPrio;
+
+      if (prioSum > 0) {
+        // Jeder Weg hat eine implizite "Eignung" für bestimmte Prioritäten,
+        // abgeleitet aus seinen Basiswerten (Karriere ↔ karrierepotenzial,
+        // Sicherheit ↔ geringes Risiko, Flexibilität ↔ jobKompatibilitaet,
+        // Work-Life-Balance ↔ studienbelastung).
+        const eignung =
+          (karrierePrio  * base.karrierepotenzial) +
+          (sicherheit    * (100 - base.risiko)) +
+          (flexPrio       * base.jobKompatibilitaet) +
+          (wlbPrio         * base.studienbelastung) +
+          (interessePrio * 70) + // neutral, da Interesse individuell ist
+          (einkommenPrio * base.karrierepotenzial) +
+          (prestigePrio   * (pathName.includes('Medizin') ? 90 : pathName.includes('Psychologie') ? 60 : 50));
+
+        const maxMoeglich = prioSum * 100;
+        scores.prioritaeten = this._clamp((eignung / maxMoeglich) * 100);
       } else {
-        applyStatus = {
-          color: 'green',
-          title: 'Bewerbung nach Abschluss',
-          detail: `Der Bachelorabschluss liegt zum Bewerbungszeitpunkt bereits ${Math.abs(daysApplyToBachelor)} Tag(e) zurück. Der Abschlussnachweis kann direkt beigelegt werden.`,
-        };
+        scores.prioritaeten = 50; // neutral, falls keine Prioritäten gesetzt
       }
 
-      /* ── Status bei Einschreibung ── */
-      let enrollStatus;
-      if (daysBachelorToStart > 30) {
-        enrollStatus = {
-          color: 'green',
-          title: 'Ausreichend Puffer bis Studienbeginn',
-          detail: `Zwischen Abschluss und Studienbeginn liegen ${daysBachelorToStart} Tage. Das reicht in der Regel für Zeugnisausstellung und Immatrikulation.`,
-        };
-      } else if (daysBachelorToStart >= 0) {
-        enrollStatus = {
-          color: 'amber',
-          title: 'Knapper Zeitrahmen bis Studienbeginn',
-          detail: `Nur ${daysBachelorToStart} Tag(e) zwischen Abschluss und Studienbeginn. Zeugnisausstellung kann je Hochschule mehrere Wochen dauern — Engpassrisiko.`,
-        };
-      } else {
-        enrollStatus = {
-          color: 'red',
-          title: 'Studienbeginn vor Abschluss',
-          detail: `Der Studienbeginn liegt ${Math.abs(daysBachelorToStart)} Tag(e) vor dem geplanten Bachelorabschluss. Eine Einschreibung ohne vorliegenden Abschluss ist an den meisten Hochschulen nicht oder nur bedingt möglich.`,
-        };
+      /* ── Bewerbungsinteresse als Bonus auf Karrierepotenzial ── */
+      if (bewerbungen.medizin && pathName.includes('Medizin')) {
+        scores.karrierepotenzial = this._clamp(scores.karrierepotenzial + 8);
+      }
+      if (bewerbungen.psychologie && pathName.includes('Psychologie')) {
+        scores.karrierepotenzial = this._clamp(scores.karrierepotenzial + 8);
       }
 
-      /* ── Risiken ── */
-      const risks = [];
-      if (daysBachelorToStart < 0) {
-        risks.push('Immatrikulation ohne vorliegendes Abschlusszeugnis kann zur Ablehnung oder zum Verlust des Studienplatzes führen.');
-      }
-      if (daysBachelorToStart >= 0 && daysBachelorToStart <= 30) {
-        risks.push('Knappe Zeitspanne für Notenspiegel, Zeugnisausstellung oder Beglaubigungen vor Immatrikulationsfrist.');
-      }
-      if (daysApplyToBachelor > 0) {
-        risks.push('Bewerbung mit vorläufigem Leistungsstand — endgültige Abschlussnote kann abweichen.');
-      }
-      if (daysApplyToBachelor > 180) {
-        risks.push('Große zeitliche Distanz zwischen Bewerbung und Abschluss erhöht das Risiko unvorhergesehener Studienverzögerungen.');
-      }
-      if (risks.length === 0) risks.push('Keine zeitkritischen Risiken anhand der eingegebenen Daten erkennbar.');
+      return scores;
+    },
 
-      /* ── Vorteile ── */
-      const benefits = [];
-      if (daysApplyToBachelor > 0) {
-        benefits.push('Frühzeitige Bewerbung sichert ggü. Bewerbungsfristen Planungssicherheit für den Übergang.');
+    /** Gewichteter Gesamtscore (0–100) aus den Einzelkriterien. */
+    _overallScore(scores) {
+      let total = 0;
+      for (const key in this.WEIGHTS) {
+        total += (scores[key] || 0) * this.WEIGHTS[key];
       }
-      if (daysBachelorToStart > 30) {
-        benefits.push('Komfortabler Puffer reduziert Stress bei Zeugnisausstellung und Immatrikulationsformalitäten.');
-      }
-      if (daysApplyToBachelor <= 0) {
-        benefits.push('Abschlusszeugnis liegt bei Bewerbung bereits vor — vollständige Unterlagen ohne Nachreichung möglich.');
-      }
-      if (benefits.length === 0) benefits.push('Kein eindeutiger zeitlicher Vorteil anhand der eingegebenen Daten erkennbar.');
+      return this._clamp(total);
+    },
 
-      /* ── Offene Fragen ── */
-      const questions = [
-        'Akzeptiert die Zielhochschule Bewerbungen mit vorläufigem bzw. noch ausstehendem Abschlusszeugnis?',
-        'Bis zu welchem Termin muss das endgültige Zeugnis spätestens nachgereicht werden?',
-        'Gibt es eine Frist für die Immatrikulation, die vor dem geplanten Studienbeginn liegt?',
-        'Welche Nachweise (z. B. Notenspiegel, vorläufige Bescheinigung) werden bei der Bewerbung konkret verlangt?',
-      ];
-      if (daysBachelorToStart < 0) {
-        questions.unshift('Bietet die Hochschule eine Sondereinschreibung oder Nachfrist für Abschlüsse nach Studienbeginn an?');
+    _ampel(score) {
+      if (score >= 70) return 'green';
+      if (score >= 50) return 'amber';
+      return 'red';
+    },
+
+    /** Generiert Empfehlungen und Warnungen je Studienweg. */
+    _notes(pathName, scores, profile) {
+      const recommendations = [];
+      const warnings = [];
+      const base = this.BASE_PROFILES[pathName];
+
+      if (scores.finanzierbarkeit >= 70) {
+        recommendations.push('Finanzielle Basis erscheint nach aktuellem Profil solide.');
+      } else if (scores.finanzierbarkeit < 40) {
+        warnings.push('Finanzierung ist nach aktuellen Angaben angespannt — Budget oder Einkommen prüfen.');
       }
 
-      /* ── Gesamtampel (worst-case der beiden Status) ── */
-      const severityOrder = { green: 0, amber: 1, red: 2 };
-      const overall = severityOrder[applyStatus.color] >= severityOrder[enrollStatus.color] ? applyStatus.color : enrollStatus.color;
+      if (scores.studienbelastung < 30) {
+        warnings.push(`Sehr hohe Studienbelastung erwartet (Regelstudienzeit ca. ${base.notes.dauerJahre} Jahre) — Zeitbudget realistisch einplanen.`);
+      } else if (scores.studienbelastung >= 65) {
+        recommendations.push('Studienbelastung erscheint im Vergleich gut tragbar.');
+      }
 
-      return { applyStatus, enrollStatus, risks, benefits, questions, overall, daysApplyToBachelor, daysBachelorToStart };
+      if (scores.risiko >= 60) {
+        warnings.push('Erhöhtes Risiko durch Zulassungsbeschränkung (NC) und/oder hohe Anforderungen — Alternativplan empfehlenswert.');
+      }
+
+      if (base.notes.nc && scores.karrierepotenzial >= 75) {
+        recommendations.push('Hohes Karrierepotenzial, aber zulassungsbeschränkt — frühzeitige Bewerbungsstrategie wichtig.');
+      }
+
+      const zeit = profile.zeit || {};
+      const arbeitszeit = Number(zeit.arbeitszeit) || 0;
+      if (arbeitszeit > 20 && scores.studienbelastung < 50) {
+        warnings.push('Hohe Arbeitszeit kombiniert mit hoher Studienbelastung dieses Wegs — Doppelbelastung möglich.');
+      }
+
+      if (scores.jobKompatibilitaet >= 70) {
+        recommendations.push('Gute Vereinbarkeit mit Nebenjob/Praxiserfahrung neben dem Studium.');
+      }
+
+      if (recommendations.length === 0) recommendations.push('Keine besonderen Vorteile anhand aktueller Profildaten hervorzuheben.');
+      if (warnings.length === 0) warnings.push('Keine kritischen Warnungen anhand aktueller Profildaten erkannt.');
+
+      return { recommendations, warnings };
+    },
+
+    _criterionLabels: {
+      zeitaufwand:        'Zeitaufwand',
+      risiko:             'Risiko',
+      karrierepotenzial:  'Karriere',
+      finanzierbarkeit:   'Finanzen',
+      prioritaeten:       'Prioritäten',
+      studienbelastung:   'Belastung',
+      jobKompatibilitaet: 'Job-Komp.',
     },
 
     _render() {
-      const bachelorVal = this._els.bachelor.value;
-      const applyVal    = this._els.apply.value;
-      const startVal    = this._els.start.value;
+      const profile = this._getProfile();
 
-      const bachelor = this._parseDate(bachelorVal);
-      const apply    = this._parseDate(applyVal);
-      const start    = this._parseDate(startVal);
+      const results = this.PATHS.map(pathName => {
+        const scores  = this._scorePath(pathName, profile);
+        const overall = this._overallScore(scores);
+        const ampel   = this._ampel(overall);
+        const notes   = this._notes(pathName, scores, profile);
+        return { pathName, scores, overall, ampel, notes };
+      }).sort((a, b) => b.overall - a.overall);
 
-      if (!bachelor || !apply || !start) {
-        this._els.result.innerHTML = `<p class="bwa-empty-hint">Bitte alle drei Daten eingeben, um die automatische Analyse zu sehen.</p>`;
-        return;
-      }
+      const criteriaHtml = (scores) => Object.keys(this._criterionLabels).map(key => `
+        <div class="ae-criterion">
+          <span class="ae-criterion-label">${this._escapeHtml(this._criterionLabels[key])}</span>
+          <span class="ae-criterion-value">${scores[key]}</span>
+        </div>`).join('');
 
-      const a = this._analyze(bachelor, apply, start);
+      const listHtml = (items) => items.map(i => `<div>• ${this._escapeHtml(i)}</div>`).join('');
 
-      const renderList = (items, type) => items.map(text =>
-        `<div class="bwa-list-item ${type}"><span class="dot"></span><span>${this._escapeHtml(text)}</span></div>`
-      ).join('');
-
-      this._els.result.innerHTML = `
-        <div class="bwa-status-grid">
-          <div class="bwa-status-card ${a.applyStatus.color}">
-            <div class="bwa-status-label">Status bei Bewerbung</div>
-            <div class="bwa-status-title ${a.applyStatus.color}">${this._escapeHtml(a.applyStatus.title)}</div>
-            <div class="bwa-status-detail">${this._escapeHtml(a.applyStatus.detail)}</div>
+      const cardsHtml = results.map((r, idx) => `
+        <div class="ae-path-card ${r.ampel}">
+          <div class="ae-path-header">
+            <span class="ae-path-name">${idx + 1}. ${this._escapeHtml(r.pathName)}</span>
+            <span class="badge badge-${r.ampel === 'green' ? 'green' : r.ampel === 'amber' ? 'amber' : 'red'}">
+              <span class="ae-path-score ${r.ampel}">${r.overall}</span>&nbsp;/ 100
+            </span>
           </div>
-          <div class="bwa-status-card ${a.enrollStatus.color}">
-            <div class="bwa-status-label">Status bei Einschreibung</div>
-            <div class="bwa-status-title ${a.enrollStatus.color}">${this._escapeHtml(a.enrollStatus.title)}</div>
-            <div class="bwa-status-detail">${this._escapeHtml(a.enrollStatus.detail)}</div>
-          </div>
-        </div>
+          <div class="ae-criteria-grid">${criteriaHtml(r.scores)}</div>
+          <div class="ae-note-block recommend">${listHtml(r.notes.recommendations)}</div>
+          <div class="ae-note-block warning">${listHtml(r.notes.warnings)}</div>
+        </div>`).join('');
 
-        <div class="bwa-section-title">Mögliche Risiken</div>
-        <div class="bwa-list">${renderList(a.risks, 'risk')}</div>
-
-        <div class="bwa-section-title">Mögliche Vorteile</div>
-        <div class="bwa-list">${renderList(a.benefits, 'benefit')}</div>
-
-        <div class="bwa-section-title">Offene Fragen</div>
-        <div class="bwa-list">${renderList(a.questions, 'question')}</div>
-      `;
+      this._els.result.innerHTML = `<div class="ae-rank-list">${cardsHtml}</div>`;
     },
 
     _escapeHtml(str) {
@@ -2606,23 +2685,23 @@
 
     // 3. Boot module engines
     SettingsEngine.init();
-    StrategieBwaEngine.init();
+    AnalyseEngine.init();
 
     // 4. Initial dashboard render (auto-update on load)
     updateDashboard();
 
     // 5. Log architecture (dev)
-    console.info('%cLebensplaner v0.4 — Strategie: Bewerbung vor Bachelorabschluss aktiv', 'color:#4f8ef7;font-weight:600');
+    console.info('%cLebensplaner v0.4 — Analyse-Engine (Studienwege) aktiv', 'color:#4f8ef7;font-weight:600');
     console.table({
-      AppState         : '✔ initialisiert',
-      StorageManager   : '✔ initialisiert',
-      UIManager        : '✔ initialisiert',
-      SettingsEngine   : '✔ aktiv',
-      StrategieBwaEngine: '✔ aktiv',
-      updateDashboard  : '✔ aktiv',
-      AnalysisEngine   : '✔ scaffold',
-      ActionEngine     : '✔ scaffold',
-      ChatEngine       : '✔ scaffold',
+      AppState      : '✔ initialisiert',
+      StorageManager: '✔ initialisiert',
+      UIManager     : '✔ initialisiert',
+      SettingsEngine: '✔ aktiv',
+      AnalyseEngine : '✔ aktiv',
+      updateDashboard: '✔ aktiv',
+      AnalysisEngine: '✔ scaffold',
+      ActionEngine  : '✔ scaffold',
+      ChatEngine    : '✔ scaffold',
     });
   })();
   </script>
