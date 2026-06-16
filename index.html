@@ -996,7 +996,8 @@
     @media (max-width: 640px) {
       .field-row { grid-template-columns: 1fr; }
       .checkbox-grid { grid-template-columns: 1fr; }
-      .ae-table-row { grid-template-columns: 1fr; }
+      .ae-criteria-grid { grid-template-columns: repeat(2, 1fr); }
+      .ae-chart-tabs { flex-wrap: wrap; }
     }
 
     /* ═══════════════════════════════════════════════
@@ -1110,6 +1111,74 @@
 
     @media (max-width: 900px) {
       .ae-criteria-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ── Diagramm-Bereich ───────────────────────────────── */
+    .ae-charts-section {
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .ae-chart-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .ae-chart-tab {
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      cursor: pointer;
+      transition: background 160ms ease, color 160ms ease, border-color 160ms ease;
+    }
+
+    .ae-chart-tab:hover { color: var(--text-primary); border-color: var(--border-strong); }
+
+    .ae-chart-tab.active {
+      background: var(--accent-glow);
+      color: var(--accent-primary);
+      border-color: var(--accent-primary);
+    }
+
+    .ae-chart-panel { display: none; }
+    .ae-chart-panel.active { display: block; }
+
+    .ae-canvas {
+      width: 100%;
+      max-width: 640px;
+      height: auto;
+      display: block;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+    }
+
+    .ae-legend {
+      display: flex;
+      gap: 16px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .ae-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .ae-legend-swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
     }
 
     /* ═══════════════════════════════════════════════
@@ -1690,6 +1759,43 @@
           </button>
 
           <div id="ae-result"></div>
+
+          <!-- ── Diagramme ──────────────────────────────────────── -->
+          <div class="ae-charts-section">
+            <div class="ae-chart-tabs" role="tablist">
+              <button class="ae-chart-tab active" data-chart-tab="radar" type="button" role="tab" aria-selected="true">Radar-Chart</button>
+              <button class="ae-chart-tab" data-chart-tab="bar" type="button" role="tab" aria-selected="false">Balkendiagramm</button>
+              <button class="ae-chart-tab" data-chart-tab="compare" type="button" role="tab" aria-selected="false">Vergleichsansicht</button>
+            </div>
+
+            <!-- Radar-Chart: Pfadauswahl + Canvas -->
+            <div class="ae-chart-panel active" id="ae-panel-radar">
+              <label class="field-label" for="ae-radar-select" style="margin-bottom:6px;display:block;">Studienweg für Radar-Chart</label>
+              <select class="field-input" id="ae-radar-select" style="max-width:320px;margin-bottom:12px;"></select>
+              <canvas id="ae-canvas-radar" width="480" height="380" class="ae-canvas"></canvas>
+            </div>
+
+            <!-- Balkendiagramm: Gesamtscore aller Wege -->
+            <div class="ae-chart-panel" id="ae-panel-bar">
+              <canvas id="ae-canvas-bar" width="640" height="380" class="ae-canvas"></canvas>
+            </div>
+
+            <!-- Vergleichsansicht: zwei Wege im direkten Radar-Vergleich -->
+            <div class="ae-chart-panel" id="ae-panel-compare">
+              <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
+                <div class="field" style="flex:1;min-width:200px;">
+                  <label class="field-label" for="ae-compare-a">Weg A</label>
+                  <select class="field-input" id="ae-compare-a"></select>
+                </div>
+                <div class="field" style="flex:1;min-width:200px;">
+                  <label class="field-label" for="ae-compare-b">Weg B</label>
+                  <select class="field-input" id="ae-compare-b"></select>
+                </div>
+              </div>
+              <canvas id="ae-canvas-compare" width="480" height="380" class="ae-canvas"></canvas>
+              <div class="ae-legend" id="ae-compare-legend"></div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -1909,6 +2015,12 @@
         AppState.set('theme', next);
         this._applyTheme(next);
         StorageManager.save('theme', next);
+        // Diagramme lesen Theme-Farben aus CSS-Variablen — bei Theme-Wechsel neu zeichnen.
+        if (typeof AnalyseEngine !== 'undefined' && AnalyseEngine._results && AnalyseEngine._results.length) {
+          AnalyseEngine._drawRadarChart();
+          AnalyseEngine._drawBarChart();
+          AnalyseEngine._drawCompareChart();
+        }
       });
     },
 
@@ -2252,7 +2364,8 @@
      Self-contained module. Reads profile data from
      SettingsEngine._data (no separate storage key
      needed — purely derived/computed on demand).
-     No network calls, no external APIs.
+     Charts are rendered with plain Canvas 2D —
+     no external libraries.
   ═══════════════════════════════════════════════ */
   const AnalyseEngine = {
 
@@ -2323,12 +2436,32 @@
       },
     },
 
+    _criterionLabels: {
+      zeitaufwand:        'Zeitaufwand',
+      risiko:             'Risiko',
+      karrierepotenzial:  'Karriere',
+      finanzierbarkeit:   'Finanzen',
+      prioritaeten:       'Prioritäten',
+      studienbelastung:   'Belastung',
+      jobKompatibilitaet: 'Job-Komp.',
+    },
+
     _els: {},
+    _results: [], // cache of last computed results, used by chart renderers
 
     init() {
       this._els = {
-        runBtn: document.getElementById('ae-run-btn'),
-        result: document.getElementById('ae-result'),
+        runBtn:        document.getElementById('ae-run-btn'),
+        result:        document.getElementById('ae-result'),
+        chartTabs:      document.querySelectorAll('.ae-chart-tab'),
+        chartPanels:    document.querySelectorAll('.ae-chart-panel'),
+        radarSelect:    document.getElementById('ae-radar-select'),
+        canvasRadar:    document.getElementById('ae-canvas-radar'),
+        canvasBar:      document.getElementById('ae-canvas-bar'),
+        canvasCompare:  document.getElementById('ae-canvas-compare'),
+        compareA:       document.getElementById('ae-compare-a'),
+        compareB:       document.getElementById('ae-compare-b'),
+        compareLegend:  document.getElementById('ae-compare-legend'),
       };
 
       // Modul existiert nur auf der Strategie-Seite — sicher abbrechen,
@@ -2337,8 +2470,48 @@
 
       this._els.runBtn.addEventListener('click', () => this._render());
 
+      // Chart-Tabs binden
+      this._els.chartTabs.forEach(tab => {
+        tab.addEventListener('click', () => this._switchChartTab(tab.dataset.chartTab));
+      });
+
+      // Pfad-Auswahl für Radar-Chart
+      if (this._els.radarSelect) {
+        this._populateSelect(this._els.radarSelect);
+        this._els.radarSelect.addEventListener('change', () => this._drawRadarChart());
+      }
+
+      // Pfad-Auswahl für Vergleichsansicht
+      if (this._els.compareA && this._els.compareB) {
+        this._populateSelect(this._els.compareA);
+        this._populateSelect(this._els.compareB);
+        this._els.compareB.selectedIndex = Math.min(1, this.PATHS.length - 1);
+        this._els.compareA.addEventListener('change', () => this._drawCompareChart());
+        this._els.compareB.addEventListener('change', () => this._drawCompareChart());
+      }
+
       // Erst-Render direkt beim Laden, basierend auf aktuellem Profil
       this._render();
+    },
+
+    _populateSelect(selectEl) {
+      selectEl.innerHTML = this.PATHS.map(p => `<option value="${this._escapeHtml(p)}">${this._escapeHtml(p)}</option>`).join('');
+    },
+
+    _switchChartTab(tabName) {
+      this._els.chartTabs.forEach(t => {
+        const active = t.dataset.chartTab === tabName;
+        t.classList.toggle('active', active);
+        t.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+      this._els.chartPanels.forEach(p => {
+        p.classList.toggle('active', p.id === `ae-panel-${tabName}`);
+      });
+      // Canvas neu zeichnen, sobald das jeweilige Panel sichtbar wird
+      // (Canvas-Inhalte gehen verloren, wenn sie unsichtbar gerendert wurden).
+      if (tabName === 'radar')   this._drawRadarChart();
+      if (tabName === 'bar')    this._drawBarChart();
+      if (tabName === 'compare') this._drawCompareChart();
     },
 
     /** Liest das aktuelle Profil aus SettingsEngine (gleiche Quelle wie updateDashboard). */
@@ -2378,8 +2551,6 @@
       /* ── Zeitaufwand: vorhandenes Lernzeit-Budget vs. Belastung des Wegs ── */
       const lernzeit = Number(zeit.lernzeit) || 0;
       if (lernzeit > 0) {
-        // Wege mit hoher Studienbelastung (niedriger studienbelastung-Wert)
-        // profitieren stärker von viel verfügbarer Lernzeit.
         const belastungsfaktor = (100 - base.studienbelastung) / 100;
         const zeitBonus = this._clamp((lernzeit - 20) * belastungsfaktor * 0.8);
         scores.zeitaufwand = this._clamp(base.zeitaufwand + zeitBonus);
@@ -2403,23 +2574,19 @@
       const prioSum = sicherheit + einkommenPrio + karrierePrio + interessePrio + flexPrio + prestigePrio + wlbPrio;
 
       if (prioSum > 0) {
-        // Jeder Weg hat eine implizite "Eignung" für bestimmte Prioritäten,
-        // abgeleitet aus seinen Basiswerten (Karriere ↔ karrierepotenzial,
-        // Sicherheit ↔ geringes Risiko, Flexibilität ↔ jobKompatibilitaet,
-        // Work-Life-Balance ↔ studienbelastung).
         const eignung =
           (karrierePrio  * base.karrierepotenzial) +
           (sicherheit    * (100 - base.risiko)) +
           (flexPrio       * base.jobKompatibilitaet) +
           (wlbPrio         * base.studienbelastung) +
-          (interessePrio * 70) + // neutral, da Interesse individuell ist
+          (interessePrio * 70) +
           (einkommenPrio * base.karrierepotenzial) +
           (prestigePrio   * (pathName.includes('Medizin') ? 90 : pathName.includes('Psychologie') ? 60 : 50));
 
         const maxMoeglich = prioSum * 100;
         scores.prioritaeten = this._clamp((eignung / maxMoeglich) * 100);
       } else {
-        scores.prioritaeten = 50; // neutral, falls keine Prioritäten gesetzt
+        scores.prioritaeten = 50;
       }
 
       /* ── Bewerbungsinteresse als Bonus auf Karrierepotenzial ── */
@@ -2446,6 +2613,12 @@
       if (score >= 70) return 'green';
       if (score >= 50) return 'amber';
       return 'red';
+    },
+
+    _ampelHex(ampel) {
+      if (ampel === 'green') return '#3ecf8e';
+      if (ampel === 'amber') return '#f5a623';
+      return '#f26b6b';
     },
 
     /** Generiert Empfehlungen und Warnungen je Studienweg. */
@@ -2490,20 +2663,10 @@
       return { recommendations, warnings };
     },
 
-    _criterionLabels: {
-      zeitaufwand:        'Zeitaufwand',
-      risiko:             'Risiko',
-      karrierepotenzial:  'Karriere',
-      finanzierbarkeit:   'Finanzen',
-      prioritaeten:       'Prioritäten',
-      studienbelastung:   'Belastung',
-      jobKompatibilitaet: 'Job-Komp.',
-    },
-
     _render() {
       const profile = this._getProfile();
 
-      const results = this.PATHS.map(pathName => {
+      this._results = this.PATHS.map(pathName => {
         const scores  = this._scorePath(pathName, profile);
         const overall = this._overallScore(scores);
         const ampel   = this._ampel(overall);
@@ -2519,7 +2682,7 @@
 
       const listHtml = (items) => items.map(i => `<div>• ${this._escapeHtml(i)}</div>`).join('');
 
-      const cardsHtml = results.map((r, idx) => `
+      const cardsHtml = this._results.map((r, idx) => `
         <div class="ae-path-card ${r.ampel}">
           <div class="ae-path-header">
             <span class="ae-path-name">${idx + 1}. ${this._escapeHtml(r.pathName)}</span>
@@ -2533,6 +2696,308 @@
         </div>`).join('');
 
       this._els.result.innerHTML = `<div class="ae-rank-list">${cardsHtml}</div>`;
+
+      // Diagramme mit den neuen Ergebnissen aktualisieren
+      this._drawRadarChart();
+      this._drawBarChart();
+      this._drawCompareChart();
+    },
+
+    _findResult(pathName) {
+      return this._results.find(r => r.pathName === pathName) || null;
+    },
+
+    /* ═══ CANVAS HELPERS (Vanilla, kein externes Charting) ═══ */
+
+    /** Liest CSS-Variablen für konsistente Diagrammfarben im aktuellen Theme. */
+    _cssVar(name) {
+      return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    },
+
+    _setupCanvas(canvas) {
+      // High-DPI-Unterstützung: Canvas-Backing-Store skalieren, CSS-Größe beibehalten.
+      const dpr = window.devicePixelRatio || 1;
+      const cssWidth  = canvas.clientWidth  || canvas.width;
+      const cssHeight = canvas.clientHeight || canvas.height;
+      canvas.width  = cssWidth  * dpr;
+      canvas.height = cssHeight * dpr;
+      const ctx = canvas.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      return { ctx, w: cssWidth, h: cssHeight };
+    },
+
+    /* ── RADAR-CHART ── */
+    _drawRadarChart() {
+      const canvas = this._els.canvasRadar;
+      if (!canvas || !this._els.radarSelect || this._results.length === 0) return;
+
+      const pathName = this._els.radarSelect.value || this.PATHS[0];
+      const result = this._findResult(pathName);
+      if (!result) return;
+
+      const { ctx, w, h } = this._setupCanvas(canvas);
+      ctx.clearRect(0, 0, w, h);
+
+      const keys   = Object.keys(this._criterionLabels);
+      const labels = keys.map(k => this._criterionLabels[k]);
+      const values = keys.map(k => result.scores[k]);
+
+      const cx = w / 2;
+      const cy = h / 2 - 6;
+      const radius = Math.min(w, h) / 2 - 56;
+      const n = keys.length;
+      const angleStep = (Math.PI * 2) / n;
+
+      const gridColor = this._cssVar('--border-muted') || '#2a3450';
+      const textColor = this._cssVar('--text-secondary') || '#8896b0';
+      const accent    = this._ampelHex(result.ampel);
+
+      // Gitterringe (4 Stufen: 25/50/75/100)
+      ctx.strokeStyle = gridColor;
+      ctx.lineWidth = 1;
+      for (let ring = 1; ring <= 4; ring++) {
+        const r = (radius * ring) / 4;
+        ctx.beginPath();
+        for (let i = 0; i <= n; i++) {
+          const angle = -Math.PI / 2 + i * angleStep;
+          const x = cx + r * Math.cos(angle);
+          const y = cy + r * Math.sin(angle);
+          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+
+      // Achsen + Labels
+      ctx.fillStyle = textColor;
+      ctx.font = '11px Inter, system-ui, sans-serif';
+      for (let i = 0; i < n; i++) {
+        const angle = -Math.PI / 2 + i * angleStep;
+        const x2 = cx + radius * Math.cos(angle);
+        const y2 = cy + radius * Math.sin(angle);
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+
+        const lx = cx + (radius + 22) * Math.cos(angle);
+        const ly = cy + (radius + 22) * Math.sin(angle);
+        ctx.textAlign = Math.abs(Math.cos(angle)) < 0.2 ? 'center' : (Math.cos(angle) > 0 ? 'left' : 'right');
+        ctx.textBaseline = Math.abs(Math.sin(angle)) < 0.2 ? 'middle' : (Math.sin(angle) > 0 ? 'top' : 'bottom');
+        ctx.fillText(labels[i], lx, ly);
+      }
+
+      // Datenpolygon
+      ctx.beginPath();
+      for (let i = 0; i <= n; i++) {
+        const idx = i % n;
+        const angle = -Math.PI / 2 + idx * angleStep;
+        const r = (radius * values[idx]) / 100;
+        const x = cx + r * Math.cos(angle);
+        const y = cy + r * Math.sin(angle);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.fillStyle = accent + '33'; // ~20% Deckkraft (Hex-Alpha)
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = 2;
+      ctx.fill();
+      ctx.stroke();
+
+      // Datenpunkte
+      ctx.fillStyle = accent;
+      for (let i = 0; i < n; i++) {
+        const angle = -Math.PI / 2 + i * angleStep;
+        const r = (radius * values[i]) / 100;
+        const x = cx + r * Math.cos(angle);
+        const y = cy + r * Math.sin(angle);
+        ctx.beginPath();
+        ctx.arc(x, y, 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Titel
+      ctx.fillStyle = this._cssVar('--text-primary') || '#e8ecf5';
+      ctx.font = '600 13px Inter, system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.fillText(`${pathName} — Score: ${result.overall}/100`, cx, 8);
+    },
+
+    /* ── BALKENDIAGRAMM ── */
+    _drawBarChart() {
+      const canvas = this._els.canvasBar;
+      if (!canvas || this._results.length === 0) return;
+
+      const { ctx, w, h } = this._setupCanvas(canvas);
+      ctx.clearRect(0, 0, w, h);
+
+      const padding = { top: 30, right: 20, bottom: 90, left: 40 };
+      const chartW = w - padding.left - padding.right;
+      const chartH = h - padding.top - padding.bottom;
+
+      const gridColor = this._cssVar('--border-muted') || '#2a3450';
+      const textColor = this._cssVar('--text-secondary') || '#8896b0';
+
+      // Y-Achse Gitterlinien (0/25/50/75/100)
+      ctx.strokeStyle = gridColor;
+      ctx.fillStyle = textColor;
+      ctx.font = '10px Inter, system-ui, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      for (let v = 0; v <= 100; v += 25) {
+        const y = padding.top + chartH - (chartH * v) / 100;
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(padding.left + chartW, y);
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.fillText(String(v), padding.left - 8, y);
+      }
+
+      // Balken
+      const n = this._results.length;
+      const slot = chartW / n;
+      const barWidth = slot * 0.6;
+
+      this._results.forEach((r, i) => {
+        const barHeight = (chartH * r.overall) / 100;
+        const x = padding.left + i * slot + (slot - barWidth) / 2;
+        const y = padding.top + chartH - barHeight;
+
+        ctx.fillStyle = this._ampelHex(r.ampel);
+        ctx.fillRect(x, y, barWidth, barHeight);
+
+        // Score-Label über dem Balken
+        ctx.fillStyle = this._cssVar('--text-primary') || '#e8ecf5';
+        ctx.font = '600 11px Inter, system-ui, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText(String(r.overall), x + barWidth / 2, y - 4);
+
+        // Pfadname unterhalb (rotiert für lange Labels)
+        ctx.save();
+        ctx.translate(x + barWidth / 2, padding.top + chartH + 8);
+        ctx.rotate(-Math.PI / 5);
+        ctx.fillStyle = textColor;
+        ctx.font = '10px Inter, system-ui, sans-serif';
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(r.pathName, 0, 0);
+        ctx.restore();
+      });
+
+      // Titel
+      ctx.fillStyle = this._cssVar('--text-primary') || '#e8ecf5';
+      ctx.font = '600 13px Inter, system-ui, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
+      ctx.fillText('Gesamtscore je Studienweg', padding.left, 6);
+    },
+
+    /* ── VERGLEICHSANSICHT (zwei Wege, überlagertes Radar) ── */
+    _drawCompareChart() {
+      const canvas = this._els.canvasCompare;
+      if (!canvas || !this._els.compareA || !this._els.compareB || this._results.length === 0) return;
+
+      const nameA = this._els.compareA.value || this.PATHS[0];
+      const nameB = this._els.compareB.value || this.PATHS[1];
+      const resA = this._findResult(nameA);
+      const resB = this._findResult(nameB);
+      if (!resA || !resB) return;
+
+      const { ctx, w, h } = this._setupCanvas(canvas);
+      ctx.clearRect(0, 0, w, h);
+
+      const keys   = Object.keys(this._criterionLabels);
+      const labels = keys.map(k => this._criterionLabels[k]);
+
+      const cx = w / 2;
+      const cy = h / 2 - 6;
+      const radius = Math.min(w, h) / 2 - 56;
+      const n = keys.length;
+      const angleStep = (Math.PI * 2) / n;
+
+      const gridColor = this._cssVar('--border-muted') || '#2a3450';
+      const textColor = this._cssVar('--text-secondary') || '#8896b0';
+
+      // Gitterringe
+      ctx.strokeStyle = gridColor;
+      ctx.lineWidth = 1;
+      for (let ring = 1; ring <= 4; ring++) {
+        const r = (radius * ring) / 4;
+        ctx.beginPath();
+        for (let i = 0; i <= n; i++) {
+          const angle = -Math.PI / 2 + i * angleStep;
+          const x = cx + r * Math.cos(angle);
+          const y = cy + r * Math.sin(angle);
+          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+
+      // Achsen + Labels
+      ctx.fillStyle = textColor;
+      ctx.font = '11px Inter, system-ui, sans-serif';
+      for (let i = 0; i < n; i++) {
+        const angle = -Math.PI / 2 + i * angleStep;
+        const x2 = cx + radius * Math.cos(angle);
+        const y2 = cy + radius * Math.sin(angle);
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+
+        const lx = cx + (radius + 22) * Math.cos(angle);
+        const ly = cy + (radius + 22) * Math.sin(angle);
+        ctx.textAlign = Math.abs(Math.cos(angle)) < 0.2 ? 'center' : (Math.cos(angle) > 0 ? 'left' : 'right');
+        ctx.textBaseline = Math.abs(Math.sin(angle)) < 0.2 ? 'middle' : (Math.sin(angle) > 0 ? 'top' : 'bottom');
+        ctx.fillText(labels[i], lx, ly);
+      }
+
+      const drawPolygon = (values, colorHex) => {
+        ctx.beginPath();
+        for (let i = 0; i <= n; i++) {
+          const idx = i % n;
+          const angle = -Math.PI / 2 + idx * angleStep;
+          const r = (radius * values[idx]) / 100;
+          const x = cx + r * Math.cos(angle);
+          const y = cy + r * Math.sin(angle);
+          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.fillStyle = colorHex + '26'; // ~15% Deckkraft
+        ctx.strokeStyle = colorHex;
+        ctx.lineWidth = 2;
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = colorHex;
+        for (let i = 0; i < n; i++) {
+          const angle = -Math.PI / 2 + i * angleStep;
+          const r = (radius * values[i]) / 100;
+          const x = cx + r * Math.cos(angle);
+          const y = cy + r * Math.sin(angle);
+          ctx.beginPath();
+          ctx.arc(x, y, 3, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      };
+
+      // Feste, unterscheidbare Vergleichsfarben (unabhängig von der Ampel,
+      // damit beide Pfade auch bei gleicher Ampelfarbe klar erkennbar sind).
+      const colorA = '#4f8ef7';
+      const colorB = '#f5a623';
+
+      drawPolygon(keys.map(k => resA.scores[k]), colorA);
+      drawPolygon(keys.map(k => resB.scores[k]), colorB);
+
+      // Legende (DOM, nicht Canvas — bessere Lesbarkeit/Zugänglichkeit)
+      if (this._els.compareLegend) {
+        this._els.compareLegend.innerHTML = `
+          <div class="ae-legend-item"><span class="ae-legend-swatch" style="background:${colorA}"></span>${this._escapeHtml(nameA)} — ${resA.overall}/100</div>
+          <div class="ae-legend-item"><span class="ae-legend-swatch" style="background:${colorB}"></span>${this._escapeHtml(nameB)} — ${resB.overall}/100</div>
+        `;
+      }
     },
 
     _escapeHtml(str) {
@@ -2691,7 +3156,7 @@
     updateDashboard();
 
     // 5. Log architecture (dev)
-    console.info('%cLebensplaner v0.4 — Analyse-Engine (Studienwege) aktiv', 'color:#4f8ef7;font-weight:600');
+    console.info('%cLebensplaner v0.5 — Analyse-Engine mit Diagrammen aktiv', 'color:#4f8ef7;font-weight:600');
     console.table({
       AppState      : '✔ initialisiert',
       StorageManager: '✔ initialisiert',
