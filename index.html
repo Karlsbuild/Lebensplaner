@@ -1058,6 +1058,348 @@
     .data-action-feedback.error   { color: var(--accent-red); }
 
     /* ═══════════════════════════════════════════════
+       STUDIUM: Studienübersicht, Module & Prüfungen
+       (new — scoped, does not alter existing classes)
+    ═══════════════════════════════════════════════ */
+    .study-overview-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .study-overview-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .study-overview-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .study-overview-value {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .study-progress-block { margin-top: 4px; }
+
+    .study-module-form-row {
+      display: grid;
+      grid-template-columns: 2fr 1.1fr 0.8fr 1.1fr auto;
+      gap: 10px;
+      align-items: end;
+      margin-bottom: 18px;
+    }
+
+    .study-module-form-submit .data-action-btn {
+      width: 100%;
+      height: 38px;
+    }
+
+    .study-module-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .study-module-card {
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-elevated);
+      padding: 14px 16px;
+    }
+
+    .study-module-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .study-module-title-group { display: flex; flex-direction: column; gap: 3px; }
+
+    .study-module-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .study-module-meta {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .study-module-type-badge {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 2px 8px;
+      border-radius: 100px;
+    }
+
+    .study-module-type-badge.modul    { background: rgba(79,142,247,.15); color: var(--accent-primary); }
+    .study-module-type-badge.pruefung { background: rgba(245,166,35,.15); color: var(--accent-amber); }
+
+    .study-module-delete-btn {
+      width: 28px; height: 28px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      flex-shrink: 0;
+      transition: background 160ms ease, color 160ms ease;
+    }
+
+    .study-module-delete-btn:hover {
+      background: rgba(242,107,107,.12);
+      color: var(--accent-red);
+    }
+
+    .study-module-delete-btn svg {
+      width: 14px; height: 14px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .study-module-progress-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .study-module-progress-row .range-input { flex: 1; }
+
+    .study-module-progress-val {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--accent-primary);
+      min-width: 38px;
+      text-align: right;
+    }
+
+    @media (max-width: 900px) {
+      .study-overview-grid { grid-template-columns: 1fr; }
+      .study-module-form-row { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .study-module-form-row { grid-template-columns: 1fr; }
+    }
+
+    /* ═══════════════════════════════════════════════
+       FINANZEN: Budget, Sparziele, Transaktionen, Chart
+       (new — scoped, does not alter existing classes)
+    ═══════════════════════════════════════════════ */
+    .fin-goal-form-row {
+      display: grid;
+      grid-template-columns: 2fr 1.2fr auto;
+      gap: 10px;
+      align-items: end;
+      margin-bottom: 14px;
+    }
+
+    .fin-goal-form-submit .data-action-btn { width: 100%; height: 38px; }
+
+    .fin-goal-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .fin-goal-card {
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-elevated);
+      padding: 12px 14px;
+    }
+
+    .fin-goal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .fin-goal-name { font-size: 0.85rem; font-weight: 600; color: var(--text-primary); }
+
+    .fin-goal-amounts {
+      font-size: 0.74rem;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+    }
+
+    .fin-goal-amounts strong { color: var(--accent-primary); }
+
+    .fin-chart-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .fin-pie-canvas { max-width: 240px; width: 100%; height: auto; }
+
+    .fin-pie-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .fin-pie-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+
+    .fin-pie-legend-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+
+    .fin-stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .fin-stat-item {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding: 11px 12px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .fin-stat-label {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .fin-stat-value {
+      font-size: 0.95rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      color: var(--text-primary);
+    }
+
+    .fin-transaction-form-row {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr 1fr 1.1fr 1fr auto;
+      gap: 10px;
+      align-items: end;
+      margin-bottom: 18px;
+    }
+
+    .fin-transaction-form-submit .data-action-btn { width: 100%; height: 38px; }
+
+    .fin-transaction-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .fin-tx-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-elevated);
+      padding: 11px 14px;
+    }
+
+    .fin-tx-sign {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .fin-tx-sign.income  { background: rgba(62,207,142,.15); color: var(--accent-green); }
+    .fin-tx-sign.expense { background: rgba(242,107,107,.15); color: var(--accent-red); }
+
+    .fin-tx-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+
+    .fin-tx-label { font-size: 0.85rem; font-weight: 600; color: var(--text-primary); }
+
+    .fin-tx-meta {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .fin-tx-amount {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .fin-tx-amount.income  { color: var(--accent-green); }
+    .fin-tx-amount.expense { color: var(--accent-red); }
+
+    .fin-tx-actions { display: flex; gap: 2px; flex-shrink: 0; }
+
+    .fin-tx-action-btn {
+      width: 28px; height: 28px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      transition: background 160ms ease, color 160ms ease;
+    }
+
+    .fin-tx-action-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+    .fin-tx-action-btn.delete:hover { background: rgba(242,107,107,.12); color: var(--accent-red); }
+
+    .fin-tx-action-btn svg {
+      width: 14px; height: 14px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    @media (max-width: 900px) {
+      .fin-transaction-form-row { grid-template-columns: 1fr 1fr; }
+      .fin-goal-form-row { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .fin-transaction-form-row { grid-template-columns: 1fr; }
+      .fin-stats-grid { grid-template-columns: 1fr; }
+      .fin-tx-card { flex-wrap: wrap; }
+    }
+
+    /* ═══════════════════════════════════════════════
        DEBUG LABEL (dev helper)
     ═══════════════════════════════════════════════ */
     .dev-tag {
@@ -1636,9 +1978,77 @@
       <section class="page" id="page-studium" aria-labelledby="h-studium">
         <h1 class="page-heading" id="h-studium">Studium</h1>
         <p class="page-sub">Semester, Module, Prüfungen und Lernfortschritt.</p>
-        <div class="placeholder-section">
-          <svg viewBox="0 0 24 24"><path d="M2 10l10-6 10 6-10 6z"/><path d="M6 12v6c0 0 2 2 6 2s6-2 6-2v-6"/></svg>
-          <p>Studiumsdaten und Fortschritts-Tracking folgen in der nächsten Ausbaustufe.</p>
+
+        <!-- ── Studienübersicht ──────────────────────────────── -->
+        <div class="card">
+          <div class="card-title">Studienübersicht</div>
+          <div class="study-overview-grid">
+            <div class="study-overview-item">
+              <span class="study-overview-label">Aktueller Studiengang</span>
+              <span class="study-overview-value" id="study-studiengang-display">—</span>
+            </div>
+            <div class="study-overview-item">
+              <span class="study-overview-label">Fachsemester</span>
+              <span class="study-overview-value" id="study-fachsemester-display">—</span>
+            </div>
+            <div class="study-overview-item">
+              <span class="study-overview-label">Bachelorabschluss (geplant)</span>
+              <span class="study-overview-value" id="study-abschluss-display">—</span>
+            </div>
+          </div>
+
+          <div class="study-progress-block">
+            <div class="widget-progress-label" style="display:flex;justify-content:space-between;font-size:.8rem;color:var(--text-secondary);margin-bottom:6px;">
+              <span>Bachelorfortschritt</span>
+              <span id="study-progress-pct" style="font-family:var(--font-mono);color:var(--accent-primary);font-weight:600;">0%</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" id="study-progress-fill" style="width:0%"></div>
+            </div>
+          </div>
+
+          <p class="field-hint" style="margin-top:14px;">
+            Diese Angaben stammen aus <strong>Meine Einstellungen</strong> und sind mit dem Dashboard verknüpft — Änderungen wirken sich überall sofort aus.
+          </p>
+        </div>
+
+        <!-- ── Module & Prüfungen ────────────────────────────── -->
+        <div class="card" style="margin-top:16px;">
+          <div class="card-title">Module &amp; Prüfungen</div>
+
+          <form id="study-module-form" class="study-module-form">
+            <div class="study-module-form-row">
+              <div class="field">
+                <label class="field-label" for="study-module-name">Modulname</label>
+                <input class="field-input" type="text" id="study-module-name" placeholder="z. B. Lineare Algebra" required />
+              </div>
+              <div class="field">
+                <label class="field-label" for="study-module-typ">Typ</label>
+                <select class="field-input" id="study-module-typ">
+                  <option value="modul">Modul</option>
+                  <option value="pruefung">Prüfung</option>
+                </select>
+              </div>
+              <div class="field">
+                <label class="field-label" for="study-module-ects">ECTS</label>
+                <input class="field-input" type="number" id="study-module-ects" min="0" max="60" placeholder="6" />
+              </div>
+              <div class="field">
+                <label class="field-label" for="study-module-termin">Termin</label>
+                <input class="field-input" type="date" id="study-module-termin" />
+              </div>
+              <div class="field study-module-form-submit">
+                <label class="field-label" style="visibility:hidden;">Hinzufügen</label>
+                <button type="submit" class="data-action-btn" style="justify-content:center;">
+                  <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  <span>Hinzufügen</span>
+                </button>
+              </div>
+            </div>
+          </form>
+
+          <div id="study-module-list" class="study-module-list"></div>
+          <p id="study-module-empty-hint" class="field-hint" style="display:none;">Noch keine Module oder Prüfungen hinterlegt — füge oben dein erstes Modul hinzu.</p>
         </div>
       </section>
 
@@ -1646,9 +2056,164 @@
       <section class="page" id="page-finanzen" aria-labelledby="h-finanzen">
         <h1 class="page-heading" id="h-finanzen">Finanzen</h1>
         <p class="page-sub">Einnahmen, Ausgaben, Budget und Sparziele.</p>
-        <div class="placeholder-section">
-          <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-          <p>Finanzübersicht und Budget-Tracking folgen in der nächsten Ausbaustufe.</p>
+
+        <!-- ── Monatsbilanz & Kennzahlen ──────────────────────── -->
+        <div class="grid-4 gap-16">
+          <div class="stat-card">
+            <div class="stat-icon"><svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+            <div class="stat-label">Einnahmen (Monat)</div>
+            <div class="stat-value" id="fin-month-income">€ 0</div>
+            <div class="stat-delta" id="fin-month-income-count">0 Buchungen</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><svg viewBox="0 0 24 24"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg></div>
+            <div class="stat-label">Ausgaben (Monat)</div>
+            <div class="stat-value" id="fin-month-expense">€ 0</div>
+            <div class="stat-delta" id="fin-month-expense-count">0 Buchungen</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+            <div class="stat-label">Monatsbilanz</div>
+            <div class="stat-value" id="fin-month-balance">€ 0</div>
+            <div class="stat-delta" id="fin-month-balance-sub">Einnahmen − Ausgaben</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg></div>
+            <div class="stat-label">Rücklagen</div>
+            <div class="stat-value" id="fin-ruecklagen-value">€ 0</div>
+            <div class="stat-delta">aus Einstellungen</div>
+          </div>
+        </div>
+
+        <!-- ── Budgetplanung & Rücklagen ──────────────────────── -->
+        <div class="grid-2" style="margin-top:16px;">
+          <div class="card">
+            <div class="card-title">Budgetplanung</div>
+            <div class="field-group">
+              <div class="field-row">
+                <div class="field">
+                  <label class="field-label" for="fin-budget-input">Monatliches Budget</label>
+                  <div class="field-with-unit"><span class="field-unit field-unit-left">€</span>
+                    <input class="field-input field-input-right" type="number" id="fin-budget-input" min="0" placeholder="0" />
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="field-label" for="fin-ruecklagen-input">Rücklagen gesamt</label>
+                  <div class="field-with-unit"><span class="field-unit field-unit-left">€</span>
+                    <input class="field-input field-input-right" type="number" id="fin-ruecklagen-input" min="0" placeholder="0" />
+                  </div>
+                </div>
+              </div>
+              <p class="field-hint">Diese Werte sind mit <strong>Meine Einstellungen</strong> verknüpft — Änderungen wirken sich überall sofort aus.</p>
+              <div class="study-progress-block">
+                <div class="widget-progress-label" style="display:flex;justify-content:space-between;font-size:.8rem;color:var(--text-secondary);margin-bottom:6px;">
+                  <span>Budgetauslastung (Monat)</span>
+                  <span id="fin-budget-pct" style="font-family:var(--font-mono);color:var(--accent-primary);font-weight:600;">0%</span>
+                </div>
+                <div class="progress-track">
+                  <div class="progress-fill" id="fin-budget-fill" style="width:0%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Sparziele</div>
+            <form id="fin-goal-form" class="fin-goal-form">
+              <div class="fin-goal-form-row">
+                <div class="field">
+                  <label class="field-label" for="fin-goal-name">Bezeichnung</label>
+                  <input class="field-input" type="text" id="fin-goal-name" placeholder="z. B. Laptop" required />
+                </div>
+                <div class="field">
+                  <label class="field-label" for="fin-goal-target">Zielbetrag</label>
+                  <div class="field-with-unit"><span class="field-unit field-unit-left">€</span>
+                    <input class="field-input field-input-right" type="number" id="fin-goal-target" min="1" placeholder="500" required />
+                  </div>
+                </div>
+                <div class="field fin-goal-form-submit">
+                  <label class="field-label" style="visibility:hidden;">Hinzufügen</label>
+                  <button type="submit" class="data-action-btn" style="justify-content:center;">
+                    <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <span>Sparziel</span>
+                  </button>
+                </div>
+              </div>
+            </form>
+            <div id="fin-goal-list" class="fin-goal-list"></div>
+            <p id="fin-goal-empty-hint" class="field-hint" style="display:none;">Noch keine Sparziele angelegt.</p>
+          </div>
+        </div>
+
+        <!-- ── Kreisdiagramm & Statistiken ─────────────────────── -->
+        <div class="grid-2" style="margin-top:16px;">
+          <div class="card">
+            <div class="card-title">Ausgaben nach Kategorie</div>
+            <div class="fin-chart-wrap">
+              <canvas id="fin-pie-canvas" width="280" height="280" class="fin-pie-canvas"></canvas>
+              <div id="fin-pie-legend" class="fin-pie-legend"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Finanzstatistiken</div>
+            <div id="fin-stats-grid" class="fin-stats-grid"></div>
+          </div>
+        </div>
+
+        <!-- ── Transaktionen ───────────────────────────────────── -->
+        <div class="card" style="margin-top:16px;">
+          <div class="card-title">Transaktionen</div>
+
+          <form id="fin-transaction-form" class="fin-transaction-form">
+            <div class="fin-transaction-form-row">
+              <div class="field">
+                <label class="field-label" for="fin-tx-label">Bezeichnung</label>
+                <input class="field-input" type="text" id="fin-tx-label" placeholder="z. B. Miete, Nebenjob …" required />
+              </div>
+              <div class="field">
+                <label class="field-label" for="fin-tx-typ">Typ</label>
+                <select class="field-input" id="fin-tx-typ">
+                  <option value="einnahme">Einnahme</option>
+                  <option value="ausgabe">Ausgabe</option>
+                </select>
+              </div>
+              <div class="field">
+                <label class="field-label" for="fin-tx-amount">Betrag</label>
+                <div class="field-with-unit"><span class="field-unit field-unit-left">€</span>
+                  <input class="field-input field-input-right" type="number" id="fin-tx-amount" min="0" step="0.01" placeholder="0" required />
+                </div>
+              </div>
+              <div class="field">
+                <label class="field-label" for="fin-tx-category">Kategorie</label>
+                <select class="field-input" id="fin-tx-category">
+                  <option value="wohnen">Wohnen</option>
+                  <option value="lebensmittel">Lebensmittel</option>
+                  <option value="transport">Transport</option>
+                  <option value="bildung">Bildung</option>
+                  <option value="freizeit">Freizeit</option>
+                  <option value="gesundheit">Gesundheit</option>
+                  <option value="einkommen">Einkommen</option>
+                  <option value="sonstiges">Sonstiges</option>
+                </select>
+              </div>
+              <div class="field">
+                <label class="field-label" for="fin-tx-date">Datum</label>
+                <input class="field-input" type="date" id="fin-tx-date" />
+              </div>
+              <div class="field fin-transaction-form-submit">
+                <label class="field-label" style="visibility:hidden;">Hinzufügen</label>
+                <button type="submit" class="data-action-btn" id="fin-tx-submit-btn" style="justify-content:center;">
+                  <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  <span>Hinzufügen</span>
+                </button>
+              </div>
+            </div>
+            <input type="hidden" id="fin-tx-edit-id" value="" />
+          </form>
+
+          <div id="fin-transaction-list" class="fin-transaction-list"></div>
+          <p id="fin-transaction-empty-hint" class="field-hint" style="display:none;">Noch keine Transaktionen erfasst — füge oben deine erste Buchung hinzu.</p>
         </div>
       </section>
 
@@ -1920,6 +2485,10 @@
         AppState.set('theme', next);
         this._applyTheme(next);
         StorageManager.save('theme', next);
+        // Kreisdiagramm liest Theme-Farben aus CSS-Variablen — bei Theme-Wechsel neu zeichnen.
+        if (typeof FinanzenEngine !== 'undefined' && FinanzenEngine._els && FinanzenEngine._els.pieCanvas) {
+          FinanzenEngine._renderPieChart();
+        }
       });
     },
 
@@ -2128,6 +2697,7 @@
       };
       AppState.set('financeEntries', [...(AppState.financeEntries || []), entry]);
       StorageManager.persistState();
+      if (typeof updateDashboard === 'function') updateDashboard();
       return { ok: true, message: `Finanzeintrag "${entry.label}" (${entry.amount} €) hinzugefügt.`, data: entry };
     },
 
@@ -2140,6 +2710,7 @@
       const next = [...entries]; next[idx] = updated;
       AppState.set('financeEntries', next);
       StorageManager.persistState();
+      if (typeof updateDashboard === 'function') updateDashboard();
       return { ok: true, message: `Finanzeintrag "${updated.label}" aktualisiert.`, data: updated };
     },
 
@@ -2149,6 +2720,7 @@
       if (!entries.some(e => e.id === payload.id)) return { ok: false, message: `Kein Finanzeintrag mit ID ${payload.id} gefunden.` };
       AppState.set('financeEntries', entries.filter(e => e.id !== payload.id));
       StorageManager.persistState();
+      if (typeof updateDashboard === 'function') updateDashboard();
       return { ok: true, message: `Finanzeintrag gelöscht (ID ${payload.id}).` };
     },
 
@@ -2570,6 +3142,699 @@
 
 
   /* ═══════════════════════════════════════════════
+     STUDIUM ENGINE  — Studienübersicht, Module & Prüfungen
+     Liest/schreibt ausschließlich SettingsEngine._data.studium
+     (gleiche Datenquelle wie "Meine Einstellungen"). Dadurch
+     sind Studium-Seite, Einstellungen, Dashboard und der unter
+     "settings_data" persistierte localStorage-Stand immer
+     automatisch synchron — es gibt keine zweite Datenkopie.
+  ═══════════════════════════════════════════════ */
+  const StudiumEngine = {
+    _els: {},
+
+    init() {
+      this._els = {
+        page:           document.getElementById('page-studium'),
+        studiengangEl:  document.getElementById('study-studiengang-display'),
+        fachsemesterEl: document.getElementById('study-fachsemester-display'),
+        abschlussEl:    document.getElementById('study-abschluss-display'),
+        progressPctEl:  document.getElementById('study-progress-pct'),
+        progressFillEl: document.getElementById('study-progress-fill'),
+        form:           document.getElementById('study-module-form'),
+        nameInput:      document.getElementById('study-module-name'),
+        typInput:       document.getElementById('study-module-typ'),
+        ectsInput:      document.getElementById('study-module-ects'),
+        terminInput:    document.getElementById('study-module-termin'),
+        list:           document.getElementById('study-module-list'),
+        emptyHint:      document.getElementById('study-module-empty-hint'),
+      };
+
+      // Modul existiert nur auf der Studium-Seite — sicher abbrechen,
+      // falls das Markup (noch) nicht vorhanden ist.
+      if (!this._els.page || !this._els.form) return;
+
+      this._els.form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        this._addModule();
+      });
+
+      // Immer aktuell aus SettingsEngine lesen, auch wenn sich Daten
+      // über die Einstellungen-Seite oder Import/Backup geändert haben.
+      this.render();
+
+      // Bei jedem Navigieren zur Studium-Seite neu rendern, damit
+      // Änderungen aus anderen Seiten (z. B. Einstellungen) sichtbar sind.
+      AppState.on('currentPage', (page) => {
+        if (page === 'studium') this.render();
+      });
+    },
+
+    _getStudium() {
+      if (typeof SettingsEngine === 'undefined' || !SettingsEngine._data) return null;
+      if (!Array.isArray(SettingsEngine._data.studium.module)) {
+        SettingsEngine._data.studium.module = [];
+      }
+      return SettingsEngine._data.studium;
+    },
+
+    /** Komplettes Re-Rendering der Studium-Seite aus den aktuellen Profildaten. */
+    render() {
+      const studium = this._getStudium();
+      if (!studium) return;
+
+      if (this._els.studiengangEl)  this._els.studiengangEl.textContent  = studium.studiengang || '—';
+      if (this._els.fachsemesterEl) this._els.fachsemesterEl.textContent = studium.fachsemester ? `${studium.fachsemester}. Semester` : '—';
+
+      if (this._els.abschlussEl) {
+        const d = studium.bachelorAbschluss ? new Date(studium.bachelorAbschluss) : null;
+        this._els.abschlussEl.textContent = (d && !isNaN(d))
+          ? d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })
+          : '—';
+      }
+
+      const pct = Math.min(100, Math.max(0, Number(studium.bachelorProgress) || 0));
+      if (this._els.progressPctEl)  this._els.progressPctEl.textContent = `${pct}%`;
+      if (this._els.progressFillEl) this._els.progressFillEl.style.width = `${pct}%`;
+
+      this._renderModuleList(studium.module || []);
+    },
+
+    _renderModuleList(modules) {
+      if (!this._els.list) return;
+
+      if (!modules.length) {
+        this._els.list.innerHTML = '';
+        if (this._els.emptyHint) this._els.emptyHint.style.display = '';
+        return;
+      }
+      if (this._els.emptyHint) this._els.emptyHint.style.display = 'none';
+
+      this._els.list.innerHTML = modules.map(m => this._moduleCardHtml(m)).join('');
+
+      // Event-Listener pro Karte binden (nach dem Neuaufbau des innerHTML nötig).
+      modules.forEach(m => {
+        const card = this._els.list.querySelector(`[data-module-id="${m.id}"]`);
+        if (!card) return;
+
+        const slider = card.querySelector('.study-module-progress-slider');
+        const valLbl = card.querySelector('.study-module-progress-val');
+        if (slider) {
+          slider.addEventListener('input', () => {
+            if (valLbl) valLbl.textContent = `${slider.value}%`;
+            this._updateModuleProgress(m.id, Number(slider.value));
+          });
+        }
+
+        const delBtn = card.querySelector('.study-module-delete-btn');
+        if (delBtn) {
+          delBtn.addEventListener('click', () => this._deleteModule(m.id, m.name));
+        }
+      });
+    },
+
+    _moduleCardHtml(m) {
+      const ects = m.ects ? `${m.ects} ECTS` : null;
+      const termin = m.termin ? this._fmtDate(m.termin) : null;
+      const metaParts = [ects, termin].filter(Boolean);
+      const fortschritt = Math.min(100, Math.max(0, Number(m.fortschritt) || 0));
+
+      return `
+        <div class="study-module-card" data-module-id="${m.id}">
+          <div class="study-module-header">
+            <div class="study-module-title-group">
+              <span class="study-module-name">${this._escapeHtml(m.name)}</span>
+              <span class="study-module-meta">
+                <span class="study-module-type-badge ${m.typ === 'pruefung' ? 'pruefung' : 'modul'}">${m.typ === 'pruefung' ? 'Prüfung' : 'Modul'}</span>
+                ${metaParts.map(p => `<span>${this._escapeHtml(p)}</span>`).join('')}
+              </span>
+            </div>
+            <button type="button" class="study-module-delete-btn" title="Löschen" aria-label="Modul löschen">
+              <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+            </button>
+          </div>
+          <div class="study-module-progress-row">
+            <input type="range" class="range-input study-module-progress-slider" min="0" max="100" value="${fortschritt}" />
+            <span class="study-module-progress-val">${fortschritt}%</span>
+          </div>
+        </div>`;
+    },
+
+    /* ── Modul hinzufügen ── */
+    _addModule() {
+      const studium = this._getStudium();
+      if (!studium) return;
+
+      const name = this._els.nameInput.value.trim();
+      if (!name) { this._els.nameInput.focus(); return; }
+
+      const newModule = {
+        id: Date.now() + Math.floor(Math.random() * 1000),
+        name,
+        typ: this._els.typInput.value || 'modul',
+        ects: this._els.ectsInput.value ? Number(this._els.ectsInput.value) : null,
+        termin: this._els.terminInput.value || '',
+        fortschritt: 0,
+        createdAt: new Date().toISOString(),
+      };
+
+      studium.module.push(newModule);
+      SettingsEngine._persist(); // speichert in localStorage + aktualisiert Dashboard
+
+      // Formular zurücksetzen
+      this._els.form.reset();
+      this._els.typInput.value = 'modul';
+
+      this._renderModuleList(studium.module);
+    },
+
+    /* ── Modul löschen ── */
+    _deleteModule(id, name) {
+      const studium = this._getStudium();
+      if (!studium) return;
+
+      const confirmed = window.confirm(`Modul "${name}" wirklich löschen?`);
+      if (!confirmed) return;
+
+      studium.module = studium.module.filter(m => m.id !== id);
+      SettingsEngine._persist();
+      this._renderModuleList(studium.module);
+    },
+
+    /* ── Lernfortschritt pro Modul aktualisieren ── */
+    _updateModuleProgress(id, value) {
+      const studium = this._getStudium();
+      if (!studium) return;
+
+      const mod = studium.module.find(m => m.id === id);
+      if (!mod) return;
+
+      mod.fortschritt = Math.min(100, Math.max(0, value));
+      SettingsEngine._persist();
+      // Kein vollständiges Re-Render nötig — Slider-Label wurde bereits
+      // direkt beim "input"-Event aktualisiert, das vermeidet Sprünge
+      // während des Ziehens.
+    },
+
+    _fmtDate(val) {
+      const d = new Date(val);
+      if (isNaN(d)) return val;
+      return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    },
+
+    _escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    },
+  };
+
+
+  /* ═══════════════════════════════════════════════
+     FINANZEN ENGINE  — Einnahmen, Ausgaben, Budget,
+     Rücklagen, Sparziele, Transaktionen, Kreisdiagramm
+     und Finanzstatistiken.
+
+     Datenquellen (keine Duplikate, keine externen Libs):
+     - Transaktionen: AppState.financeEntries (bestehend,
+       via ActionDispatcher ADD/UPDATE/DELETE_FINANCE).
+       Konvention: amount > 0 = Einnahme, amount < 0 = Ausgabe.
+     - Budget / Rücklagen: SettingsEngine._data.finanzen
+       (gleiche Felder wie "Meine Einstellungen").
+     - Sparziele: SettingsEngine._data.finanzen.sparziele
+       (neues, additives Array in derselben Struktur).
+  ═══════════════════════════════════════════════ */
+  const FinanzenEngine = {
+    _els: {},
+
+    CATEGORY_LABELS: {
+      wohnen: 'Wohnen', lebensmittel: 'Lebensmittel', transport: 'Transport',
+      bildung: 'Bildung', freizeit: 'Freizeit', gesundheit: 'Gesundheit',
+      einkommen: 'Einkommen', allgemein: 'Allgemein', sonstiges: 'Sonstiges',
+    },
+
+    CATEGORY_COLORS: {
+      wohnen: '#4f8ef7', lebensmittel: '#3ecf8e', transport: '#f5a623',
+      bildung: '#9b6cf7', freizeit: '#f26b6b', gesundheit: '#2dd4bf',
+      einkommen: '#84cc16', allgemein: '#94a3b8', sonstiges: '#e879f9',
+    },
+
+    init() {
+      this._els = {
+        page: document.getElementById('page-finanzen'),
+
+        // KPI cards
+        kpiIncome: document.getElementById('fin-month-income'),
+        kpiIncomeCount: document.getElementById('fin-month-income-count'),
+        kpiExpense: document.getElementById('fin-month-expense'),
+        kpiExpenseCount: document.getElementById('fin-month-expense-count'),
+        kpiBalance: document.getElementById('fin-month-balance'),
+        kpiRuecklagen: document.getElementById('fin-ruecklagen-value'),
+
+        // Budgetplanung
+        budgetInput: document.getElementById('fin-budget-input'),
+        ruecklagenInput: document.getElementById('fin-ruecklagen-input'),
+        budgetPct: document.getElementById('fin-budget-pct'),
+        budgetFill: document.getElementById('fin-budget-fill'),
+
+        // Sparziele
+        goalForm: document.getElementById('fin-goal-form'),
+        goalNameInput: document.getElementById('fin-goal-name'),
+        goalTargetInput: document.getElementById('fin-goal-target'),
+        goalList: document.getElementById('fin-goal-list'),
+        goalEmptyHint: document.getElementById('fin-goal-empty-hint'),
+
+        // Chart & Stats
+        pieCanvas: document.getElementById('fin-pie-canvas'),
+        pieLegend: document.getElementById('fin-pie-legend'),
+        statsGrid: document.getElementById('fin-stats-grid'),
+
+        // Transaktionen
+        txForm: document.getElementById('fin-transaction-form'),
+        txLabelInput: document.getElementById('fin-tx-label'),
+        txTypInput: document.getElementById('fin-tx-typ'),
+        txAmountInput: document.getElementById('fin-tx-amount'),
+        txCategoryInput: document.getElementById('fin-tx-category'),
+        txDateInput: document.getElementById('fin-tx-date'),
+        txEditIdInput: document.getElementById('fin-tx-edit-id'),
+        txSubmitBtn: document.getElementById('fin-tx-submit-btn'),
+        txList: document.getElementById('fin-transaction-list'),
+        txEmptyHint: document.getElementById('fin-transaction-empty-hint'),
+      };
+
+      if (!this._els.page || !this._els.txForm) return;
+
+      // Default-Datum auf heute setzen
+      if (this._els.txDateInput && !this._els.txDateInput.value) {
+        this._els.txDateInput.value = new Date().toISOString().slice(0, 10);
+      }
+
+      this._els.txForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        this._submitTransaction();
+      });
+
+      if (this._els.goalForm) {
+        this._els.goalForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          this._addGoal();
+        });
+      }
+
+      // Budget / Rücklagen ↔ SettingsEngine (gleiche Datenquelle wie Einstellungen)
+      if (this._els.budgetInput) {
+        this._els.budgetInput.addEventListener('input', () => {
+          const finanzen = this._getFinanzen();
+          if (!finanzen) return;
+          finanzen.budget = Number(this._els.budgetInput.value) || 0;
+          SettingsEngine._persist();
+          this.render();
+        });
+      }
+      if (this._els.ruecklagenInput) {
+        this._els.ruecklagenInput.addEventListener('input', () => {
+          const finanzen = this._getFinanzen();
+          if (!finanzen) return;
+          finanzen.ruecklagen = Number(this._els.ruecklagenInput.value) || 0;
+          SettingsEngine._persist();
+          this.render();
+        });
+      }
+
+      this.render();
+
+      // Neu rendern, sobald die Finanzen-Seite erneut angezeigt wird
+      // (z. B. nach Änderungen in den Einstellungen oder Datenimport).
+      AppState.on('currentPage', (page) => {
+        if (page === 'finanzen') this.render();
+      });
+    },
+
+    _getFinanzen() {
+      if (typeof SettingsEngine === 'undefined' || !SettingsEngine._data) return null;
+      if (!Array.isArray(SettingsEngine._data.finanzen.sparziele)) {
+        SettingsEngine._data.finanzen.sparziele = [];
+      }
+      return SettingsEngine._data.finanzen;
+    },
+
+    _entries() { return Array.isArray(AppState.financeEntries) ? AppState.financeEntries : []; },
+
+    _isCurrentMonth(dateStr) {
+      const d = new Date(dateStr);
+      const now = new Date();
+      return !isNaN(d) && d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+    },
+
+    _fmtEuro(n) { return `€ ${(Number(n) || 0).toLocaleString('de-DE', { maximumFractionDigits: 2 })}`; },
+
+    /** Komplettes Re-Rendering aller Finanzen-Seitenabschnitte. */
+    render() {
+      const finanzen = this._getFinanzen();
+      if (!finanzen) return;
+
+      this._renderKpis(finanzen);
+      this._renderBudgetBlock(finanzen);
+      this._renderGoals(finanzen);
+      this._renderTransactionList();
+      this._renderStats();
+      this._renderPieChart();
+    },
+
+    /* ── KPI-Karten (Monatsbilanz) ── */
+    _renderKpis(finanzen) {
+      const entries = this._entries();
+      const monthEntries = entries.filter(e => this._isCurrentMonth(e.date));
+      const incomeEntries = monthEntries.filter(e => Number(e.amount) > 0);
+      const expenseEntries = monthEntries.filter(e => Number(e.amount) < 0);
+
+      const income = incomeEntries.reduce((s, e) => s + Number(e.amount), 0);
+      const expense = Math.abs(expenseEntries.reduce((s, e) => s + Number(e.amount), 0));
+      const balance = income - expense;
+
+      if (this._els.kpiIncome) this._els.kpiIncome.textContent = this._fmtEuro(income);
+      if (this._els.kpiIncomeCount) this._els.kpiIncomeCount.textContent = `${incomeEntries.length} Buchung${incomeEntries.length === 1 ? '' : 'en'}`;
+      if (this._els.kpiExpense) this._els.kpiExpense.textContent = this._fmtEuro(expense);
+      if (this._els.kpiExpenseCount) this._els.kpiExpenseCount.textContent = `${expenseEntries.length} Buchung${expenseEntries.length === 1 ? '' : 'en'}`;
+      if (this._els.kpiBalance) {
+        this._els.kpiBalance.textContent = this._fmtEuro(balance);
+        this._els.kpiBalance.style.color = balance >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+      }
+      if (this._els.kpiRuecklagen) this._els.kpiRuecklagen.textContent = this._fmtEuro(finanzen.ruecklagen);
+    },
+
+    /* ── Budgetplanung ── */
+    _renderBudgetBlock(finanzen) {
+      if (this._els.budgetInput && document.activeElement !== this._els.budgetInput) {
+        this._els.budgetInput.value = finanzen.budget || '';
+      }
+      if (this._els.ruecklagenInput && document.activeElement !== this._els.ruecklagenInput) {
+        this._els.ruecklagenInput.value = finanzen.ruecklagen || '';
+      }
+
+      const entries = this._entries().filter(e => this._isCurrentMonth(e.date) && Number(e.amount) < 0);
+      const monthExpense = Math.abs(entries.reduce((s, e) => s + Number(e.amount), 0));
+      const budget = Number(finanzen.budget) || 0;
+      const pct = budget > 0 ? Math.min(100, Math.round((monthExpense / budget) * 100)) : 0;
+
+      if (this._els.budgetPct) this._els.budgetPct.textContent = `${pct}%`;
+      if (this._els.budgetFill) {
+        this._els.budgetFill.style.width = `${pct}%`;
+        this._els.budgetFill.style.background = pct >= 100 ? 'var(--accent-red)' : pct >= 80 ? 'var(--accent-amber)' : 'var(--accent-primary)';
+      }
+    },
+
+    /* ── Sparziele ── */
+    _addGoal() {
+      const finanzen = this._getFinanzen();
+      if (!finanzen) return;
+
+      const name = this._els.goalNameInput.value.trim();
+      const target = Number(this._els.goalTargetInput.value);
+      if (!name || !target || target <= 0) return;
+
+      finanzen.sparziele.push({
+        id: Date.now() + Math.floor(Math.random() * 1000),
+        name, target,
+        createdAt: new Date().toISOString(),
+      });
+      SettingsEngine._persist();
+
+      this._els.goalForm.reset();
+      this._renderGoals(finanzen);
+    },
+
+    _deleteGoal(id, name) {
+      const finanzen = this._getFinanzen();
+      if (!finanzen) return;
+      if (!window.confirm(`Sparziel "${name}" wirklich löschen?`)) return;
+
+      finanzen.sparziele = finanzen.sparziele.filter(g => g.id !== id);
+      SettingsEngine._persist();
+      this._renderGoals(finanzen);
+    },
+
+    _renderGoals(finanzen) {
+      if (!this._els.goalList) return;
+      const goals = finanzen.sparziele || [];
+      const ruecklagen = Number(finanzen.ruecklagen) || 0;
+
+      if (!goals.length) {
+        this._els.goalList.innerHTML = '';
+        if (this._els.goalEmptyHint) this._els.goalEmptyHint.style.display = '';
+        return;
+      }
+      if (this._els.goalEmptyHint) this._els.goalEmptyHint.style.display = 'none';
+
+      this._els.goalList.innerHTML = goals.map(g => {
+        const pct = g.target > 0 ? Math.min(100, Math.round((ruecklagen / g.target) * 100)) : 0;
+        return `
+          <div class="fin-goal-card" data-goal-id="${g.id}">
+            <div class="fin-goal-header">
+              <span class="fin-goal-name">${this._escapeHtml(g.name)}</span>
+              <button type="button" class="fin-tx-action-btn delete" data-goal-delete="${g.id}" title="Löschen" aria-label="Sparziel löschen">
+                <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+              </button>
+            </div>
+            <div class="fin-goal-amounts"><strong>${this._fmtEuro(ruecklagen)}</strong> von ${this._fmtEuro(g.target)} (${pct}%)</div>
+            <div class="progress-track" style="margin-top:6px;"><div class="progress-fill" style="width:${pct}%"></div></div>
+          </div>`;
+      }).join('');
+
+      this._els.goalList.querySelectorAll('[data-goal-delete]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const goal = goals.find(g => String(g.id) === btn.dataset.goalDelete);
+          this._deleteGoal(Number(btn.dataset.goalDelete), goal ? goal.name : '');
+        });
+      });
+    },
+
+    /* ── Transaktionen: hinzufügen / bearbeiten / löschen ── */
+    _submitTransaction() {
+      const label = this._els.txLabelInput.value.trim();
+      const typ = this._els.txTypInput.value;
+      const amountRaw = Number(this._els.txAmountInput.value);
+      const category = this._els.txCategoryInput.value;
+      const date = this._els.txDateInput.value || new Date().toISOString().slice(0, 10);
+      const editId = this._els.txEditIdInput.value;
+
+      if (!label || !amountRaw || amountRaw <= 0) return;
+
+      // Vorzeichen-Konvention: Einnahme = positiv, Ausgabe = negativ.
+      const signedAmount = typ === 'ausgabe' ? -Math.abs(amountRaw) : Math.abs(amountRaw);
+
+      if (editId) {
+        ActionDispatcher.dispatch({
+          type: 'UPDATE_FINANCE',
+          payload: { id: Number(editId), changes: { label, amount: signedAmount, category, date } },
+        });
+      } else {
+        ActionDispatcher.dispatch({
+          type: 'ADD_FINANCE',
+          payload: { label, amount: signedAmount, category, date },
+        });
+      }
+
+      this._resetTransactionForm();
+      this.render();
+    },
+
+    _resetTransactionForm() {
+      this._els.txForm.reset();
+      this._els.txEditIdInput.value = '';
+      this._els.txDateInput.value = new Date().toISOString().slice(0, 10);
+      this._els.txSubmitBtn.querySelector('span').textContent = 'Hinzufügen';
+    },
+
+    _startEditTransaction(entry) {
+      this._els.txLabelInput.value = entry.label;
+      this._els.txTypInput.value = Number(entry.amount) < 0 ? 'ausgabe' : 'einnahme';
+      this._els.txAmountInput.value = Math.abs(Number(entry.amount));
+      this._els.txCategoryInput.value = entry.category || 'sonstiges';
+      this._els.txDateInput.value = entry.date || '';
+      this._els.txEditIdInput.value = entry.id;
+      this._els.txSubmitBtn.querySelector('span').textContent = 'Speichern';
+      this._els.txLabelInput.focus();
+    },
+
+    _deleteTransaction(id, label) {
+      if (!window.confirm(`Transaktion "${label}" wirklich löschen?`)) return;
+      ActionDispatcher.dispatch({ type: 'DELETE_FINANCE', payload: { id } });
+      this.render();
+    },
+
+    _renderTransactionList() {
+      if (!this._els.txList) return;
+      const entries = [...this._entries()].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      if (!entries.length) {
+        this._els.txList.innerHTML = '';
+        if (this._els.txEmptyHint) this._els.txEmptyHint.style.display = '';
+        return;
+      }
+      if (this._els.txEmptyHint) this._els.txEmptyHint.style.display = 'none';
+
+      this._els.txList.innerHTML = entries.map(e => {
+        const isIncome = Number(e.amount) >= 0;
+        const catLabel = this.CATEGORY_LABELS[e.category] || e.category || 'Sonstiges';
+        const dateLabel = this._fmtDateShort(e.date);
+        return `
+          <div class="fin-tx-card" data-tx-id="${e.id}">
+            <span class="fin-tx-sign ${isIncome ? 'income' : 'expense'}">${isIncome ? '+' : '−'}</span>
+            <div class="fin-tx-info">
+              <span class="fin-tx-label">${this._escapeHtml(e.label)}</span>
+              <span class="fin-tx-meta"><span>${this._escapeHtml(catLabel)}</span><span>${dateLabel}</span></span>
+            </div>
+            <span class="fin-tx-amount ${isIncome ? 'income' : 'expense'}">${isIncome ? '+' : ''}${this._fmtEuro(e.amount)}</span>
+            <div class="fin-tx-actions">
+              <button type="button" class="fin-tx-action-btn" data-tx-edit="${e.id}" title="Bearbeiten" aria-label="Transaktion bearbeiten">
+                <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </button>
+              <button type="button" class="fin-tx-action-btn delete" data-tx-delete="${e.id}" title="Löschen" aria-label="Transaktion löschen">
+                <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+              </button>
+            </div>
+          </div>`;
+      }).join('');
+
+      this._els.txList.querySelectorAll('[data-tx-edit]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const entry = entries.find(e => String(e.id) === btn.dataset.txEdit);
+          if (entry) this._startEditTransaction(entry);
+        });
+      });
+      this._els.txList.querySelectorAll('[data-tx-delete]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const entry = entries.find(e => String(e.id) === btn.dataset.txDelete);
+          this._deleteTransaction(Number(btn.dataset.txDelete), entry ? entry.label : '');
+        });
+      });
+    },
+
+    _fmtDateShort(val) {
+      const d = new Date(val);
+      if (isNaN(d)) return val;
+      return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' });
+    },
+
+    /* ── Finanzstatistiken ── */
+    _renderStats() {
+      if (!this._els.statsGrid) return;
+      const entries = this._entries();
+
+      const totalIncome = entries.filter(e => Number(e.amount) > 0).reduce((s, e) => s + Number(e.amount), 0);
+      const totalExpense = Math.abs(entries.filter(e => Number(e.amount) < 0).reduce((s, e) => s + Number(e.amount), 0));
+      const avgExpense = entries.filter(e => Number(e.amount) < 0).length
+        ? totalExpense / entries.filter(e => Number(e.amount) < 0).length
+        : 0;
+      const sparquote = totalIncome > 0 ? Math.round(((totalIncome - totalExpense) / totalIncome) * 100) : 0;
+
+      const byCategory = {};
+      entries.filter(e => Number(e.amount) < 0).forEach(e => {
+        const cat = e.category || 'sonstiges';
+        byCategory[cat] = (byCategory[cat] || 0) + Math.abs(Number(e.amount));
+      });
+      const topCategoryEntry = Object.entries(byCategory).sort((a, b) => b[1] - a[1])[0];
+      const topCategory = topCategoryEntry ? (this.CATEGORY_LABELS[topCategoryEntry[0]] || topCategoryEntry[0]) : '—';
+
+      const stats = [
+        { label: 'Gesamteinnahmen', value: this._fmtEuro(totalIncome) },
+        { label: 'Gesamtausgaben', value: this._fmtEuro(totalExpense) },
+        { label: 'Ø Ausgabe / Buchung', value: this._fmtEuro(avgExpense) },
+        { label: 'Sparquote', value: `${sparquote}%` },
+        { label: 'Größte Kategorie', value: topCategory },
+        { label: 'Anzahl Buchungen', value: String(entries.length) },
+      ];
+
+      this._els.statsGrid.innerHTML = stats.map(s => `
+        <div class="fin-stat-item">
+          <span class="fin-stat-label">${this._escapeHtml(s.label)}</span>
+          <span class="fin-stat-value">${this._escapeHtml(s.value)}</span>
+        </div>`).join('');
+    },
+
+    /* ── Kreisdiagramm (reines Canvas 2D, keine externe Bibliothek) ── */
+    _cssVar(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); },
+
+    _renderPieChart() {
+      const canvas = this._els.pieCanvas;
+      if (!canvas) return;
+
+      const entries = this._entries().filter(e => Number(e.amount) < 0);
+      const byCategory = {};
+      entries.forEach(e => {
+        const cat = e.category || 'sonstiges';
+        byCategory[cat] = (byCategory[cat] || 0) + Math.abs(Number(e.amount));
+      });
+      const cats = Object.keys(byCategory);
+      const total = cats.reduce((s, c) => s + byCategory[c], 0);
+
+      const dpr = window.devicePixelRatio || 1;
+      const cssSize = canvas.clientWidth || canvas.width;
+      canvas.width = cssSize * dpr;
+      canvas.height = cssSize * dpr;
+      const ctx = canvas.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, cssSize, cssSize);
+
+      const cx = cssSize / 2, cy = cssSize / 2, radius = cssSize / 2 - 8;
+
+      if (!cats.length || total <= 0) {
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+        ctx.strokeStyle = this._cssVar('--border-muted') || '#2a3450';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.fillStyle = this._cssVar('--text-muted') || '#8896b0';
+        ctx.font = '12px Inter, system-ui, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('Keine Ausgaben', cx, cy);
+        if (this._els.pieLegend) this._els.pieLegend.innerHTML = '';
+        return;
+      }
+
+      let startAngle = -Math.PI / 2;
+      cats.sort((a, b) => byCategory[b] - byCategory[a]);
+      cats.forEach(cat => {
+        const slice = (byCategory[cat] / total) * Math.PI * 2;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, radius, startAngle, startAngle + slice);
+        ctx.closePath();
+        ctx.fillStyle = this.CATEGORY_COLORS[cat] || '#94a3b8';
+        ctx.fill();
+        startAngle += slice;
+      });
+
+      // Donut-Loch für bessere Lesbarkeit
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius * 0.55, 0, Math.PI * 2);
+      ctx.fillStyle = this._cssVar('--bg-surface') || '#131720';
+      ctx.fill();
+
+      if (this._els.pieLegend) {
+        this._els.pieLegend.innerHTML = cats.map(cat => {
+          const pct = Math.round((byCategory[cat] / total) * 100);
+          const label = this.CATEGORY_LABELS[cat] || cat;
+          const color = this.CATEGORY_COLORS[cat] || '#94a3b8';
+          return `<span class="fin-pie-legend-item"><span class="fin-pie-legend-dot" style="background:${color}"></span>${this._escapeHtml(label)} (${pct}%)</span>`;
+        }).join('');
+      }
+    },
+
+    _escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    },
+  };
+
+
+  /* ═══════════════════════════════════════════════
      UPDATE DASHBOARD  — central read-only renderer
      Reads from SettingsEngine._data (i.e. localStorage
      key "lp_settings_data") and writes the current
@@ -2605,11 +3870,14 @@
     const studiumDetailEl = document.getElementById('dash-studium-detail');
     if (studiumDetailEl) {
       const abschlussDate = fmtDate(studium.bachelorAbschluss);
+      const module = Array.isArray(studium.module) ? studium.module : [];
+      const moduleBestanden = module.filter(m => Number(m.fortschritt) >= 100).length;
       studiumDetailEl.innerHTML = `
         <p style="text-align:left;max-width:none;margin:0;">
           <strong>Studiengang:</strong> ${studium.studiengang ? escapeHtml(studium.studiengang) : PLACEHOLDER}<br/>
           <strong>Bachelorfortschritt:</strong> ${hasPct ? pct + '%' : PLACEHOLDER}<br/>
-          <strong>Bachelorabschluss:</strong> ${abschlussDate ? abschlussDate : PLACEHOLDER}
+          <strong>Bachelorabschluss:</strong> ${abschlussDate ? abschlussDate : PLACEHOLDER}<br/>
+          <strong>Module:</strong> ${module.length ? `${moduleBestanden} von ${module.length} abgeschlossen` : PLACEHOLDER}
         </p>`;
     }
 
@@ -2626,12 +3894,22 @@
 
     const finanzenDetailEl = document.getElementById('dash-finanzen-detail');
     if (finanzenDetailEl) {
+      const entries = Array.isArray(AppState.financeEntries) ? AppState.financeEntries : [];
+      const now = new Date();
+      const monthEntries = entries.filter(e => {
+        const d = new Date(e.date);
+        return !isNaN(d) && d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+      });
+      const monthBalance = monthEntries.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+      const hasEntries = entries.length > 0;
+
       finanzenDetailEl.innerHTML = `
         <p style="text-align:left;max-width:none;margin:0;">
           <strong>Budget:</strong> ${finanzen.budget ? '€ ' + budget.toLocaleString('de-DE') : PLACEHOLDER}<br/>
           <strong>Einkommen:</strong> ${finanzen.einkommen ? '€ ' + einkommen.toLocaleString('de-DE') : PLACEHOLDER}<br/>
           <strong>BAföG:</strong> ${finanzen.bafoeg ? '€ ' + bafoeg.toLocaleString('de-DE') : PLACEHOLDER}<br/>
-          <strong>Gesamteinnahmen:</strong> ${hasFinanzData ? '€ ' + gesamteinnahmen.toLocaleString('de-DE') : PLACEHOLDER}
+          <strong>Gesamteinnahmen:</strong> ${hasFinanzData ? '€ ' + gesamteinnahmen.toLocaleString('de-DE') : PLACEHOLDER}<br/>
+          <strong>Monatsbilanz (Transaktionen):</strong> ${hasEntries ? '€ ' + monthBalance.toLocaleString('de-DE') : PLACEHOLDER}
         </p>`;
     }
 
@@ -2849,17 +4127,21 @@
     // 3. Boot module engines
     SettingsEngine.init();
     DataManagementUI.init();
+    StudiumEngine.init();
+    FinanzenEngine.init();
 
     // 4. Initial dashboard render (auto-update on load)
     updateDashboard();
 
     // 5. Log architecture (dev)
-    console.info('%cLebensplaner v0.4 — Daten-Management (Export/Import/Backup/Reset) aktiv', 'color:#4f8ef7;font-weight:600');
+    console.info('%cLebensplaner v0.6 — Finanzen-Modul (Transaktionen, Budget, Sparziele, Chart) aktiv', 'color:#4f8ef7;font-weight:600');
     console.table({
       AppState         : '✔ initialisiert',
       StorageManager   : '✔ initialisiert',
       UIManager        : '✔ initialisiert',
       SettingsEngine   : '✔ aktiv',
+      StudiumEngine    : '✔ aktiv',
+      FinanzenEngine   : '✔ aktiv',
       ActionDispatcher : '✔ aktiv (14 Aktionstypen)',
       DataManagementUI : '✔ aktiv',
       updateDashboard  : '✔ aktiv',
