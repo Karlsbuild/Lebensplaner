@@ -998,6 +998,7 @@
       .checkbox-grid { grid-template-columns: 1fr; }
       .chat-input-row { flex-direction: column; }
       .chat-send-btn { width: 100%; }
+      .chat-legend-grid { grid-template-columns: 1fr 1fr; }
     }
 
     /* ═══════════════════════════════════════════════
@@ -1149,6 +1150,96 @@
       padding: 10px 0;
     }
 
+    /* ── Kurzbefehls-Legende (ausklappbar) ── */
+    .chat-legend-card {
+      margin-bottom: 16px;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .chat-legend-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: background 160ms ease;
+    }
+
+    .chat-legend-toggle:hover { background: var(--bg-hover); }
+
+    .chat-legend-chevron {
+      width: 16px; height: 16px;
+      stroke: var(--text-secondary);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: transform 160ms ease;
+      flex-shrink: 0;
+    }
+
+    .chat-legend-card.open .chat-legend-chevron { transform: rotate(180deg); }
+
+    .chat-legend-body {
+      display: none;
+      padding: 0 18px 18px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .chat-legend-card.open .chat-legend-body { display: block; }
+
+    .chat-legend-hint {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin: 14px 0 12px;
+    }
+
+    .chat-legend-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .chat-legend-item {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding: 9px 11px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      cursor: pointer;
+      text-align: left;
+      transition: border-color 160ms ease, background 160ms ease;
+    }
+
+    .chat-legend-item:hover {
+      border-color: var(--accent-primary);
+      background: var(--accent-glow);
+    }
+
+    .chat-legend-cmd {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--accent-primary);
+    }
+
+    .chat-legend-desc {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    @media (max-width: 900px) {
+      .chat-legend-grid { grid-template-columns: 1fr 1fr; }
+    }
+
     /* ═══════════════════════════════════════════════
        DEBUG LABEL (dev helper)
     ═══════════════════════════════════════════════ */
@@ -1291,25 +1382,25 @@
         <p class="page-sub">Willkommen zurück — dein Leben auf einen Blick.</p>
 
         <div class="grid-4 gap-16">
-          <div class="stat-card">
+          <div class="stat-card" data-card-id="card-studium-stat">
             <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M2 10l10-6 10 6-10 6z"/><path d="M6 12v6c0 0 2 2 6 2s6-2 6-2v-6"/></svg></div>
             <div class="stat-label">Studium</div>
             <div class="stat-value" id="dash-studium-value">—</div>
             <div class="stat-delta" id="dash-studium-delta">Noch kein Fortschritt</div>
           </div>
-          <div class="stat-card">
+          <div class="stat-card" data-card-id="card-finanzen-stat">
             <div class="stat-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
             <div class="stat-label">Finanzen</div>
             <div class="stat-value" id="dash-finanzen-value">—</div>
             <div class="stat-delta" id="dash-finanzen-delta">Noch keine Daten</div>
           </div>
-          <div class="stat-card">
+          <div class="stat-card" data-card-id="card-strategie-stat">
             <div class="stat-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
             <div class="stat-label">Strategie</div>
             <div class="stat-value">—</div>
             <div class="stat-delta">Ziele noch nicht definiert</div>
           </div>
-          <div class="stat-card">
+          <div class="stat-card" data-card-id="card-notizen-stat">
             <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
             <div class="stat-label">Notizen</div>
             <div class="stat-value">0</div>
@@ -1318,13 +1409,13 @@
         </div>
 
         <div class="grid-2" style="margin-top:16px;">
-          <div class="card">
+          <div class="card" data-card-id="card-studium-detail">
             <div class="card-title">Studium</div>
             <div id="dash-studium-detail" class="placeholder-section" style="margin-top:0;">
               <p>Noch keine Studiumsdaten hinterlegt.</p>
             </div>
           </div>
-          <div class="card">
+          <div class="card" data-card-id="card-finanzen-detail">
             <div class="card-title">Finanzen</div>
             <div id="dash-finanzen-detail" class="placeholder-section" style="margin-top:0;">
               <p>Noch keine Finanzdaten hinterlegt.</p>
@@ -1333,13 +1424,13 @@
         </div>
 
         <div class="grid-2" style="margin-top:16px;">
-          <div class="card">
+          <div class="card" data-card-id="card-bewerbungen-detail">
             <div class="card-title">Bewerbungen</div>
             <div id="dash-bewerbungen-detail" class="placeholder-section" style="margin-top:0;">
               <p>Noch keine Bewerbungsdaten hinterlegt.</p>
             </div>
           </div>
-          <div class="card">
+          <div class="card" data-card-id="card-prioritaeten-detail">
             <div class="card-title">Top-Prioritäten</div>
             <div id="dash-prioritaeten-detail" class="placeholder-section" style="margin-top:0;">
               <p>Noch keine Prioritäten bewertet.</p>
@@ -1348,14 +1439,14 @@
         </div>
 
         <div class="grid-2" style="margin-top:16px;">
-          <div class="card">
+          <div class="card" data-card-id="card-tasks-today">
             <div class="card-title">Heutige Aufgaben</div>
             <div class="placeholder-section">
               <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
               <p>Aufgaben werden hier erscheinen, sobald du sie im Strategie-Bereich anlegst.</p>
             </div>
           </div>
-          <div class="card">
+          <div class="card" data-card-id="card-notes-recent">
             <div class="card-title">Letzte Notizen</div>
             <div class="placeholder-section">
               <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -1721,6 +1812,18 @@
         <h1 class="page-heading" id="h-chatbot">Chatbot</h1>
         <p class="page-sub">Lokaler Offline-Assistent — beantwortet Fragen, analysiert deine Daten, erkennt Fristen und Konflikte. Läuft vollständig im Browser, ohne Internetverbindung oder externe Dienste.</p>
 
+        <!-- ── Ausklappbare Kurzbefehls-Legende ── -->
+        <div class="card chat-legend-card">
+          <button type="button" id="chat-legend-toggle" class="chat-legend-toggle" aria-expanded="false" aria-controls="chat-legend-body">
+            <span>Kurzbefehle anzeigen</span>
+            <svg class="chat-legend-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div id="chat-legend-body" class="chat-legend-body">
+            <p class="chat-legend-hint">Klicke einen Befehl an, um ihn direkt ins Eingabefeld zu übernehmen.</p>
+            <div class="chat-legend-grid" id="chat-legend-grid"></div>
+          </div>
+        </div>
+
         <div class="card chat-card">
           <div id="chat-log" class="chat-log" aria-live="polite"></div>
 
@@ -1729,7 +1832,7 @@
               type="text"
               id="chat-input"
               class="field-input chat-input"
-              placeholder="Frage stellen, z. B. „Welche Fristen stehen an?" oder „Füge Termin Bachelorabschluss am 2026-09-01 hinzu""
+              placeholder="Frage stellen oder Kurzbefehl nutzen, z. B. /event, /budget, /recommend …"
               autocomplete="off"
             />
             <button type="submit" class="chat-send-btn">Senden</button>
@@ -1789,9 +1892,12 @@
     strategie: {},
     notizen  : [],
     settings : {},
-    events   : [],   // { id, title, date, type, createdAt }
-    checklist: [],   // { id, text, done, createdAt }
-    financeEntries: [], // { id, label, amount, category, date, createdAt }
+    events         : [], // { id, title, date, type, createdAt }
+    checklist      : [], // { id, text, done, createdAt }
+    financeEntries : [], // { id, label, amount, category, date, createdAt }
+    cardState      : {}, // { [cardId]: 'visible' | 'hidden' | 'deleted' }
+    scenarios      : [], // { id, name, description, data, createdAt }
+    charts         : {}, // { [chartId]: { type, data, updatedAt } }
 
     /** Notify listeners when state changes */
     _listeners: {},
@@ -1858,9 +1964,12 @@
         strategie: AppState.strategie,
         notizen : AppState.notizen,
         settings: AppState.settings,
-        events  : AppState.events,
-        checklist: AppState.checklist,
-        financeEntries: AppState.financeEntries,
+        events         : AppState.events,
+        checklist      : AppState.checklist,
+        financeEntries : AppState.financeEntries,
+        cardState      : AppState.cardState,
+        scenarios      : AppState.scenarios,
+        charts         : AppState.charts,
       });
     },
 
@@ -2068,6 +2177,11 @@
       'ADD_FINANCE', 'UPDATE_FINANCE', 'DELETE_FINANCE',
       'ADD_CHECKLIST_ITEM', 'DELETE_CHECKLIST_ITEM',
       'UPDATE_PROFILE',
+      'HIDE_CARD', 'SHOW_CARD', 'DELETE_CARD',
+      'UPDATE_CHART',
+      'ADD_SCENARIO', 'DELETE_SCENARIO',
+      'GENERATE_RECOMMENDATION',
+      'EXPORT_DATA', 'IMPORT_DATA',
     ],
 
     /** Letzte ausgeführte Aktionen, für das Transparenz-Log auf der Chatbot-Seite. */
@@ -2089,15 +2203,24 @@
       let result;
       try {
         switch (type) {
-          case 'ADD_EVENT':            result = this._addEvent(payload); break;
-          case 'UPDATE_EVENT':         result = this._updateEvent(payload); break;
-          case 'DELETE_EVENT':         result = this._deleteEvent(payload); break;
-          case 'ADD_FINANCE':          result = this._addFinance(payload); break;
-          case 'UPDATE_FINANCE':       result = this._updateFinance(payload); break;
-          case 'DELETE_FINANCE':       result = this._deleteFinance(payload); break;
-          case 'ADD_CHECKLIST_ITEM':   result = this._addChecklistItem(payload); break;
-          case 'DELETE_CHECKLIST_ITEM':result = this._deleteChecklistItem(payload); break;
-          case 'UPDATE_PROFILE':       result = this._updateProfile(payload); break;
+          case 'ADD_EVENT':             result = this._addEvent(payload); break;
+          case 'UPDATE_EVENT':          result = this._updateEvent(payload); break;
+          case 'DELETE_EVENT':          result = this._deleteEvent(payload); break;
+          case 'ADD_FINANCE':           result = this._addFinance(payload); break;
+          case 'UPDATE_FINANCE':        result = this._updateFinance(payload); break;
+          case 'DELETE_FINANCE':        result = this._deleteFinance(payload); break;
+          case 'ADD_CHECKLIST_ITEM':    result = this._addChecklistItem(payload); break;
+          case 'DELETE_CHECKLIST_ITEM': result = this._deleteChecklistItem(payload); break;
+          case 'UPDATE_PROFILE':        result = this._updateProfile(payload); break;
+          case 'HIDE_CARD':             result = this._hideCard(payload); break;
+          case 'SHOW_CARD':             result = this._showCard(payload); break;
+          case 'DELETE_CARD':           result = this._deleteCard(payload); break;
+          case 'UPDATE_CHART':          result = this._updateChart(payload); break;
+          case 'ADD_SCENARIO':          result = this._addScenario(payload); break;
+          case 'DELETE_SCENARIO':       result = this._deleteScenario(payload); break;
+          case 'GENERATE_RECOMMENDATION': result = this._generateRecommendation(payload); break;
+          case 'EXPORT_DATA':           result = this._exportData(payload); break;
+          case 'IMPORT_DATA':           result = this._importData(payload); break;
         }
       } catch (e) {
         result = { ok: false, message: `Aktion fehlgeschlagen: ${e.message}` };
@@ -2249,6 +2372,153 @@
       SettingsEngine._updateDerived();
       return { ok: true, message: `Profilfeld "${payload.path}" auf "${payload.value}" aktualisiert.` };
     },
+
+    /* ── KARTEN (Dashboard-Karten ein-/ausblenden/löschen) ──
+       Operiert auf jedem Element mit [data-card-id] im DOM und
+       merkt sich den Zustand persistent in AppState.cardState,
+       damit er beim nächsten Laden erhalten bleibt. */
+    _findCardEl(cardId) {
+      return document.querySelector(`[data-card-id="${cardId}"]`);
+    },
+
+    _setCardState(cardId, state) {
+      const next = { ...(AppState.cardState || {}), [cardId]: state };
+      AppState.set('cardState', next);
+      StorageManager.persistState();
+    },
+
+    _hideCard(payload) {
+      if (!payload || !payload.cardId) return { ok: false, message: 'HIDE_CARD benötigt "cardId".' };
+      const el = this._findCardEl(payload.cardId);
+      if (!el) return { ok: false, message: `Keine Karte mit ID "${payload.cardId}" gefunden.` };
+      el.style.display = 'none';
+      this._setCardState(payload.cardId, 'hidden');
+      return { ok: true, message: `Karte "${payload.cardId}" ausgeblendet.` };
+    },
+
+    _showCard(payload) {
+      if (!payload || !payload.cardId) return { ok: false, message: 'SHOW_CARD benötigt "cardId".' };
+      const el = this._findCardEl(payload.cardId);
+      if (!el) return { ok: false, message: `Keine Karte mit ID "${payload.cardId}" gefunden.` };
+      el.style.display = '';
+      this._setCardState(payload.cardId, 'visible');
+      return { ok: true, message: `Karte "${payload.cardId}" eingeblendet.` };
+    },
+
+    _deleteCard(payload) {
+      if (!payload || !payload.cardId) return { ok: false, message: 'DELETE_CARD benötigt "cardId".' };
+      const el = this._findCardEl(payload.cardId);
+      if (!el) return { ok: false, message: `Keine Karte mit ID "${payload.cardId}" gefunden.` };
+      el.remove();
+      this._setCardState(payload.cardId, 'deleted');
+      return { ok: true, message: `Karte "${payload.cardId}" entfernt.` };
+    },
+
+    /* ── DIAGRAMME ──
+       Speichert die Konfiguration/Daten eines benannten Diagramms
+       in AppState.charts. Ruft optional eine globale Redraw-Funktion
+       window.renderChart(chartId) auf, falls eine solche existiert
+       (z. B. von einem späteren Chart-Modul bereitgestellt). */
+    _updateChart(payload) {
+      if (!payload || !payload.chartId) return { ok: false, message: 'UPDATE_CHART benötigt "chartId".' };
+      const next = {
+        ...(AppState.charts || {}),
+        [payload.chartId]: {
+          type: payload.type || (AppState.charts?.[payload.chartId]?.type) || 'bar',
+          data: payload.data !== undefined ? payload.data : (AppState.charts?.[payload.chartId]?.data || null),
+          updatedAt: new Date().toISOString(),
+        },
+      };
+      AppState.set('charts', next);
+      StorageManager.persistState();
+      if (typeof window.renderChart === 'function') {
+        try { window.renderChart(payload.chartId); } catch (e) { /* Chart-Modul optional, Fehler ignorieren */ }
+      }
+      return { ok: true, message: `Diagramm "${payload.chartId}" aktualisiert.`, data: next[payload.chartId] };
+    },
+
+    /* ── SZENARIEN ── */
+    _addScenario(payload) {
+      if (!payload || !payload.name) return { ok: false, message: 'ADD_SCENARIO benötigt "name".' };
+      const scenario = {
+        id: this._genId(),
+        name: payload.name,
+        description: payload.description || '',
+        data: payload.data || {},
+        createdAt: new Date().toISOString(),
+      };
+      AppState.set('scenarios', [...(AppState.scenarios || []), scenario]);
+      StorageManager.persistState();
+      return { ok: true, message: `Szenario "${scenario.name}" hinzugefügt.`, data: scenario };
+    },
+
+    _deleteScenario(payload) {
+      if (!payload || !payload.id) return { ok: false, message: 'DELETE_SCENARIO benötigt "id".' };
+      const scenarios = AppState.scenarios || [];
+      const exists = scenarios.some(s => s.id === payload.id);
+      if (!exists) return { ok: false, message: `Kein Szenario mit ID ${payload.id} gefunden.` };
+      AppState.set('scenarios', scenarios.filter(s => s.id !== payload.id));
+      StorageManager.persistState();
+      return { ok: true, message: `Szenario gelöscht (ID ${payload.id}).` };
+    },
+
+    /* ── EMPFEHLUNG GENERIEREN ──
+       Formale Aktions-Hülle um die bestehende, regelbasierte
+       Empfehlungslogik aus ChatbotEngine — rein lokal berechnet. */
+    _generateRecommendation(payload) {
+      if (typeof ChatbotEngine === 'undefined') {
+        return { ok: false, message: 'ChatbotEngine nicht verfügbar.' };
+      }
+      const text = ChatbotEngine._answerRecommendation();
+      return { ok: true, message: 'Empfehlung erzeugt.', data: { text } };
+    },
+
+    /* ── EXPORT / IMPORT (lokale Datei, kein Netzwerk) ── */
+    _exportData(payload) {
+      const snapshot = {
+        exportedAt: new Date().toISOString(),
+        state: StorageManager.load('state', {}),
+        settings: StorageManager.load('settings_data', {}),
+      };
+      try {
+        const json = JSON.stringify(snapshot, null, 2);
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = payload?.filename || `lebensplaner-export-${new Date().toISOString().slice(0,10)}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        return { ok: true, message: 'Daten als JSON-Datei exportiert.', data: snapshot };
+      } catch (e) {
+        return { ok: false, message: `Export fehlgeschlagen: ${e.message}` };
+      }
+    },
+
+    _importData(payload) {
+      if (!payload || !payload.json) {
+        return { ok: false, message: 'IMPORT_DATA benötigt "json" (als String oder Objekt).' };
+      }
+      try {
+        const parsed = typeof payload.json === 'string' ? JSON.parse(payload.json) : payload.json;
+        if (parsed.state) {
+          Object.assign(AppState, parsed.state);
+          StorageManager.save('state', parsed.state);
+        }
+        if (parsed.settings && typeof SettingsEngine !== 'undefined') {
+          SettingsEngine._data = SettingsEngine._merge(SettingsEngine._clone(SettingsEngine.DEFAULTS), parsed.settings);
+          SettingsEngine._persist();
+          SettingsEngine._populateAll();
+          SettingsEngine._updateDerived();
+        }
+        if (typeof updateDashboard === 'function') updateDashboard();
+        return { ok: true, message: 'Daten erfolgreich importiert.' };
+      } catch (e) {
+        return { ok: false, message: `Import fehlgeschlagen: ungültiges JSON-Format (${e.message}).` };
+      }
+    },
   };
 
 
@@ -2268,8 +2538,6 @@
       this.history.push({ role: 'user', content: userMessage });
 
       // Lokale, regelbasierte Verarbeitung — kein API-Aufruf, kein Netzwerk.
-      // (ChatbotEngine wird unten definiert und arbeitet ausschließlich
-      // mit bereits im Browser vorhandenen Daten aus AppState/SettingsEngine.)
       const reply = (typeof ChatbotEngine !== 'undefined')
         ? ChatbotEngine.process(userMessage)
         : '[ChatEngine] ChatbotEngine nicht verfügbar.';
@@ -2287,22 +2555,44 @@
   /* ═══════════════════════════════════════════════
      CHATBOT ENGINE  — lokaler Offline-Assistent
      Erkennt Absicht (Frage / Analyse / Empfehlung /
-     Frist / Konflikt / direkter Befehl), liest Daten
-     aus AppState + SettingsEngine, und kann über den
-     ActionDispatcher Aktionen auslösen. Vollständig
-     offline — keine Netzwerk- oder API-Aufrufe.
+     Frist / Konflikt / Kurzbefehl / direkter Befehl),
+     liest Daten aus AppState + SettingsEngine, und kann
+     über den ActionDispatcher Aktionen auslösen.
+     Vollständig offline — keine Netzwerk- oder API-Aufrufe.
   ═══════════════════════════════════════════════ */
   const ChatbotEngine = {
+
+    /** Kurzbefehle: Slash-Befehl -> { description, handler } */
+    SLASH_COMMANDS: {
+      '/event':              'Termin/Frist hinzufügen — z. B. "/event Bachelorabschluss 2026-09-01"',
+      '/budget':             'Aktuelles Budget anzeigen oder setzen — z. B. "/budget 800"',
+      '/income':             'Einkommen anzeigen oder setzen — z. B. "/income 600"',
+      '/expense':            'Ausgabe hinzufügen — z. B. "/expense Miete 450"',
+      '/check':              'Checklisten-Punkt hinzufügen — z. B. "/check Anschreiben fertigstellen"',
+      '/check-first-degree': 'Status des ersten Studienabschlusses prüfen',
+      '/strategy':           'Strategie-Übersicht anzeigen',
+      '/bachelor':           'Bachelorfortschritt anzeigen',
+      '/start':              'Hilfetext mit allen Möglichkeiten anzeigen',
+      '/recommend':          'Empfehlung basierend auf deinen Daten generieren',
+      '/compare':            'Hinweis zum Studienwege-Vergleich in der Strategie-Seite',
+      '/hide':                'Dashboard-Karte ausblenden — z. B. "/hide card-notes-recent"',
+      '/show':                'Dashboard-Karte wieder einblenden — z. B. "/show card-notes-recent"',
+    },
 
     /** Haupteinstiegspunkt: Text -> Antworttext (+ ggf. Aktionen). */
     process(rawText) {
       const text = String(rawText || '').trim();
       if (!text) return 'Bitte gib eine Frage oder einen Befehl ein.';
 
+      // 0) Slash-Kurzbefehle haben höchste Priorität.
+      if (text.startsWith('/')) {
+        const slashReply = this._trySlashCommand(text);
+        if (slashReply) return slashReply;
+      }
+
       const lower = text.toLowerCase();
 
-      // 1) Direkte Befehle (Termin/Finanzen/Checkliste hinzufügen) haben Vorrang,
-      //    da sie eine Aktion auslösen statt nur zu antworten.
+      // 1) Direkte Freitext-Befehle (Termin/Finanzen/Checkliste hinzufügen).
       const commandReply = this._tryCommand(text, lower);
       if (commandReply) return commandReply;
 
@@ -2344,20 +2634,100 @@
         : StorageManager.load('settings_data', {});
     },
 
-    /* ── Direkte Befehle → ActionDispatcher ── */
+    /* ── Slash-Kurzbefehle ── */
+    _trySlashCommand(text) {
+      const parts = text.split(/\s+/);
+      const cmd = parts[0].toLowerCase();
+      const rest = text.slice(cmd.length).trim();
+
+      switch (cmd) {
+        case '/event': {
+          // /event <Titel> <YYYY-MM-DD>
+          const m = rest.match(/^(.+?)\s+(\d{4}-\d{2}-\d{2})$/);
+          if (!m) return 'Format: "/event <Titel> <JJJJ-MM-TT>", z. B. "/event Bachelorabschluss 2026-09-01".';
+          const result = ActionDispatcher.dispatch({ type: 'ADD_EVENT', payload: { title: m[1].trim(), date: m[2] } });
+          return result.ok ? `✅ ${result.message}` : `⚠️ ${result.message}`;
+        }
+        case '/budget': {
+          if (!rest) {
+            const f = this._getProfile().finanzen || {};
+            return `Aktuelles Budget: ${f.budget || 0} €. Setzen mit "/budget <Betrag>".`;
+          }
+          const value = parseFloat(rest.replace(',', '.'));
+          if (isNaN(value)) return 'Bitte einen gültigen Betrag angeben, z. B. "/budget 800".';
+          const result = ActionDispatcher.dispatch({ type: 'UPDATE_PROFILE', payload: { path: 'finanzen.budget', value } });
+          return result.ok ? `✅ ${result.message}` : `⚠️ ${result.message}`;
+        }
+        case '/income': {
+          if (!rest) {
+            const f = this._getProfile().finanzen || {};
+            return `Aktuelles Einkommen: ${f.einkommen || 0} €. Setzen mit "/income <Betrag>".`;
+          }
+          const value = parseFloat(rest.replace(',', '.'));
+          if (isNaN(value)) return 'Bitte einen gültigen Betrag angeben, z. B. "/income 600".';
+          const result = ActionDispatcher.dispatch({ type: 'UPDATE_PROFILE', payload: { path: 'finanzen.einkommen', value } });
+          return result.ok ? `✅ ${result.message}` : `⚠️ ${result.message}`;
+        }
+        case '/expense': {
+          // /expense <Label> <Betrag>
+          const m = rest.match(/^(.+?)\s+([\-]?\d+(?:[.,]\d+)?)$/);
+          if (!m) return 'Format: "/expense <Bezeichnung> <Betrag>", z. B. "/expense Miete 450".';
+          const result = ActionDispatcher.dispatch({ type: 'ADD_FINANCE', payload: { label: m[1].trim(), amount: parseFloat(m[2].replace(',', '.')) } });
+          return result.ok ? `✅ ${result.message}` : `⚠️ ${result.message}`;
+        }
+        case '/check': {
+          if (!rest) return 'Format: "/check <Aufgabe>", z. B. "/check Anschreiben fertigstellen".';
+          const result = ActionDispatcher.dispatch({ type: 'ADD_CHECKLIST_ITEM', payload: { text: rest } });
+          return result.ok ? `✅ ${result.message}` : `⚠️ ${result.message}`;
+        }
+        case '/check-first-degree': {
+          const s = this._getProfile().studium || {};
+          const pct = Number(s.bachelorProgress) || 0;
+          const status = pct >= 100 ? '✅ abgeschlossen' : pct >= 70 ? '🟡 auf gutem Weg' : '🔴 noch früh in der Bearbeitung';
+          return `Status erster Studienabschluss: ${s.studiengang || 'Studiengang nicht angegeben'} — Fortschritt ${pct}% (${status}). Geplanter Abschluss: ${s.bachelorAbschluss || 'nicht angegeben'}.`;
+        }
+        case '/strategy': {
+          const events = AppState.events || [];
+          const scenarios = AppState.scenarios || [];
+          return `Strategie-Übersicht: ${events.length} Termin(e) hinterlegt, ${scenarios.length} Szenario(s) gespeichert. Nutze "/compare" für den Studienwege-Vergleich.`;
+        }
+        case '/bachelor': {
+          const s = this._getProfile().studium || {};
+          return `Bachelorfortschritt: ${s.bachelorProgress || 0}% · Fachsemester ${s.fachsemester || '–'} · geplanter Abschluss: ${s.bachelorAbschluss || 'nicht angegeben'}.`;
+        }
+        case '/start':
+          return this._helpText();
+        case '/recommend': {
+          const result = ActionDispatcher.dispatch({ type: 'GENERATE_RECOMMENDATION', payload: {} });
+          return result.ok ? result.data.text : `⚠️ ${result.message}`;
+        }
+        case '/compare':
+          return 'Den vollständigen Studienwege-Vergleich (Medizin, Psychologie, Graphic Design u. a.) findest du im Bereich "Strategie" auf der entsprechenden Analyse-Karte.';
+        case '/hide': {
+          if (!rest) return 'Format: "/hide <Karten-ID>", z. B. "/hide card-notes-recent".';
+          const result = ActionDispatcher.dispatch({ type: 'HIDE_CARD', payload: { cardId: rest } });
+          return result.ok ? `✅ ${result.message}` : `⚠️ ${result.message}`;
+        }
+        case '/show': {
+          if (!rest) return 'Format: "/show <Karten-ID>", z. B. "/show card-notes-recent".';
+          const result = ActionDispatcher.dispatch({ type: 'SHOW_CARD', payload: { cardId: rest } });
+          return result.ok ? `✅ ${result.message}` : `⚠️ ${result.message}`;
+        }
+        default:
+          return `Unbekannter Kurzbefehl "${cmd}". Öffne die Kurzbefehls-Legende für alle verfügbaren Befehle.`;
+      }
+    },
+
+    /* ── Direkte Freitext-Befehle → ActionDispatcher ── */
     _tryCommand(text, lower) {
-      // "füge termin <titel> am YYYY-MM-DD hinzu" / "neuer termin ..."
       const eventMatch = text.match(/(?:f[üu]ge\s+termin|neuer?\s+termin|termin\s+hinzuf[üu]gen)\s*[:\-]?\s*(.+?)\s+am\s+(\d{4}-\d{2}-\d{2})/i);
       if (eventMatch) {
         const title = eventMatch[1].trim();
         const date = eventMatch[2].trim();
         const result = ActionDispatcher.dispatch({ type: 'ADD_EVENT', payload: { title, date } });
-        return result.ok
-          ? `✅ ${result.message}`
-          : `⚠️ ${result.message}`;
+        return result.ok ? `✅ ${result.message}` : `⚠️ ${result.message}`;
       }
 
-      // "lösche termin <id>"
       const deleteEventMatch = text.match(/l[öo]sche\s+termin\s+(\d+)/i);
       if (deleteEventMatch) {
         const id = Number(deleteEventMatch[1]);
@@ -2365,7 +2735,6 @@
         return result.ok ? `✅ ${result.message}` : `⚠️ ${result.message}`;
       }
 
-      // "füge ausgabe/einnahme <label> <betrag> hinzu" o. ä.
       const financeMatch = text.match(/(?:f[üu]ge\s+(?:ausgabe|einnahme|finanzeintrag)|neue?\s+(?:ausgabe|einnahme))\s*[:\-]?\s*(.+?)\s+([\-]?\d+(?:[.,]\d+)?)\s*(?:€|euro)?\s*hinzu/i);
       if (financeMatch) {
         const label = financeMatch[1].trim();
@@ -2374,7 +2743,6 @@
         return result.ok ? `✅ ${result.message}` : `⚠️ ${result.message}`;
       }
 
-      // "füge checkliste/aufgabe <text> hinzu"
       const checklistMatch = text.match(/(?:f[üu]ge\s+(?:checklisten?-?punkt|aufgabe|todo)|neue?\s+aufgabe)\s*[:\-]?\s*(.+?)\s+hinzu/i);
       if (checklistMatch) {
         const itemText = checklistMatch[1].trim();
@@ -2382,7 +2750,6 @@
         return result.ok ? `✅ ${result.message}` : `⚠️ ${result.message}`;
       }
 
-      // "lösche checklisten-punkt <id>" / "lösche aufgabe <id>"
       const deleteChecklistMatch = text.match(/l[öo]sche\s+(?:checklisten?-?punkt|aufgabe|todo)\s+(\d+)/i);
       if (deleteChecklistMatch) {
         const id = Number(deleteChecklistMatch[1]);
@@ -2404,7 +2771,7 @@
         .sort((a, b) => a._date - b._date);
 
       if (upcoming.length === 0) {
-        return 'Aktuell sind keine Termine oder Fristen hinterlegt. Du kannst z. B. schreiben: "Füge Termin Bachelorabschluss am 2026-09-01 hinzu".';
+        return 'Aktuell sind keine Termine oder Fristen hinterlegt. Du kannst z. B. schreiben: "/event Bachelorabschluss 2026-09-01".';
       }
 
       const lines = upcoming.map(e => {
@@ -2430,16 +2797,13 @@
 
       const conflicts = [];
 
-      // a) Termine am selben Tag
       for (let i = 0; i < parsed.length - 1; i++) {
         if (parsed[i]._date.getTime() === parsed[i + 1]._date.getTime()) {
           conflicts.push(`"${parsed[i].title}" und "${parsed[i + 1].title}" fallen beide auf den ${parsed[i].date}.`);
         }
       }
 
-      // b) Bekannter Studienweg-Konflikt: Studienbeginn vor Bachelorabschluss
       const studium = (this._getProfile().studium) || {};
-      const bewerbungen = (this._getProfile().bewerbungen) || {};
       if (studium.bachelorAbschluss) {
         const abschluss = new Date(studium.bachelorAbschluss);
         const beginnEvent = parsed.find(e => /studienbeginn|immatrikulation/i.test(e.title));
@@ -2448,7 +2812,6 @@
         }
       }
 
-      // c) Zeitbudget-Konflikt: Arbeitszeit + Lernzeit + Freizeit > 168h/Woche
       const zeit = (this._getProfile().zeit) || {};
       const totalStunden = (Number(zeit.arbeitszeit) || 0) + (Number(zeit.lernzeit) || 0) + (Number(zeit.freizeit) || 0);
       if (totalStunden > 168) {
@@ -2560,13 +2923,11 @@
         'Ich kann dir bei folgenden Dingen helfen (alles läuft offline, ohne Internetverbindung):',
         '• Fragen zu deinem Profil beantworten (z. B. "Wie hoch ist mein Budget?")',
         '• Daten analysieren ("Analysiere meine Daten")',
-        '• Empfehlungen geben ("Gib mir eine Empfehlung")',
+        '• Empfehlungen geben ("Gib mir eine Empfehlung" oder "/recommend")',
         '• Fristen erkennen ("Welche Fristen stehen an?")',
         '• Konflikte erkennen ("Gibt es Konflikte in meiner Planung?")',
-        '• Termine, Finanzeinträge und Checklisten-Punkte anlegen oder löschen, z. B.:',
-        '  "Füge Termin Bachelorabschluss am 2026-09-01 hinzu"',
-        '  "Füge Ausgabe Miete 450 hinzu"',
-        '  "Füge Aufgabe Anschreiben fertigstellen hinzu"',
+        '• Termine, Finanzeinträge und Checklisten-Punkte anlegen oder löschen',
+        '• Kurzbefehle nutzen — öffne die Kurzbefehls-Legende oberhalb des Chats für die vollständige Liste (z. B. /event, /budget, /check, /recommend).',
       ].join('\n');
     },
   };
@@ -2939,8 +3300,9 @@
 
   /* ═══════════════════════════════════════════════
      CHAT UI  — verbindet die Chatbot-Seite (Formular,
-     Nachrichtenliste, Schnellaktionen) mit ChatEngine.
-     Rein lokale DOM-Steuerung, keine Netzwerkaufrufe.
+     Nachrichtenliste, Schnellaktionen, Kurzbefehls-Legende)
+     mit ChatEngine. Rein lokale DOM-Steuerung, keine
+     Netzwerkaufrufe.
   ═══════════════════════════════════════════════ */
   const ChatUI = {
     _els: {},
@@ -2951,6 +3313,9 @@
         input: document.getElementById('chat-input'),
         log: document.getElementById('chat-log'),
         quickBtns: document.querySelectorAll('.chat-quick-btn'),
+        legendCard: document.querySelector('.chat-legend-card'),
+        legendToggle: document.getElementById('chat-legend-toggle'),
+        legendGrid: document.getElementById('chat-legend-grid'),
       };
 
       if (!this._els.form || !this._els.input || !this._els.log) return;
@@ -2965,10 +3330,40 @@
         btn.addEventListener('click', () => this._handleUserMessage(btn.dataset.quick));
       });
 
+      this._initLegend();
+
       // Begrüßungsnachricht beim ersten Laden (nur Anzeige, kein Eintrag in ChatEngine.history)
-      this._appendMessage('bot', 'Hallo! Ich bin dein lokaler Offline-Assistent. Frag mich etwas zu deinem Profil, oder probiere eine der Schnellaktionen unten aus.', 'success');
+      this._appendMessage('bot', 'Hallo! Ich bin dein lokaler Offline-Assistent. Frag mich etwas zu deinem Profil, nutze einen Kurzbefehl (siehe Legende oben), oder probiere eine der Schnellaktionen unten aus.', 'success');
 
       renderActionLog();
+    },
+
+    /** Baut die ausklappbare Kurzbefehls-Legende aus ChatbotEngine.SLASH_COMMANDS. */
+    _initLegend() {
+      if (!this._els.legendCard || !this._els.legendToggle || !this._els.legendGrid) return;
+      if (typeof ChatbotEngine === 'undefined') return;
+
+      const commands = ChatbotEngine.SLASH_COMMANDS;
+      this._els.legendGrid.innerHTML = Object.keys(commands).map(cmd => `
+        <button type="button" class="chat-legend-item" data-cmd="${escapeHtml(cmd)}">
+          <span class="chat-legend-cmd">${escapeHtml(cmd)}</span>
+          <span class="chat-legend-desc">${escapeHtml(commands[cmd])}</span>
+        </button>`).join('');
+
+      // Aufklappen/Einklappen
+      this._els.legendToggle.addEventListener('click', () => {
+        const isOpen = this._els.legendCard.classList.toggle('open');
+        this._els.legendToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        this._els.legendToggle.querySelector('span').textContent = isOpen ? 'Kurzbefehle ausblenden' : 'Kurzbefehle anzeigen';
+      });
+
+      // Klick auf einen Befehl → automatisch ins Eingabefeld übernehmen
+      this._els.legendGrid.querySelectorAll('.chat-legend-item').forEach(item => {
+        item.addEventListener('click', () => {
+          this._els.input.value = item.dataset.cmd + ' ';
+          this._els.input.focus();
+        });
+      });
     },
 
     async _handleUserMessage(text) {
@@ -3020,18 +3415,26 @@
     SettingsEngine.init();
     ChatUI.init();
 
+    // 3b. Persistierten Karten-Zustand anwenden (HIDE_CARD/DELETE_CARD aus vorheriger Sitzung)
+    Object.entries(AppState.cardState || {}).forEach(([cardId, state]) => {
+      const el = document.querySelector(`[data-card-id="${cardId}"]`);
+      if (!el) return;
+      if (state === 'hidden') el.style.display = 'none';
+      if (state === 'deleted') el.remove();
+    });
+
     // 4. Initial dashboard render (auto-update on load)
     updateDashboard();
 
     // 5. Log architecture (dev)
-    console.info('%cLebensplaner v0.4 — Offline-Chatbot mit Action-System aktiv', 'color:#4f8ef7;font-weight:600');
+    console.info('%cLebensplaner v0.4 — Offline-Chatbot mit erweitertem Action-System aktiv', 'color:#4f8ef7;font-weight:600');
     console.table({
       AppState        : '✔ initialisiert',
       StorageManager  : '✔ initialisiert',
       UIManager       : '✔ initialisiert',
       SettingsEngine  : '✔ aktiv',
-      ActionDispatcher: '✔ aktiv',
-      ChatbotEngine   : '✔ aktiv',
+      ActionDispatcher: '✔ aktiv (18 Aktionstypen)',
+      ChatbotEngine   : '✔ aktiv (inkl. Kurzbefehle)',
       ChatEngine      : '✔ aktiv (offline, regelbasiert)',
       ChatUI          : '✔ aktiv',
       updateDashboard : '✔ aktiv',
