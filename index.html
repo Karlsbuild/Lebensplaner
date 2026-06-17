@@ -996,19 +996,79 @@
     @media (max-width: 640px) {
       .field-row { grid-template-columns: 1fr; }
       .checkbox-grid { grid-template-columns: 1fr; }
-      .ae-criteria-grid { grid-template-columns: repeat(2, 1fr); }
-      .ae-chart-tabs { flex-wrap: wrap; }
+      .chat-input-row { flex-direction: column; }
+      .chat-send-btn { width: 100%; }
     }
 
     /* ═══════════════════════════════════════════════
-       ANALYSE-ENGINE: Studienwege-Vergleich
+       CHATBOT: lokaler Offline-Assistent
        (new — scoped, does not alter existing classes)
     ═══════════════════════════════════════════════ */
-    .ae-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 9px 16px;
+    .chat-card {
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .chat-log {
+      flex: 1;
+      min-height: 320px;
+      max-height: 480px;
+      overflow-y: auto;
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .chat-msg {
+      max-width: 80%;
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      font-size: 0.85rem;
+      line-height: 1.55;
+      white-space: pre-wrap;
+    }
+
+    .chat-msg.user {
+      align-self: flex-end;
+      background: var(--accent-primary);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+
+    .chat-msg.bot {
+      align-self: flex-start;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      border-bottom-left-radius: 4px;
+    }
+
+    .chat-msg.bot.warning { border-color: rgba(242,107,107,.4); }
+    .chat-msg.bot.deadline { border-color: rgba(245,166,35,.4); }
+    .chat-msg.bot.success  { border-color: rgba(62,207,142,.4); }
+
+    .chat-msg-time {
+      display: block;
+      font-size: 0.65rem;
+      opacity: 0.6;
+      margin-top: 4px;
+    }
+
+    .chat-input-row {
+      display: flex;
+      gap: 8px;
+      padding: 14px 16px;
+      border-top: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+    }
+
+    .chat-input { flex: 1; }
+
+    .chat-send-btn {
+      padding: 9px 18px;
       border-radius: var(--radius-sm);
       background: var(--accent-primary);
       color: #fff;
@@ -1016,121 +1076,25 @@
       font-weight: 600;
       cursor: pointer;
       transition: background 160ms ease;
-      margin-bottom: 18px;
+      flex-shrink: 0;
     }
 
-    .ae-btn:hover { background: #3d7de0; }
+    .chat-send-btn:hover { background: #3d7de0; }
 
-    .ae-rank-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .ae-path-card {
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border-subtle);
-      background: var(--bg-elevated);
-      padding: 16px 18px;
-    }
-
-    .ae-path-card.green { border-color: rgba(62,207,142,.35); }
-    .ae-path-card.amber { border-color: rgba(245,166,35,.35); }
-    .ae-path-card.red   { border-color: rgba(242,107,107,.35); }
-
-    .ae-path-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
-    }
-
-    .ae-path-name {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-
-    .ae-path-score {
-      font-family: var(--font-mono);
-      font-size: 1.1rem;
-      font-weight: 700;
-    }
-
-    .ae-path-score.green { color: var(--accent-green); }
-    .ae-path-score.amber { color: var(--accent-amber); }
-    .ae-path-score.red   { color: var(--accent-red);   }
-
-    .ae-criteria-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      margin: 10px 0;
-    }
-
-    .ae-criterion {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      padding: 6px 8px;
-      border-radius: var(--radius-sm);
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-    }
-
-    .ae-criterion-label {
-      font-size: 0.62rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-muted);
-    }
-
-    .ae-criterion-value {
-      font-size: 0.85rem;
-      font-weight: 600;
-      font-family: var(--font-mono);
-      color: var(--text-primary);
-    }
-
-    .ae-note-block {
-      margin-top: 8px;
-      font-size: 0.8rem;
-      line-height: 1.5;
-    }
-
-    .ae-note-block.recommend { color: var(--accent-green); }
-    .ae-note-block.warning   { color: var(--accent-red);   }
-
-    .ae-empty-hint {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      padding: 10px 0;
-    }
-
-    @media (max-width: 900px) {
-      .ae-criteria-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-
-    /* ── Diagramm-Bereich ───────────────────────────────── */
-    .ae-charts-section {
-      margin-top: 22px;
-      padding-top: 18px;
-      border-top: 1px solid var(--border-subtle);
-    }
-
-    .ae-chart-tabs {
+    .chat-quick-actions {
       display: flex;
       gap: 6px;
-      margin-bottom: 16px;
+      flex-wrap: wrap;
+      padding: 12px 16px 16px;
+      border-top: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
     }
 
-    .ae-chart-tab {
-      padding: 7px 14px;
-      border-radius: var(--radius-sm);
-      font-size: 0.8rem;
-      font-weight: 600;
+    .chat-quick-btn {
+      padding: 6px 11px;
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 500;
       color: var(--text-secondary);
       background: var(--bg-elevated);
       border: 1px solid var(--border-subtle);
@@ -1138,47 +1102,51 @@
       transition: background 160ms ease, color 160ms ease, border-color 160ms ease;
     }
 
-    .ae-chart-tab:hover { color: var(--text-primary); border-color: var(--border-strong); }
-
-    .ae-chart-tab.active {
-      background: var(--accent-glow);
+    .chat-quick-btn:hover {
       color: var(--accent-primary);
       border-color: var(--accent-primary);
+      background: var(--accent-glow);
     }
 
-    .ae-chart-panel { display: none; }
-    .ae-chart-panel.active { display: block; }
-
-    .ae-canvas {
-      width: 100%;
-      max-width: 640px;
-      height: auto;
-      display: block;
-      background: var(--bg-elevated);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-    }
-
-    .ae-legend {
+    .chat-action-log {
       display: flex;
-      gap: 16px;
-      margin-top: 10px;
-      flex-wrap: wrap;
+      flex-direction: column;
+      gap: 8px;
     }
 
-    .ae-legend-item {
+    .chat-action-entry {
       display: flex;
-      align-items: center;
-      gap: 6px;
+      align-items: flex-start;
+      gap: 8px;
       font-size: 0.8rem;
       color: var(--text-secondary);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
     }
 
-    .ae-legend-swatch {
-      width: 10px;
-      height: 10px;
+    .chat-action-entry .dot {
+      width: 6px; height: 6px;
       border-radius: 50%;
+      background: var(--accent-green);
       flex-shrink: 0;
+      margin-top: 6px;
+    }
+
+    .chat-action-entry code {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--accent-primary);
+      background: var(--accent-glow);
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+
+    .chat-empty-hint {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      padding: 10px 0;
     }
 
     /* ═══════════════════════════════════════════════
@@ -1746,66 +1714,41 @@
           <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
           <p>Ziel-Framework und Strategieplanung folgen in der nächsten Ausbaustufe.</p>
         </div>
-
-        <!-- ── Modul: Studienwege-Analyse ───────────────────────── -->
-        <div class="card" style="margin-top:16px;">
-          <div class="card-title">Analyse: Studienwege im Vergleich</div>
-          <p style="font-size:.83rem;color:var(--text-secondary);margin-bottom:16px;line-height:1.55;">
-            Vergleicht Medizin, Psychologie und Graphic Design (inkl. Kombinationen) auf Basis deiner Profildaten aus „Meine Einstellungen". Bewertet werden Zeitaufwand, Risiko, Karrierepotenzial, Finanzierbarkeit, persönliche Prioritäten, Studienbelastung und Job-Kompatibilität.
-          </p>
-
-          <button class="ae-btn" id="ae-run-btn" type="button">
-            Analyse aktualisieren
-          </button>
-
-          <div id="ae-result"></div>
-
-          <!-- ── Diagramme ──────────────────────────────────────── -->
-          <div class="ae-charts-section">
-            <div class="ae-chart-tabs" role="tablist">
-              <button class="ae-chart-tab active" data-chart-tab="radar" type="button" role="tab" aria-selected="true">Radar-Chart</button>
-              <button class="ae-chart-tab" data-chart-tab="bar" type="button" role="tab" aria-selected="false">Balkendiagramm</button>
-              <button class="ae-chart-tab" data-chart-tab="compare" type="button" role="tab" aria-selected="false">Vergleichsansicht</button>
-            </div>
-
-            <!-- Radar-Chart: Pfadauswahl + Canvas -->
-            <div class="ae-chart-panel active" id="ae-panel-radar">
-              <label class="field-label" for="ae-radar-select" style="margin-bottom:6px;display:block;">Studienweg für Radar-Chart</label>
-              <select class="field-input" id="ae-radar-select" style="max-width:320px;margin-bottom:12px;"></select>
-              <canvas id="ae-canvas-radar" width="480" height="380" class="ae-canvas"></canvas>
-            </div>
-
-            <!-- Balkendiagramm: Gesamtscore aller Wege -->
-            <div class="ae-chart-panel" id="ae-panel-bar">
-              <canvas id="ae-canvas-bar" width="640" height="380" class="ae-canvas"></canvas>
-            </div>
-
-            <!-- Vergleichsansicht: zwei Wege im direkten Radar-Vergleich -->
-            <div class="ae-chart-panel" id="ae-panel-compare">
-              <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
-                <div class="field" style="flex:1;min-width:200px;">
-                  <label class="field-label" for="ae-compare-a">Weg A</label>
-                  <select class="field-input" id="ae-compare-a"></select>
-                </div>
-                <div class="field" style="flex:1;min-width:200px;">
-                  <label class="field-label" for="ae-compare-b">Weg B</label>
-                  <select class="field-input" id="ae-compare-b"></select>
-                </div>
-              </div>
-              <canvas id="ae-canvas-compare" width="480" height="380" class="ae-canvas"></canvas>
-              <div class="ae-legend" id="ae-compare-legend"></div>
-            </div>
-          </div>
-        </div>
       </section>
 
       <!-- ══ CHATBOT ════════════════════════════════ -->
       <section class="page" id="page-chatbot" aria-labelledby="h-chatbot">
         <h1 class="page-heading" id="h-chatbot">Chatbot</h1>
-        <p class="page-sub">KI-Assistent für Planung, Analyse und Beratung.</p>
-        <div class="placeholder-section">
-          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          <p>Der KI-Assistent wird hier integriert — ChatEngine ist bereits in der Architektur verankert.</p>
+        <p class="page-sub">Lokaler Offline-Assistent — beantwortet Fragen, analysiert deine Daten, erkennt Fristen und Konflikte. Läuft vollständig im Browser, ohne Internetverbindung oder externe Dienste.</p>
+
+        <div class="card chat-card">
+          <div id="chat-log" class="chat-log" aria-live="polite"></div>
+
+          <form id="chat-form" class="chat-input-row">
+            <input
+              type="text"
+              id="chat-input"
+              class="field-input chat-input"
+              placeholder="Frage stellen, z. B. „Welche Fristen stehen an?" oder „Füge Termin Bachelorabschluss am 2026-09-01 hinzu""
+              autocomplete="off"
+            />
+            <button type="submit" class="chat-send-btn">Senden</button>
+          </form>
+
+          <div class="chat-quick-actions">
+            <button type="button" class="chat-quick-btn" data-quick="Welche Fristen stehen an?">Fristen prüfen</button>
+            <button type="button" class="chat-quick-btn" data-quick="Gibt es Konflikte in meiner Planung?">Konflikte prüfen</button>
+            <button type="button" class="chat-quick-btn" data-quick="Analysiere meine Daten">Daten analysieren</button>
+            <button type="button" class="chat-quick-btn" data-quick="Gib mir eine Empfehlung">Empfehlung</button>
+          </div>
+        </div>
+
+        <!-- Transparenz: zuletzt ausgeführte Aktionen -->
+        <div class="card" style="margin-top:16px;">
+          <div class="card-title">Zuletzt ausgeführte Aktionen</div>
+          <div id="chat-action-log" class="chat-action-log">
+            <p class="chat-empty-hint">Noch keine Aktionen ausgeführt.</p>
+          </div>
         </div>
       </section>
 
@@ -1846,6 +1789,9 @@
     strategie: {},
     notizen  : [],
     settings : {},
+    events   : [],   // { id, title, date, type, createdAt }
+    checklist: [],   // { id, text, done, createdAt }
+    financeEntries: [], // { id, label, amount, category, date, createdAt }
 
     /** Notify listeners when state changes */
     _listeners: {},
@@ -1912,6 +1858,9 @@
         strategie: AppState.strategie,
         notizen : AppState.notizen,
         settings: AppState.settings,
+        events  : AppState.events,
+        checklist: AppState.checklist,
+        financeEntries: AppState.financeEntries,
       });
     },
 
@@ -2015,12 +1964,6 @@
         AppState.set('theme', next);
         this._applyTheme(next);
         StorageManager.save('theme', next);
-        // Diagramme lesen Theme-Farben aus CSS-Variablen — bei Theme-Wechsel neu zeichnen.
-        if (typeof AnalyseEngine !== 'undefined' && AnalyseEngine._results && AnalyseEngine._results.length) {
-          AnalyseEngine._drawRadarChart();
-          AnalyseEngine._drawBarChart();
-          AnalyseEngine._drawCompareChart();
-        }
       });
     },
 
@@ -2111,6 +2054,205 @@
 
 
   /* ═══════════════════════════════════════════════
+     ACTION DISPATCHER  — { type, payload } action system
+     Single entry point for all state-mutating actions
+     triggered by the offline chatbot (or any future caller).
+     Every action is validated, applied to AppState/SettingsEngine,
+     persisted via StorageManager, and logged for transparency.
+     No network calls — purely local read/write of AppState.
+  ═══════════════════════════════════════════════ */
+  const ActionDispatcher = {
+
+    TYPES: [
+      'ADD_EVENT', 'UPDATE_EVENT', 'DELETE_EVENT',
+      'ADD_FINANCE', 'UPDATE_FINANCE', 'DELETE_FINANCE',
+      'ADD_CHECKLIST_ITEM', 'DELETE_CHECKLIST_ITEM',
+      'UPDATE_PROFILE',
+    ],
+
+    /** Letzte ausgeführte Aktionen, für das Transparenz-Log auf der Chatbot-Seite. */
+    log: [],
+
+    /**
+     * Führt eine Aktion im Format { type, payload } aus.
+     * @returns {{ ok: boolean, message: string, data?: any }}
+     */
+    dispatch(action) {
+      if (!action || typeof action !== 'object') {
+        return { ok: false, message: 'Ungültige Aktion: kein Objekt übergeben.' };
+      }
+      const { type, payload } = action;
+      if (!this.TYPES.includes(type)) {
+        return { ok: false, message: `Unbekannter Aktionstyp: "${type}".` };
+      }
+
+      let result;
+      try {
+        switch (type) {
+          case 'ADD_EVENT':            result = this._addEvent(payload); break;
+          case 'UPDATE_EVENT':         result = this._updateEvent(payload); break;
+          case 'DELETE_EVENT':         result = this._deleteEvent(payload); break;
+          case 'ADD_FINANCE':          result = this._addFinance(payload); break;
+          case 'UPDATE_FINANCE':       result = this._updateFinance(payload); break;
+          case 'DELETE_FINANCE':       result = this._deleteFinance(payload); break;
+          case 'ADD_CHECKLIST_ITEM':   result = this._addChecklistItem(payload); break;
+          case 'DELETE_CHECKLIST_ITEM':result = this._deleteChecklistItem(payload); break;
+          case 'UPDATE_PROFILE':       result = this._updateProfile(payload); break;
+        }
+      } catch (e) {
+        result = { ok: false, message: `Aktion fehlgeschlagen: ${e.message}` };
+      }
+
+      this._logAction(type, payload, result);
+      return result;
+    },
+
+    _logAction(type, payload, result) {
+      this.log.unshift({
+        type, payload, ok: result.ok, message: result.message,
+        timestamp: new Date().toISOString(),
+      });
+      if (this.log.length > 30) this.log.length = 30; // Speicher begrenzen
+      if (typeof renderActionLog === 'function') renderActionLog();
+    },
+
+    _genId() { return Date.now() + Math.floor(Math.random() * 1000); },
+
+    /* ── EVENTS (Termine/Fristen) ── */
+    _addEvent(payload) {
+      if (!payload || !payload.title || !payload.date) {
+        return { ok: false, message: 'ADD_EVENT benötigt mindestens "title" und "date".' };
+      }
+      const event = {
+        id: this._genId(),
+        title: payload.title,
+        date: payload.date,
+        type: payload.type || 'termin',
+        createdAt: new Date().toISOString(),
+      };
+      AppState.set('events', [...(AppState.events || []), event]);
+      StorageManager.persistState();
+      return { ok: true, message: `Termin "${event.title}" am ${event.date} hinzugefügt.`, data: event };
+    },
+
+    _updateEvent(payload) {
+      if (!payload || !payload.id) {
+        return { ok: false, message: 'UPDATE_EVENT benötigt "id".' };
+      }
+      const events = AppState.events || [];
+      const idx = events.findIndex(e => e.id === payload.id);
+      if (idx === -1) return { ok: false, message: `Kein Termin mit ID ${payload.id} gefunden.` };
+      const updated = { ...events[idx], ...payload.changes };
+      const next = [...events];
+      next[idx] = updated;
+      AppState.set('events', next);
+      StorageManager.persistState();
+      return { ok: true, message: `Termin "${updated.title}" aktualisiert.`, data: updated };
+    },
+
+    _deleteEvent(payload) {
+      if (!payload || !payload.id) {
+        return { ok: false, message: 'DELETE_EVENT benötigt "id".' };
+      }
+      const events = AppState.events || [];
+      const exists = events.some(e => e.id === payload.id);
+      if (!exists) return { ok: false, message: `Kein Termin mit ID ${payload.id} gefunden.` };
+      AppState.set('events', events.filter(e => e.id !== payload.id));
+      StorageManager.persistState();
+      return { ok: true, message: `Termin gelöscht (ID ${payload.id}).` };
+    },
+
+    /* ── FINANZEN (Transaktionen) ── */
+    _addFinance(payload) {
+      if (!payload || !payload.label || payload.amount === undefined) {
+        return { ok: false, message: 'ADD_FINANCE benötigt "label" und "amount".' };
+      }
+      const entry = {
+        id: this._genId(),
+        label: payload.label,
+        amount: Number(payload.amount) || 0,
+        category: payload.category || 'allgemein',
+        date: payload.date || new Date().toISOString().slice(0, 10),
+        createdAt: new Date().toISOString(),
+      };
+      AppState.set('financeEntries', [...(AppState.financeEntries || []), entry]);
+      StorageManager.persistState();
+      return { ok: true, message: `Finanzeintrag "${entry.label}" (${entry.amount} €) hinzugefügt.`, data: entry };
+    },
+
+    _updateFinance(payload) {
+      if (!payload || !payload.id) {
+        return { ok: false, message: 'UPDATE_FINANCE benötigt "id".' };
+      }
+      const entries = AppState.financeEntries || [];
+      const idx = entries.findIndex(e => e.id === payload.id);
+      if (idx === -1) return { ok: false, message: `Kein Finanzeintrag mit ID ${payload.id} gefunden.` };
+      const updated = { ...entries[idx], ...payload.changes };
+      const next = [...entries];
+      next[idx] = updated;
+      AppState.set('financeEntries', next);
+      StorageManager.persistState();
+      return { ok: true, message: `Finanzeintrag "${updated.label}" aktualisiert.`, data: updated };
+    },
+
+    _deleteFinance(payload) {
+      if (!payload || !payload.id) {
+        return { ok: false, message: 'DELETE_FINANCE benötigt "id".' };
+      }
+      const entries = AppState.financeEntries || [];
+      const exists = entries.some(e => e.id === payload.id);
+      if (!exists) return { ok: false, message: `Kein Finanzeintrag mit ID ${payload.id} gefunden.` };
+      AppState.set('financeEntries', entries.filter(e => e.id !== payload.id));
+      StorageManager.persistState();
+      return { ok: true, message: `Finanzeintrag gelöscht (ID ${payload.id}).` };
+    },
+
+    /* ── CHECKLISTE ── */
+    _addChecklistItem(payload) {
+      if (!payload || !payload.text) {
+        return { ok: false, message: 'ADD_CHECKLIST_ITEM benötigt "text".' };
+      }
+      const item = {
+        id: this._genId(),
+        text: payload.text,
+        done: false,
+        createdAt: new Date().toISOString(),
+      };
+      AppState.set('checklist', [...(AppState.checklist || []), item]);
+      StorageManager.persistState();
+      return { ok: true, message: `Checklisten-Punkt "${item.text}" hinzugefügt.`, data: item };
+    },
+
+    _deleteChecklistItem(payload) {
+      if (!payload || !payload.id) {
+        return { ok: false, message: 'DELETE_CHECKLIST_ITEM benötigt "id".' };
+      }
+      const items = AppState.checklist || [];
+      const exists = items.some(i => i.id === payload.id);
+      if (!exists) return { ok: false, message: `Kein Checklisten-Punkt mit ID ${payload.id} gefunden.` };
+      AppState.set('checklist', items.filter(i => i.id !== payload.id));
+      StorageManager.persistState();
+      return { ok: true, message: `Checklisten-Punkt gelöscht (ID ${payload.id}).` };
+    },
+
+    /* ── PROFIL (delegiert an SettingsEngine, gleiche Speicherquelle) ── */
+    _updateProfile(payload) {
+      if (!payload || !payload.path || payload.value === undefined) {
+        return { ok: false, message: 'UPDATE_PROFILE benötigt "path" (z. B. "finanzen.budget") und "value".' };
+      }
+      if (typeof SettingsEngine === 'undefined' || !SettingsEngine._data) {
+        return { ok: false, message: 'Profil ist noch nicht geladen.' };
+      }
+      SettingsEngine._setNested(SettingsEngine._data, payload.path, payload.value);
+      SettingsEngine._persist();
+      SettingsEngine._populateAll();
+      SettingsEngine._updateDerived();
+      return { ok: true, message: `Profilfeld "${payload.path}" auf "${payload.value}" aktualisiert.` };
+    },
+  };
+
+
+  /* ═══════════════════════════════════════════════
      CHAT ENGINE  — AI assistant interface
      (scaffold — to be wired to API in next phase)
   ═══════════════════════════════════════════════ */
@@ -2125,8 +2267,12 @@
     async send(userMessage) {
       this.history.push({ role: 'user', content: userMessage });
 
-      // TODO: call AI API (Anthropic / OpenAI)
-      const reply = '[ChatEngine] Noch nicht implementiert.';
+      // Lokale, regelbasierte Verarbeitung — kein API-Aufruf, kein Netzwerk.
+      // (ChatbotEngine wird unten definiert und arbeitet ausschließlich
+      // mit bereits im Browser vorhandenen Daten aus AppState/SettingsEngine.)
+      const reply = (typeof ChatbotEngine !== 'undefined')
+        ? ChatbotEngine.process(userMessage)
+        : '[ChatEngine] ChatbotEngine nicht verfügbar.';
 
       this.history.push({ role: 'assistant', content: reply });
       return reply;
@@ -2134,6 +2280,294 @@
 
     clearHistory() {
       this.history = [];
+    },
+  };
+
+
+  /* ═══════════════════════════════════════════════
+     CHATBOT ENGINE  — lokaler Offline-Assistent
+     Erkennt Absicht (Frage / Analyse / Empfehlung /
+     Frist / Konflikt / direkter Befehl), liest Daten
+     aus AppState + SettingsEngine, und kann über den
+     ActionDispatcher Aktionen auslösen. Vollständig
+     offline — keine Netzwerk- oder API-Aufrufe.
+  ═══════════════════════════════════════════════ */
+  const ChatbotEngine = {
+
+    /** Haupteinstiegspunkt: Text -> Antworttext (+ ggf. Aktionen). */
+    process(rawText) {
+      const text = String(rawText || '').trim();
+      if (!text) return 'Bitte gib eine Frage oder einen Befehl ein.';
+
+      const lower = text.toLowerCase();
+
+      // 1) Direkte Befehle (Termin/Finanzen/Checkliste hinzufügen) haben Vorrang,
+      //    da sie eine Aktion auslösen statt nur zu antworten.
+      const commandReply = this._tryCommand(text, lower);
+      if (commandReply) return commandReply;
+
+      // 2) Fristen-Erkennung
+      if (this._matchesAny(lower, ['frist', 'fristen', 'deadline', 'wann muss', 'läuft ab', 'ablauf'])) {
+        return this._answerDeadlines();
+      }
+
+      // 3) Konflikt-Erkennung
+      if (this._matchesAny(lower, ['konflikt', 'überschneid', 'kollidiert', 'problem in meiner planung'])) {
+        return this._answerConflicts();
+      }
+
+      // 4) Analyse-Anfrage
+      if (this._matchesAny(lower, ['analysiere', 'analyse', 'wie sieht es aus', 'überblick', 'zusammenfassung'])) {
+        return this._answerAnalysis();
+      }
+
+      // 5) Empfehlungs-Anfrage
+      if (this._matchesAny(lower, ['empfehlung', 'empfiehlst', 'rat', 'was soll ich tun', 'vorschlag'])) {
+        return this._answerRecommendation();
+      }
+
+      // 6) Allgemeine Profil-/Datenfragen (Budget, Fortschritt, Studiengang, etc.)
+      const dataAnswer = this._tryDataQuestion(lower);
+      if (dataAnswer) return dataAnswer;
+
+      // 7) Fallback: Hilfetext
+      return this._helpText();
+    },
+
+    _matchesAny(lower, keywords) {
+      return keywords.some(k => lower.includes(k));
+    },
+
+    _getProfile() {
+      return (typeof SettingsEngine !== 'undefined' && SettingsEngine._data)
+        ? SettingsEngine._data
+        : StorageManager.load('settings_data', {});
+    },
+
+    /* ── Direkte Befehle → ActionDispatcher ── */
+    _tryCommand(text, lower) {
+      // "füge termin <titel> am YYYY-MM-DD hinzu" / "neuer termin ..."
+      const eventMatch = text.match(/(?:f[üu]ge\s+termin|neuer?\s+termin|termin\s+hinzuf[üu]gen)\s*[:\-]?\s*(.+?)\s+am\s+(\d{4}-\d{2}-\d{2})/i);
+      if (eventMatch) {
+        const title = eventMatch[1].trim();
+        const date = eventMatch[2].trim();
+        const result = ActionDispatcher.dispatch({ type: 'ADD_EVENT', payload: { title, date } });
+        return result.ok
+          ? `✅ ${result.message}`
+          : `⚠️ ${result.message}`;
+      }
+
+      // "lösche termin <id>"
+      const deleteEventMatch = text.match(/l[öo]sche\s+termin\s+(\d+)/i);
+      if (deleteEventMatch) {
+        const id = Number(deleteEventMatch[1]);
+        const result = ActionDispatcher.dispatch({ type: 'DELETE_EVENT', payload: { id } });
+        return result.ok ? `✅ ${result.message}` : `⚠️ ${result.message}`;
+      }
+
+      // "füge ausgabe/einnahme <label> <betrag> hinzu" o. ä.
+      const financeMatch = text.match(/(?:f[üu]ge\s+(?:ausgabe|einnahme|finanzeintrag)|neue?\s+(?:ausgabe|einnahme))\s*[:\-]?\s*(.+?)\s+([\-]?\d+(?:[.,]\d+)?)\s*(?:€|euro)?\s*hinzu/i);
+      if (financeMatch) {
+        const label = financeMatch[1].trim();
+        const amount = parseFloat(financeMatch[2].replace(',', '.'));
+        const result = ActionDispatcher.dispatch({ type: 'ADD_FINANCE', payload: { label, amount } });
+        return result.ok ? `✅ ${result.message}` : `⚠️ ${result.message}`;
+      }
+
+      // "füge checkliste/aufgabe <text> hinzu"
+      const checklistMatch = text.match(/(?:f[üu]ge\s+(?:checklisten?-?punkt|aufgabe|todo)|neue?\s+aufgabe)\s*[:\-]?\s*(.+?)\s+hinzu/i);
+      if (checklistMatch) {
+        const itemText = checklistMatch[1].trim();
+        const result = ActionDispatcher.dispatch({ type: 'ADD_CHECKLIST_ITEM', payload: { text: itemText } });
+        return result.ok ? `✅ ${result.message}` : `⚠️ ${result.message}`;
+      }
+
+      // "lösche checklisten-punkt <id>" / "lösche aufgabe <id>"
+      const deleteChecklistMatch = text.match(/l[öo]sche\s+(?:checklisten?-?punkt|aufgabe|todo)\s+(\d+)/i);
+      if (deleteChecklistMatch) {
+        const id = Number(deleteChecklistMatch[1]);
+        const result = ActionDispatcher.dispatch({ type: 'DELETE_CHECKLIST_ITEM', payload: { id } });
+        return result.ok ? `✅ ${result.message}` : `⚠️ ${result.message}`;
+      }
+
+      return null;
+    },
+
+    /* ── Fristen-Erkennung ── */
+    _answerDeadlines() {
+      const events = AppState.events || [];
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+
+      const upcoming = events
+        .map(e => ({ ...e, _date: new Date(e.date) }))
+        .filter(e => !isNaN(e._date))
+        .sort((a, b) => a._date - b._date);
+
+      if (upcoming.length === 0) {
+        return 'Aktuell sind keine Termine oder Fristen hinterlegt. Du kannst z. B. schreiben: "Füge Termin Bachelorabschluss am 2026-09-01 hinzu".';
+      }
+
+      const lines = upcoming.map(e => {
+        const diffDays = Math.round((e._date - today) / (1000 * 60 * 60 * 24));
+        let status;
+        if (diffDays < 0) status = `⚠️ überfällig seit ${Math.abs(diffDays)} Tag(en)`;
+        else if (diffDays <= 14) status = `🔴 in ${diffDays} Tag(en) — dringend`;
+        else if (diffDays <= 45) status = `🟡 in ${diffDays} Tag(en)`;
+        else status = `🟢 in ${diffDays} Tag(en)`;
+        return `• ${e.title} (${e.date}, ID ${e.id}) — ${status}`;
+      });
+
+      return `Folgende Fristen/Termine sind hinterlegt:\n${lines.join('\n')}`;
+    },
+
+    /* ── Konflikt-Erkennung ── */
+    _answerConflicts() {
+      const events = AppState.events || [];
+      const parsed = events
+        .map(e => ({ ...e, _date: new Date(e.date) }))
+        .filter(e => !isNaN(e._date))
+        .sort((a, b) => a._date - b._date);
+
+      const conflicts = [];
+
+      // a) Termine am selben Tag
+      for (let i = 0; i < parsed.length - 1; i++) {
+        if (parsed[i]._date.getTime() === parsed[i + 1]._date.getTime()) {
+          conflicts.push(`"${parsed[i].title}" und "${parsed[i + 1].title}" fallen beide auf den ${parsed[i].date}.`);
+        }
+      }
+
+      // b) Bekannter Studienweg-Konflikt: Studienbeginn vor Bachelorabschluss
+      const studium = (this._getProfile().studium) || {};
+      const bewerbungen = (this._getProfile().bewerbungen) || {};
+      if (studium.bachelorAbschluss) {
+        const abschluss = new Date(studium.bachelorAbschluss);
+        const beginnEvent = parsed.find(e => /studienbeginn|immatrikulation/i.test(e.title));
+        if (beginnEvent && !isNaN(abschluss) && beginnEvent._date < abschluss) {
+          conflicts.push(`Geplanter Studienbeginn ("${beginnEvent.title}", ${beginnEvent.date}) liegt vor dem geplanten Bachelorabschluss (${studium.bachelorAbschluss}).`);
+        }
+      }
+
+      // c) Zeitbudget-Konflikt: Arbeitszeit + Lernzeit + Freizeit > 168h/Woche
+      const zeit = (this._getProfile().zeit) || {};
+      const totalStunden = (Number(zeit.arbeitszeit) || 0) + (Number(zeit.lernzeit) || 0) + (Number(zeit.freizeit) || 0);
+      if (totalStunden > 168) {
+        conflicts.push(`Dein wöchentliches Zeitbudget summiert sich auf ${totalStunden} Stunden — mehr als die 168 Stunden, die eine Woche hat.`);
+      }
+
+      if (conflicts.length === 0) {
+        return 'Keine Konflikte erkannt — Termine und Profildaten erscheinen aktuell widerspruchsfrei.';
+      }
+      return `Folgende Konflikte wurden erkannt:\n${conflicts.map(c => `• ${c}`).join('\n')}`;
+    },
+
+    /* ── Datenanalyse ── */
+    _answerAnalysis() {
+      const profile = this._getProfile();
+      const studium = profile.studium || {};
+      const finanzen = profile.finanzen || {};
+      const zeit = profile.zeit || {};
+
+      const lines = [];
+      lines.push(`Studiengang: ${studium.studiengang || 'nicht angegeben'} (Fortschritt: ${studium.bachelorProgress || 0}%, Fachsemester ${studium.fachsemester || '–'})`);
+
+      const einnahmen = (Number(finanzen.einkommen) || 0) + (Number(finanzen.bafoeg) || 0);
+      const budget = Number(finanzen.budget) || 0;
+      const diff = einnahmen - budget;
+      lines.push(`Finanzen: ${einnahmen} € Einnahmen vs. ${budget} € Budget (${diff >= 0 ? 'Überschuss' : 'Defizit'} von ${Math.abs(diff)} €)`);
+
+      const totalStunden = (Number(zeit.arbeitszeit) || 0) + (Number(zeit.lernzeit) || 0) + (Number(zeit.freizeit) || 0);
+      lines.push(`Zeitbudget: ${totalStunden} Std./Woche eingeplant (Arbeit ${zeit.arbeitszeit || 0}, Lernen ${zeit.lernzeit || 0}, Freizeit ${zeit.freizeit || 0})`);
+
+      lines.push(`Anstehende Termine: ${(AppState.events || []).length}`);
+      lines.push(`Offene Checklisten-Punkte: ${(AppState.checklist || []).filter(i => !i.done).length}`);
+
+      return `Analyse deiner aktuellen Daten:\n${lines.map(l => `• ${l}`).join('\n')}`;
+    },
+
+    /* ── Empfehlung ── */
+    _answerRecommendation() {
+      const profile = this._getProfile();
+      const finanzen = profile.finanzen || {};
+      const zeit = profile.zeit || {};
+      const recs = [];
+
+      const einnahmen = (Number(finanzen.einkommen) || 0) + (Number(finanzen.bafoeg) || 0);
+      const budget = Number(finanzen.budget) || 0;
+      if (budget > einnahmen) {
+        recs.push('Dein Budget übersteigt deine Einnahmen — prüfe, ob Ausgaben reduziert oder zusätzliche Einnahmen (z. B. BAföG-Antrag, Nebenjob) sinnvoll sind.');
+      }
+
+      const totalStunden = (Number(zeit.arbeitszeit) || 0) + (Number(zeit.lernzeit) || 0) + (Number(zeit.freizeit) || 0);
+      if (totalStunden > 168) {
+        recs.push('Dein Zeitbudget ist überplant — reduziere Arbeits- oder Lernzeit, um auf eine realistische Wochenstundenzahl zu kommen.');
+      } else if (Number(zeit.lernzeit) < 10) {
+        recs.push('Deine eingeplante Lernzeit ist sehr gering — für die meisten Studiengänge empfiehlt sich deutlich mehr wöchentliche Lernzeit.');
+      }
+
+      const events = AppState.events || [];
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+      const dringend = events
+        .map(e => ({ ...e, _date: new Date(e.date) }))
+        .filter(e => !isNaN(e._date) && (e._date - today) / (1000 * 60 * 60 * 24) <= 14 && (e._date - today) >= 0);
+      if (dringend.length > 0) {
+        recs.push(`Folgende Termine stehen in den nächsten 14 Tagen an und sollten priorisiert werden: ${dringend.map(e => e.title).join(', ')}.`);
+      }
+
+      if (recs.length === 0) {
+        recs.push('Anhand der aktuellen Daten keine dringenden Handlungsempfehlungen — Profil und Zeitplanung wirken ausgewogen.');
+      }
+
+      return `Empfehlungen basierend auf deinen Daten:\n${recs.map(r => `• ${r}`).join('\n')}`;
+    },
+
+    /* ── Allgemeine Datenfragen (Stichwort-basiert) ── */
+    _tryDataQuestion(lower) {
+      const profile = this._getProfile();
+
+      if (lower.includes('budget') || lower.includes('einkommen') || lower.includes('bafög') || lower.includes('bafoeg')) {
+        const f = profile.finanzen || {};
+        const einnahmen = (Number(f.einkommen) || 0) + (Number(f.bafoeg) || 0);
+        return `Budget: ${f.budget || 0} € · Einkommen: ${f.einkommen || 0} € · BAföG: ${f.bafoeg || 0} € · Gesamteinnahmen: ${einnahmen} €.`;
+      }
+
+      if (lower.includes('studiengang') || lower.includes('fortschritt') || lower.includes('semester')) {
+        const s = profile.studium || {};
+        return `Studiengang: ${s.studiengang || 'nicht angegeben'} · Bachelorfortschritt: ${s.bachelorProgress || 0}% · Fachsemester: ${s.fachsemester || '–'} · Abschluss geplant: ${s.bachelorAbschluss || 'nicht angegeben'}.`;
+      }
+
+      if (lower.includes('priorität') || lower.includes('prioritaet')) {
+        const p = profile.prioritaeten || {};
+        const labels = { sicherheit:'Sicherheit', einkommen:'Einkommen', karriere:'Karriere', interesse:'Interesse', flexibilitaet:'Flexibilität', prestige:'Prestige', worklife:'Work-Life-Balance' };
+        const sorted = Object.keys(labels)
+          .map(k => ({ label: labels[k], value: Number(p[k]) || 0 }))
+          .sort((a, b) => b.value - a.value)
+          .filter(e => e.value > 0);
+        if (sorted.length === 0) return 'Es sind noch keine Prioritäten in den Einstellungen bewertet.';
+        return `Deine Top-Prioritäten: ${sorted.slice(0, 3).map(e => `${e.label} (${e.value}/5)`).join(', ')}.`;
+      }
+
+      if (lower.includes('zeit') && (lower.includes('arbeit') || lower.includes('lernen') || lower.includes('freizeit'))) {
+        const z = profile.zeit || {};
+        return `Zeitbudget pro Woche: Arbeit ${z.arbeitszeit || 0} Std. · Lernen ${z.lernzeit || 0} Std. · Freizeit ${z.freizeit || 0} Std.`;
+      }
+
+      return null;
+    },
+
+    _helpText() {
+      return [
+        'Ich kann dir bei folgenden Dingen helfen (alles läuft offline, ohne Internetverbindung):',
+        '• Fragen zu deinem Profil beantworten (z. B. "Wie hoch ist mein Budget?")',
+        '• Daten analysieren ("Analysiere meine Daten")',
+        '• Empfehlungen geben ("Gib mir eine Empfehlung")',
+        '• Fristen erkennen ("Welche Fristen stehen an?")',
+        '• Konflikte erkennen ("Gibt es Konflikte in meiner Planung?")',
+        '• Termine, Finanzeinträge und Checklisten-Punkte anlegen oder löschen, z. B.:',
+        '  "Füge Termin Bachelorabschluss am 2026-09-01 hinzu"',
+        '  "Füge Ausgabe Miete 450 hinzu"',
+        '  "Füge Aufgabe Anschreiben fertigstellen hinzu"',
+      ].join('\n');
     },
   };
 
@@ -2360,657 +2794,6 @@
 
 
   /* ═══════════════════════════════════════════════
-     ANALYSE-ENGINE: Studienwege im Vergleich
-     Self-contained module. Reads profile data from
-     SettingsEngine._data (no separate storage key
-     needed — purely derived/computed on demand).
-     Charts are rendered with plain Canvas 2D —
-     no external libraries.
-  ═══════════════════════════════════════════════ */
-  const AnalyseEngine = {
-
-    /* Die sieben zu vergleichenden Studienwege */
-    PATHS: [
-      'Medizin',
-      'Psychologie',
-      'Graphic Design',
-      'Graphic Design + Medizin',
-      'Graphic Design + Psychologie',
-      'Graphic Design → Medizin',
-      'Graphic Design → Psychologie',
-    ],
-
-    /* Kriterien-Gewichte für den Gesamtscore (Summe = 1.0) */
-    WEIGHTS: {
-      zeitaufwand:        0.15,
-      risiko:             0.15,
-      karrierepotenzial:  0.15,
-      finanzierbarkeit:   0.15,
-      prioritaeten:       0.15,
-      studienbelastung:   0.15,
-      jobKompatibilitaet: 0.10,
-    },
-
-    /**
-     * Basisprofile je Studienweg (0–100, unabhängig vom Nutzerprofil).
-     * Diese Werte bilden grobe, allgemein bekannte Eigenschaften der
-     * jeweiligen Wege ab (Regelstudienzeit, Numerus-clausus-Druck,
-     * Praxisanteil etc.) und werden anschließend mit den persönlichen
-     * Profildaten kombiniert/angepasst.
-     */
-    BASE_PROFILES: {
-      'Medizin': {
-        zeitaufwand: 25, risiko: 55, karrierepotenzial: 90, finanzierbarkeit: 35,
-        studienbelastung: 15, jobKompatibilitaet: 20,
-        notes: { dauerJahre: 6, nc: true, praxisanteil: 'hoch' },
-      },
-      'Psychologie': {
-        zeitaufwand: 55, risiko: 40, karrierepotenzial: 65, finanzierbarkeit: 60,
-        studienbelastung: 50, jobKompatibilitaet: 55,
-        notes: { dauerJahre: 5, nc: true, praxisanteil: 'mittel' },
-      },
-      'Graphic Design': {
-        zeitaufwand: 70, risiko: 45, karrierepotenzial: 55, finanzierbarkeit: 70,
-        studienbelastung: 65, jobKompatibilitaet: 80,
-        notes: { dauerJahre: 3.5, nc: false, praxisanteil: 'sehr hoch' },
-      },
-      'Graphic Design + Medizin': {
-        zeitaufwand: 10, risiko: 75, karrierepotenzial: 80, finanzierbarkeit: 25,
-        studienbelastung: 5, jobKompatibilitaet: 25,
-        notes: { dauerJahre: 9.5, nc: true, praxisanteil: 'hoch' },
-      },
-      'Graphic Design + Psychologie': {
-        zeitaufwand: 35, risiko: 55, karrierepotenzial: 65, finanzierbarkeit: 45,
-        studienbelastung: 30, jobKompatibilitaet: 60,
-        notes: { dauerJahre: 8.5, nc: true, praxisanteil: 'mittel' },
-      },
-      'Graphic Design → Medizin': {
-        zeitaufwand: 30, risiko: 60, karrierepotenzial: 85, finanzierbarkeit: 40,
-        studienbelastung: 25, jobKompatibilitaet: 50,
-        notes: { dauerJahre: 9.5, nc: true, praxisanteil: 'hoch' },
-      },
-      'Graphic Design → Psychologie': {
-        zeitaufwand: 50, risiko: 45, karrierepotenzial: 68, finanzierbarkeit: 55,
-        studienbelastung: 45, jobKompatibilitaet: 65,
-        notes: { dauerJahre: 8.5, nc: true, praxisanteil: 'mittel' },
-      },
-    },
-
-    _criterionLabels: {
-      zeitaufwand:        'Zeitaufwand',
-      risiko:             'Risiko',
-      karrierepotenzial:  'Karriere',
-      finanzierbarkeit:   'Finanzen',
-      prioritaeten:       'Prioritäten',
-      studienbelastung:   'Belastung',
-      jobKompatibilitaet: 'Job-Komp.',
-    },
-
-    _els: {},
-    _results: [], // cache of last computed results, used by chart renderers
-
-    init() {
-      this._els = {
-        runBtn:        document.getElementById('ae-run-btn'),
-        result:        document.getElementById('ae-result'),
-        chartTabs:      document.querySelectorAll('.ae-chart-tab'),
-        chartPanels:    document.querySelectorAll('.ae-chart-panel'),
-        radarSelect:    document.getElementById('ae-radar-select'),
-        canvasRadar:    document.getElementById('ae-canvas-radar'),
-        canvasBar:      document.getElementById('ae-canvas-bar'),
-        canvasCompare:  document.getElementById('ae-canvas-compare'),
-        compareA:       document.getElementById('ae-compare-a'),
-        compareB:       document.getElementById('ae-compare-b'),
-        compareLegend:  document.getElementById('ae-compare-legend'),
-      };
-
-      // Modul existiert nur auf der Strategie-Seite — sicher abbrechen,
-      // falls das Markup (noch) nicht vorhanden ist.
-      if (!this._els.runBtn || !this._els.result) return;
-
-      this._els.runBtn.addEventListener('click', () => this._render());
-
-      // Chart-Tabs binden
-      this._els.chartTabs.forEach(tab => {
-        tab.addEventListener('click', () => this._switchChartTab(tab.dataset.chartTab));
-      });
-
-      // Pfad-Auswahl für Radar-Chart
-      if (this._els.radarSelect) {
-        this._populateSelect(this._els.radarSelect);
-        this._els.radarSelect.addEventListener('change', () => this._drawRadarChart());
-      }
-
-      // Pfad-Auswahl für Vergleichsansicht
-      if (this._els.compareA && this._els.compareB) {
-        this._populateSelect(this._els.compareA);
-        this._populateSelect(this._els.compareB);
-        this._els.compareB.selectedIndex = Math.min(1, this.PATHS.length - 1);
-        this._els.compareA.addEventListener('change', () => this._drawCompareChart());
-        this._els.compareB.addEventListener('change', () => this._drawCompareChart());
-      }
-
-      // Erst-Render direkt beim Laden, basierend auf aktuellem Profil
-      this._render();
-    },
-
-    _populateSelect(selectEl) {
-      selectEl.innerHTML = this.PATHS.map(p => `<option value="${this._escapeHtml(p)}">${this._escapeHtml(p)}</option>`).join('');
-    },
-
-    _switchChartTab(tabName) {
-      this._els.chartTabs.forEach(t => {
-        const active = t.dataset.chartTab === tabName;
-        t.classList.toggle('active', active);
-        t.setAttribute('aria-selected', active ? 'true' : 'false');
-      });
-      this._els.chartPanels.forEach(p => {
-        p.classList.toggle('active', p.id === `ae-panel-${tabName}`);
-      });
-      // Canvas neu zeichnen, sobald das jeweilige Panel sichtbar wird
-      // (Canvas-Inhalte gehen verloren, wenn sie unsichtbar gerendert wurden).
-      if (tabName === 'radar')   this._drawRadarChart();
-      if (tabName === 'bar')    this._drawBarChart();
-      if (tabName === 'compare') this._drawCompareChart();
-    },
-
-    /** Liest das aktuelle Profil aus SettingsEngine (gleiche Quelle wie updateDashboard). */
-    _getProfile() {
-      return (SettingsEngine && SettingsEngine._data)
-        ? SettingsEngine._data
-        : StorageManager.load('settings_data', SettingsEngine.DEFAULTS);
-    },
-
-    _clamp(n) { return Math.max(0, Math.min(100, Math.round(n))); },
-
-    /**
-     * Personalisiert die Basisbewertung eines Studienwegs anhand der
-     * Profildaten (Finanzen, Zeitbudget, Prioritäten, Bewerbungsinteresse).
-     * Reine, lokale Berechnung — keine Netzwerkaufrufe.
-     */
-    _scorePath(pathName, profile) {
-      const base = this.BASE_PROFILES[pathName];
-      const finanzen     = profile.finanzen     || {};
-      const zeit         = profile.zeit         || {};
-      const prioritaeten = profile.prioritaeten || {};
-      const bewerbungen  = profile.bewerbungen  || {};
-
-      const scores = { ...base };
-
-      /* ── Finanzierbarkeit: Einkommen + BAföG vs. Budget ── */
-      const einkommen = Number(finanzen.einkommen) || 0;
-      const bafoeg     = Number(finanzen.bafoeg)    || 0;
-      const budget      = Number(finanzen.budget)    || 0;
-      const gesamteinnahmen = einkommen + bafoeg;
-      if (gesamteinnahmen > 0 || budget > 0) {
-        const deckungsgrad = budget > 0 ? gesamteinnahmen / budget : 1;
-        const finanzBonus = this._clamp((deckungsgrad - 1) * 30); // ±30 Punkte Spielraum
-        scores.finanzierbarkeit = this._clamp(base.finanzierbarkeit + finanzBonus);
-      }
-
-      /* ── Zeitaufwand: vorhandenes Lernzeit-Budget vs. Belastung des Wegs ── */
-      const lernzeit = Number(zeit.lernzeit) || 0;
-      if (lernzeit > 0) {
-        const belastungsfaktor = (100 - base.studienbelastung) / 100;
-        const zeitBonus = this._clamp((lernzeit - 20) * belastungsfaktor * 0.8);
-        scores.zeitaufwand = this._clamp(base.zeitaufwand + zeitBonus);
-      }
-
-      /* ── Studienbelastung: Arbeitszeit reduziert verfügbare Kapazität ── */
-      const arbeitszeit = Number(zeit.arbeitszeit) || 0;
-      if (arbeitszeit > 0) {
-        const arbeitsMalus = this._clamp(arbeitszeit * 0.6);
-        scores.studienbelastung = this._clamp(base.studienbelastung - arbeitsMalus * 0.4);
-      }
-
-      /* ── Persönliche Prioritäten: gewichtete Übereinstimmung ── */
-      const sicherheit    = Number(prioritaeten.sicherheit)    || 0;
-      const einkommenPrio = Number(prioritaeten.einkommen)     || 0;
-      const karrierePrio  = Number(prioritaeten.karriere)      || 0;
-      const interessePrio = Number(prioritaeten.interesse)     || 0;
-      const flexPrio       = Number(prioritaeten.flexibilitaet) || 0;
-      const prestigePrio   = Number(prioritaeten.prestige)      || 0;
-      const wlbPrio         = Number(prioritaeten.worklife)      || 0;
-      const prioSum = sicherheit + einkommenPrio + karrierePrio + interessePrio + flexPrio + prestigePrio + wlbPrio;
-
-      if (prioSum > 0) {
-        const eignung =
-          (karrierePrio  * base.karrierepotenzial) +
-          (sicherheit    * (100 - base.risiko)) +
-          (flexPrio       * base.jobKompatibilitaet) +
-          (wlbPrio         * base.studienbelastung) +
-          (interessePrio * 70) +
-          (einkommenPrio * base.karrierepotenzial) +
-          (prestigePrio   * (pathName.includes('Medizin') ? 90 : pathName.includes('Psychologie') ? 60 : 50));
-
-        const maxMoeglich = prioSum * 100;
-        scores.prioritaeten = this._clamp((eignung / maxMoeglich) * 100);
-      } else {
-        scores.prioritaeten = 50;
-      }
-
-      /* ── Bewerbungsinteresse als Bonus auf Karrierepotenzial ── */
-      if (bewerbungen.medizin && pathName.includes('Medizin')) {
-        scores.karrierepotenzial = this._clamp(scores.karrierepotenzial + 8);
-      }
-      if (bewerbungen.psychologie && pathName.includes('Psychologie')) {
-        scores.karrierepotenzial = this._clamp(scores.karrierepotenzial + 8);
-      }
-
-      return scores;
-    },
-
-    /** Gewichteter Gesamtscore (0–100) aus den Einzelkriterien. */
-    _overallScore(scores) {
-      let total = 0;
-      for (const key in this.WEIGHTS) {
-        total += (scores[key] || 0) * this.WEIGHTS[key];
-      }
-      return this._clamp(total);
-    },
-
-    _ampel(score) {
-      if (score >= 70) return 'green';
-      if (score >= 50) return 'amber';
-      return 'red';
-    },
-
-    _ampelHex(ampel) {
-      if (ampel === 'green') return '#3ecf8e';
-      if (ampel === 'amber') return '#f5a623';
-      return '#f26b6b';
-    },
-
-    /** Generiert Empfehlungen und Warnungen je Studienweg. */
-    _notes(pathName, scores, profile) {
-      const recommendations = [];
-      const warnings = [];
-      const base = this.BASE_PROFILES[pathName];
-
-      if (scores.finanzierbarkeit >= 70) {
-        recommendations.push('Finanzielle Basis erscheint nach aktuellem Profil solide.');
-      } else if (scores.finanzierbarkeit < 40) {
-        warnings.push('Finanzierung ist nach aktuellen Angaben angespannt — Budget oder Einkommen prüfen.');
-      }
-
-      if (scores.studienbelastung < 30) {
-        warnings.push(`Sehr hohe Studienbelastung erwartet (Regelstudienzeit ca. ${base.notes.dauerJahre} Jahre) — Zeitbudget realistisch einplanen.`);
-      } else if (scores.studienbelastung >= 65) {
-        recommendations.push('Studienbelastung erscheint im Vergleich gut tragbar.');
-      }
-
-      if (scores.risiko >= 60) {
-        warnings.push('Erhöhtes Risiko durch Zulassungsbeschränkung (NC) und/oder hohe Anforderungen — Alternativplan empfehlenswert.');
-      }
-
-      if (base.notes.nc && scores.karrierepotenzial >= 75) {
-        recommendations.push('Hohes Karrierepotenzial, aber zulassungsbeschränkt — frühzeitige Bewerbungsstrategie wichtig.');
-      }
-
-      const zeit = profile.zeit || {};
-      const arbeitszeit = Number(zeit.arbeitszeit) || 0;
-      if (arbeitszeit > 20 && scores.studienbelastung < 50) {
-        warnings.push('Hohe Arbeitszeit kombiniert mit hoher Studienbelastung dieses Wegs — Doppelbelastung möglich.');
-      }
-
-      if (scores.jobKompatibilitaet >= 70) {
-        recommendations.push('Gute Vereinbarkeit mit Nebenjob/Praxiserfahrung neben dem Studium.');
-      }
-
-      if (recommendations.length === 0) recommendations.push('Keine besonderen Vorteile anhand aktueller Profildaten hervorzuheben.');
-      if (warnings.length === 0) warnings.push('Keine kritischen Warnungen anhand aktueller Profildaten erkannt.');
-
-      return { recommendations, warnings };
-    },
-
-    _render() {
-      const profile = this._getProfile();
-
-      this._results = this.PATHS.map(pathName => {
-        const scores  = this._scorePath(pathName, profile);
-        const overall = this._overallScore(scores);
-        const ampel   = this._ampel(overall);
-        const notes   = this._notes(pathName, scores, profile);
-        return { pathName, scores, overall, ampel, notes };
-      }).sort((a, b) => b.overall - a.overall);
-
-      const criteriaHtml = (scores) => Object.keys(this._criterionLabels).map(key => `
-        <div class="ae-criterion">
-          <span class="ae-criterion-label">${this._escapeHtml(this._criterionLabels[key])}</span>
-          <span class="ae-criterion-value">${scores[key]}</span>
-        </div>`).join('');
-
-      const listHtml = (items) => items.map(i => `<div>• ${this._escapeHtml(i)}</div>`).join('');
-
-      const cardsHtml = this._results.map((r, idx) => `
-        <div class="ae-path-card ${r.ampel}">
-          <div class="ae-path-header">
-            <span class="ae-path-name">${idx + 1}. ${this._escapeHtml(r.pathName)}</span>
-            <span class="badge badge-${r.ampel === 'green' ? 'green' : r.ampel === 'amber' ? 'amber' : 'red'}">
-              <span class="ae-path-score ${r.ampel}">${r.overall}</span>&nbsp;/ 100
-            </span>
-          </div>
-          <div class="ae-criteria-grid">${criteriaHtml(r.scores)}</div>
-          <div class="ae-note-block recommend">${listHtml(r.notes.recommendations)}</div>
-          <div class="ae-note-block warning">${listHtml(r.notes.warnings)}</div>
-        </div>`).join('');
-
-      this._els.result.innerHTML = `<div class="ae-rank-list">${cardsHtml}</div>`;
-
-      // Diagramme mit den neuen Ergebnissen aktualisieren
-      this._drawRadarChart();
-      this._drawBarChart();
-      this._drawCompareChart();
-    },
-
-    _findResult(pathName) {
-      return this._results.find(r => r.pathName === pathName) || null;
-    },
-
-    /* ═══ CANVAS HELPERS (Vanilla, kein externes Charting) ═══ */
-
-    /** Liest CSS-Variablen für konsistente Diagrammfarben im aktuellen Theme. */
-    _cssVar(name) {
-      return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-    },
-
-    _setupCanvas(canvas) {
-      // High-DPI-Unterstützung: Canvas-Backing-Store skalieren, CSS-Größe beibehalten.
-      const dpr = window.devicePixelRatio || 1;
-      const cssWidth  = canvas.clientWidth  || canvas.width;
-      const cssHeight = canvas.clientHeight || canvas.height;
-      canvas.width  = cssWidth  * dpr;
-      canvas.height = cssHeight * dpr;
-      const ctx = canvas.getContext('2d');
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      return { ctx, w: cssWidth, h: cssHeight };
-    },
-
-    /* ── RADAR-CHART ── */
-    _drawRadarChart() {
-      const canvas = this._els.canvasRadar;
-      if (!canvas || !this._els.radarSelect || this._results.length === 0) return;
-
-      const pathName = this._els.radarSelect.value || this.PATHS[0];
-      const result = this._findResult(pathName);
-      if (!result) return;
-
-      const { ctx, w, h } = this._setupCanvas(canvas);
-      ctx.clearRect(0, 0, w, h);
-
-      const keys   = Object.keys(this._criterionLabels);
-      const labels = keys.map(k => this._criterionLabels[k]);
-      const values = keys.map(k => result.scores[k]);
-
-      const cx = w / 2;
-      const cy = h / 2 - 6;
-      const radius = Math.min(w, h) / 2 - 56;
-      const n = keys.length;
-      const angleStep = (Math.PI * 2) / n;
-
-      const gridColor = this._cssVar('--border-muted') || '#2a3450';
-      const textColor = this._cssVar('--text-secondary') || '#8896b0';
-      const accent    = this._ampelHex(result.ampel);
-
-      // Gitterringe (4 Stufen: 25/50/75/100)
-      ctx.strokeStyle = gridColor;
-      ctx.lineWidth = 1;
-      for (let ring = 1; ring <= 4; ring++) {
-        const r = (radius * ring) / 4;
-        ctx.beginPath();
-        for (let i = 0; i <= n; i++) {
-          const angle = -Math.PI / 2 + i * angleStep;
-          const x = cx + r * Math.cos(angle);
-          const y = cy + r * Math.sin(angle);
-          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-        }
-        ctx.stroke();
-      }
-
-      // Achsen + Labels
-      ctx.fillStyle = textColor;
-      ctx.font = '11px Inter, system-ui, sans-serif';
-      for (let i = 0; i < n; i++) {
-        const angle = -Math.PI / 2 + i * angleStep;
-        const x2 = cx + radius * Math.cos(angle);
-        const y2 = cy + radius * Math.sin(angle);
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(x2, y2);
-        ctx.stroke();
-
-        const lx = cx + (radius + 22) * Math.cos(angle);
-        const ly = cy + (radius + 22) * Math.sin(angle);
-        ctx.textAlign = Math.abs(Math.cos(angle)) < 0.2 ? 'center' : (Math.cos(angle) > 0 ? 'left' : 'right');
-        ctx.textBaseline = Math.abs(Math.sin(angle)) < 0.2 ? 'middle' : (Math.sin(angle) > 0 ? 'top' : 'bottom');
-        ctx.fillText(labels[i], lx, ly);
-      }
-
-      // Datenpolygon
-      ctx.beginPath();
-      for (let i = 0; i <= n; i++) {
-        const idx = i % n;
-        const angle = -Math.PI / 2 + idx * angleStep;
-        const r = (radius * values[idx]) / 100;
-        const x = cx + r * Math.cos(angle);
-        const y = cy + r * Math.sin(angle);
-        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-      }
-      ctx.closePath();
-      ctx.fillStyle = accent + '33'; // ~20% Deckkraft (Hex-Alpha)
-      ctx.strokeStyle = accent;
-      ctx.lineWidth = 2;
-      ctx.fill();
-      ctx.stroke();
-
-      // Datenpunkte
-      ctx.fillStyle = accent;
-      for (let i = 0; i < n; i++) {
-        const angle = -Math.PI / 2 + i * angleStep;
-        const r = (radius * values[i]) / 100;
-        const x = cx + r * Math.cos(angle);
-        const y = cy + r * Math.sin(angle);
-        ctx.beginPath();
-        ctx.arc(x, y, 3, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      // Titel
-      ctx.fillStyle = this._cssVar('--text-primary') || '#e8ecf5';
-      ctx.font = '600 13px Inter, system-ui, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'top';
-      ctx.fillText(`${pathName} — Score: ${result.overall}/100`, cx, 8);
-    },
-
-    /* ── BALKENDIAGRAMM ── */
-    _drawBarChart() {
-      const canvas = this._els.canvasBar;
-      if (!canvas || this._results.length === 0) return;
-
-      const { ctx, w, h } = this._setupCanvas(canvas);
-      ctx.clearRect(0, 0, w, h);
-
-      const padding = { top: 30, right: 20, bottom: 90, left: 40 };
-      const chartW = w - padding.left - padding.right;
-      const chartH = h - padding.top - padding.bottom;
-
-      const gridColor = this._cssVar('--border-muted') || '#2a3450';
-      const textColor = this._cssVar('--text-secondary') || '#8896b0';
-
-      // Y-Achse Gitterlinien (0/25/50/75/100)
-      ctx.strokeStyle = gridColor;
-      ctx.fillStyle = textColor;
-      ctx.font = '10px Inter, system-ui, sans-serif';
-      ctx.textAlign = 'right';
-      ctx.textBaseline = 'middle';
-      for (let v = 0; v <= 100; v += 25) {
-        const y = padding.top + chartH - (chartH * v) / 100;
-        ctx.beginPath();
-        ctx.moveTo(padding.left, y);
-        ctx.lineTo(padding.left + chartW, y);
-        ctx.lineWidth = 1;
-        ctx.stroke();
-        ctx.fillText(String(v), padding.left - 8, y);
-      }
-
-      // Balken
-      const n = this._results.length;
-      const slot = chartW / n;
-      const barWidth = slot * 0.6;
-
-      this._results.forEach((r, i) => {
-        const barHeight = (chartH * r.overall) / 100;
-        const x = padding.left + i * slot + (slot - barWidth) / 2;
-        const y = padding.top + chartH - barHeight;
-
-        ctx.fillStyle = this._ampelHex(r.ampel);
-        ctx.fillRect(x, y, barWidth, barHeight);
-
-        // Score-Label über dem Balken
-        ctx.fillStyle = this._cssVar('--text-primary') || '#e8ecf5';
-        ctx.font = '600 11px Inter, system-ui, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'bottom';
-        ctx.fillText(String(r.overall), x + barWidth / 2, y - 4);
-
-        // Pfadname unterhalb (rotiert für lange Labels)
-        ctx.save();
-        ctx.translate(x + barWidth / 2, padding.top + chartH + 8);
-        ctx.rotate(-Math.PI / 5);
-        ctx.fillStyle = textColor;
-        ctx.font = '10px Inter, system-ui, sans-serif';
-        ctx.textAlign = 'right';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(r.pathName, 0, 0);
-        ctx.restore();
-      });
-
-      // Titel
-      ctx.fillStyle = this._cssVar('--text-primary') || '#e8ecf5';
-      ctx.font = '600 13px Inter, system-ui, sans-serif';
-      ctx.textAlign = 'left';
-      ctx.textBaseline = 'top';
-      ctx.fillText('Gesamtscore je Studienweg', padding.left, 6);
-    },
-
-    /* ── VERGLEICHSANSICHT (zwei Wege, überlagertes Radar) ── */
-    _drawCompareChart() {
-      const canvas = this._els.canvasCompare;
-      if (!canvas || !this._els.compareA || !this._els.compareB || this._results.length === 0) return;
-
-      const nameA = this._els.compareA.value || this.PATHS[0];
-      const nameB = this._els.compareB.value || this.PATHS[1];
-      const resA = this._findResult(nameA);
-      const resB = this._findResult(nameB);
-      if (!resA || !resB) return;
-
-      const { ctx, w, h } = this._setupCanvas(canvas);
-      ctx.clearRect(0, 0, w, h);
-
-      const keys   = Object.keys(this._criterionLabels);
-      const labels = keys.map(k => this._criterionLabels[k]);
-
-      const cx = w / 2;
-      const cy = h / 2 - 6;
-      const radius = Math.min(w, h) / 2 - 56;
-      const n = keys.length;
-      const angleStep = (Math.PI * 2) / n;
-
-      const gridColor = this._cssVar('--border-muted') || '#2a3450';
-      const textColor = this._cssVar('--text-secondary') || '#8896b0';
-
-      // Gitterringe
-      ctx.strokeStyle = gridColor;
-      ctx.lineWidth = 1;
-      for (let ring = 1; ring <= 4; ring++) {
-        const r = (radius * ring) / 4;
-        ctx.beginPath();
-        for (let i = 0; i <= n; i++) {
-          const angle = -Math.PI / 2 + i * angleStep;
-          const x = cx + r * Math.cos(angle);
-          const y = cy + r * Math.sin(angle);
-          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-        }
-        ctx.stroke();
-      }
-
-      // Achsen + Labels
-      ctx.fillStyle = textColor;
-      ctx.font = '11px Inter, system-ui, sans-serif';
-      for (let i = 0; i < n; i++) {
-        const angle = -Math.PI / 2 + i * angleStep;
-        const x2 = cx + radius * Math.cos(angle);
-        const y2 = cy + radius * Math.sin(angle);
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(x2, y2);
-        ctx.stroke();
-
-        const lx = cx + (radius + 22) * Math.cos(angle);
-        const ly = cy + (radius + 22) * Math.sin(angle);
-        ctx.textAlign = Math.abs(Math.cos(angle)) < 0.2 ? 'center' : (Math.cos(angle) > 0 ? 'left' : 'right');
-        ctx.textBaseline = Math.abs(Math.sin(angle)) < 0.2 ? 'middle' : (Math.sin(angle) > 0 ? 'top' : 'bottom');
-        ctx.fillText(labels[i], lx, ly);
-      }
-
-      const drawPolygon = (values, colorHex) => {
-        ctx.beginPath();
-        for (let i = 0; i <= n; i++) {
-          const idx = i % n;
-          const angle = -Math.PI / 2 + idx * angleStep;
-          const r = (radius * values[idx]) / 100;
-          const x = cx + r * Math.cos(angle);
-          const y = cy + r * Math.sin(angle);
-          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-        }
-        ctx.closePath();
-        ctx.fillStyle = colorHex + '26'; // ~15% Deckkraft
-        ctx.strokeStyle = colorHex;
-        ctx.lineWidth = 2;
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.fillStyle = colorHex;
-        for (let i = 0; i < n; i++) {
-          const angle = -Math.PI / 2 + i * angleStep;
-          const r = (radius * values[i]) / 100;
-          const x = cx + r * Math.cos(angle);
-          const y = cy + r * Math.sin(angle);
-          ctx.beginPath();
-          ctx.arc(x, y, 3, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      };
-
-      // Feste, unterscheidbare Vergleichsfarben (unabhängig von der Ampel,
-      // damit beide Pfade auch bei gleicher Ampelfarbe klar erkennbar sind).
-      const colorA = '#4f8ef7';
-      const colorB = '#f5a623';
-
-      drawPolygon(keys.map(k => resA.scores[k]), colorA);
-      drawPolygon(keys.map(k => resB.scores[k]), colorB);
-
-      // Legende (DOM, nicht Canvas — bessere Lesbarkeit/Zugänglichkeit)
-      if (this._els.compareLegend) {
-        this._els.compareLegend.innerHTML = `
-          <div class="ae-legend-item"><span class="ae-legend-swatch" style="background:${colorA}"></span>${this._escapeHtml(nameA)} — ${resA.overall}/100</div>
-          <div class="ae-legend-item"><span class="ae-legend-swatch" style="background:${colorB}"></span>${this._escapeHtml(nameB)} — ${resB.overall}/100</div>
-        `;
-      }
-    },
-
-    _escapeHtml(str) {
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    },
-  };
-
-
-  /* ═══════════════════════════════════════════════
      UPDATE DASHBOARD  — central read-only renderer
      Reads from SettingsEngine._data (i.e. localStorage
      key "lp_settings_data") and writes the current
@@ -3132,6 +2915,91 @@
 
 
   /* ═══════════════════════════════════════════════
+     RENDER ACTION LOG  — Transparenz-Panel auf der
+     Chatbot-Seite. Zeigt die zuletzt vom ActionDispatcher
+     ausgeführten Aktionen (Typ + Ergebnis), rein lesend.
+  ═══════════════════════════════════════════════ */
+  function renderActionLog() {
+    const el = document.getElementById('chat-action-log');
+    if (!el) return;
+    const entries = (typeof ActionDispatcher !== 'undefined') ? ActionDispatcher.log : [];
+
+    if (!entries.length) {
+      el.innerHTML = `<p class="chat-empty-hint">Noch keine Aktionen ausgeführt.</p>`;
+      return;
+    }
+
+    el.innerHTML = entries.map(e => `
+      <div class="chat-action-entry">
+        <span class="dot" style="background:${e.ok ? 'var(--accent-green)' : 'var(--accent-red)'}"></span>
+        <span><code>${escapeHtml(e.type)}</code> — ${escapeHtml(e.message)}</span>
+      </div>`).join('');
+  }
+
+
+  /* ═══════════════════════════════════════════════
+     CHAT UI  — verbindet die Chatbot-Seite (Formular,
+     Nachrichtenliste, Schnellaktionen) mit ChatEngine.
+     Rein lokale DOM-Steuerung, keine Netzwerkaufrufe.
+  ═══════════════════════════════════════════════ */
+  const ChatUI = {
+    _els: {},
+
+    init() {
+      this._els = {
+        form: document.getElementById('chat-form'),
+        input: document.getElementById('chat-input'),
+        log: document.getElementById('chat-log'),
+        quickBtns: document.querySelectorAll('.chat-quick-btn'),
+      };
+
+      if (!this._els.form || !this._els.input || !this._els.log) return;
+
+      this._els.form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        this._handleUserMessage(this._els.input.value);
+        this._els.input.value = '';
+      });
+
+      this._els.quickBtns.forEach(btn => {
+        btn.addEventListener('click', () => this._handleUserMessage(btn.dataset.quick));
+      });
+
+      // Begrüßungsnachricht beim ersten Laden (nur Anzeige, kein Eintrag in ChatEngine.history)
+      this._appendMessage('bot', 'Hallo! Ich bin dein lokaler Offline-Assistent. Frag mich etwas zu deinem Profil, oder probiere eine der Schnellaktionen unten aus.', 'success');
+
+      renderActionLog();
+    },
+
+    async _handleUserMessage(text) {
+      const trimmed = String(text || '').trim();
+      if (!trimmed) return;
+
+      this._appendMessage('user', trimmed);
+      const reply = await ChatEngine.send(trimmed);
+      const mood = this._classifyReply(reply);
+      this._appendMessage('bot', reply, mood);
+    },
+
+    _classifyReply(reply) {
+      if (/^⚠️/.test(reply) || reply.includes('Konflikt')) return 'warning';
+      if (/^✅/.test(reply)) return 'success';
+      if (reply.includes('Frist') || reply.includes('dringend')) return 'deadline';
+      return '';
+    },
+
+    _appendMessage(role, text, mood) {
+      const wrap = document.createElement('div');
+      wrap.className = `chat-msg ${role}${mood ? ' ' + mood : ''}`;
+      const time = new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+      wrap.innerHTML = `${escapeHtml(text)}<span class="chat-msg-time">${time}</span>`;
+      this._els.log.appendChild(wrap);
+      this._els.log.scrollTop = this._els.log.scrollHeight;
+    },
+  };
+
+
+  /* ═══════════════════════════════════════════════
   ═══════════════════════════════════════════════ */
   (function boot() {
     // 1. Restore persisted state
@@ -3150,23 +3018,25 @@
 
     // 3. Boot module engines
     SettingsEngine.init();
-    AnalyseEngine.init();
+    ChatUI.init();
 
     // 4. Initial dashboard render (auto-update on load)
     updateDashboard();
 
     // 5. Log architecture (dev)
-    console.info('%cLebensplaner v0.5 — Analyse-Engine mit Diagrammen aktiv', 'color:#4f8ef7;font-weight:600');
+    console.info('%cLebensplaner v0.4 — Offline-Chatbot mit Action-System aktiv', 'color:#4f8ef7;font-weight:600');
     console.table({
-      AppState      : '✔ initialisiert',
-      StorageManager: '✔ initialisiert',
-      UIManager     : '✔ initialisiert',
-      SettingsEngine: '✔ aktiv',
-      AnalyseEngine : '✔ aktiv',
-      updateDashboard: '✔ aktiv',
-      AnalysisEngine: '✔ scaffold',
-      ActionEngine  : '✔ scaffold',
-      ChatEngine    : '✔ scaffold',
+      AppState        : '✔ initialisiert',
+      StorageManager  : '✔ initialisiert',
+      UIManager       : '✔ initialisiert',
+      SettingsEngine  : '✔ aktiv',
+      ActionDispatcher: '✔ aktiv',
+      ChatbotEngine   : '✔ aktiv',
+      ChatEngine      : '✔ aktiv (offline, regelbasiert)',
+      ChatUI          : '✔ aktiv',
+      updateDashboard : '✔ aktiv',
+      AnalysisEngine  : '✔ scaffold',
+      ActionEngine    : '✔ scaffold',
     });
   })();
   </script>
